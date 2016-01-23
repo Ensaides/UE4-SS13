@@ -1949,9 +1949,11 @@
     <NMakeOutput>..\..\Binaries\HTML5\SpaceStationGameServer-HTML5-Test.exe</NMakeOutput>
   </PropertyGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\SpaceStationGame\Jobs\JobManagerObject.cpp" />
     <ClCompile Include="..\..\Source\SpaceStationGame\Jobs\JobObject.cpp" />
     <ClCompile Include="..\..\Source\SpaceStationGame\Jobs\Jobs.cpp" />
     <ClCompile Include="..\..\Source\SpaceStationGame\Voxel\Voxel.cpp" />
+    <ClInclude Include="..\..\Source\SpaceStationGame\Jobs\JobManagerObject.h" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Jobs\JobObject.h" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Jobs\Jobs.h" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Voxel\Voxel.h" />

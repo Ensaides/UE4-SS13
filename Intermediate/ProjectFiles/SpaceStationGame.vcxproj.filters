@@ -277,6 +277,9 @@
     <ClInclude Include="..\..\Source\SpaceStationGame\Jobs\Jobs.h">
       <Filter>Source\SpaceStationGame\Jobs</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceStationGame\Jobs\JobManagerObject.h">
+      <Filter>Source\SpaceStationGame\Jobs</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\SpaceStationGame\Private\SpaceStationGameServerState.cpp">
@@ -316,6 +319,9 @@
       <Filter>Source\SpaceStationGame\Jobs</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\SpaceStationGame\Jobs\Jobs.cpp">
+      <Filter>Source\SpaceStationGame\Jobs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceStationGame\Jobs\JobManagerObject.cpp">
       <Filter>Source\SpaceStationGame\Jobs</Filter>
     </ClCompile>
   </ItemGroup>
