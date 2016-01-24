@@ -3,20 +3,50 @@
 #pragma once
 
 #include "Object.h"
-#include "Jobs.h"
 #include "JobObject.generated.h"
+
+USTRUCT(BlueprintType)
+struct FAccess
+{
+	GENERATED_USTRUCT_BODY()
+
+		//Security
+		uint32 bBrig : 1;
+	uint32 bWeaponPermit : 1;
+	uint32 bSecurity : 1;
+	uint32 bHoldingCells : 1;
+	uint32 bArmory : 1;
+	uint32 bForensics : 1;
+	uint32 bCourtroom : 1;
+	uint32 bHeadOfSecurity : 1;
+
+	//Medical
+	uint32 bMedical : 1;
+
+
+	//General
+	uint32 bKitchen : 1;
+	uint32 bBar : 1;
+	uint32 bHydroponics : 1;
+	uint32 bCustodialCloset : 1;
+	uint32 bChapelOffice : 1;
+	uint32 bCrematorium : 1;
+	uint32 bLibrary : 1;
+	uint32 bTheatre : 1;
+	uint32 bLawOffice : 1;
+	uint32 bHonkAccess : 1;
+	uint32 bSilentAccess : 1;
+	uint32 bMaintenanceAccess : 1;
+};
 
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable)
 class SPACESTATIONGAME_API UJobObject : public UObject
 {
 	GENERATED_BODY()
 	
-	UPROPERTY()
-		EJobs Job;
-
 	UPROPERTY()
 		FInventory StartingInventory;
 
@@ -26,5 +56,12 @@ class SPACESTATIONGAME_API UJobObject : public UObject
 public:
 	UJobObject();
 
-	static UJobObject* GetJobObjectFromJob(EJobs Job);
+	// Set up your inventory and initialize variables here
+	UFUNCTION(BlueprintImplementableEvent, Category = Job)
+		void SetUpJobObject();
+
+	UFUNCTION(BlueprintCallable, Category = Inventory)
+		void Add(AItem* Item, uint8 inIndex);
+
+	static FString Name;
 };

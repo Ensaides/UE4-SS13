@@ -123,13 +123,13 @@ void ASpaceStationGameGameMode::PostLogin(APlayerController* NewPlayer)
 #if UE_SERVER || UE_EDITOR
 	if (Cast<ASpaceStationGameGameState>(GetWorld()->GetGameState()) && GEngine->GetNetMode(GetWorld()) == NM_DedicatedServer)
 	{
-		Cast<ASpaceStationGameGameState>(GetWorld()->GetGameState())->GetServerState()->SetUpMySQLPlayerData(NewPlayer);
+		/*Cast<ASpaceStationGameGameState>(GetWorld()->GetGameState())->GetServerState()->SetUpMySQLPlayerData(NewPlayer);
 		 
 		EJobs JobEnum = (EJobs)Cast<ASpaceStationGameGameState>(GetWorld()->GetGameState())->GetServerState()->GetMySQLPreferredJob(NewPlayer);
 
 		FJobStruct NewJobStruct = FJobStruct::GetJobStructFromJob(JobEnum);
 
-		Cast<ASpaceStationGamePlayerController>(NewPlayer)->SetStartingJob(NewJobStruct);
+		Cast<ASpaceStationGamePlayerController>(NewPlayer)->SetStartingJob(NewJobStruct);*/
 	}
 #endif
 

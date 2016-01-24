@@ -4,6 +4,7 @@
 #include "ChatMessageStruct.h"
 #include "Reagents.h"
 #include "UnrealNetwork.h"
+#include "JobManagerObject.h"
 #include "InstancedItemContainer.h"
 #include "SpaceStationGameGameMode.h"
 #include "SpaceStationGamePlayerController.h"
@@ -18,6 +19,10 @@ ASpaceStationGameGameState::ASpaceStationGameGameState(const FObjectInitializer&
 : Super(ObjectInitializer)
 {	
 	InstancedItemContainerClasses.Add(AInstancedItemContainer::StaticClass());
+
+	JobManagerObject = ObjectInitializer.CreateDefaultSubobject<UJobManagerObject>(this, TEXT("Job Manager Object"));
+
+	SetUpJobs();
 }
 
 void ASpaceStationGameGameState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
@@ -68,6 +73,10 @@ void ASpaceStationGameGameState::StartMatchTimer(float TimerLength)
 void ASpaceStationGameGameState::StartRound()
 {
 	Cast<ASpaceStationGameGameMode>(GetWorld()->GetAuthGameMode())->bDelayedStart = false;
+}
+
+void ASpaceStationGameGameState::SetUpJobs_Implementation()
+{
 }
 
 AInstancedItemContainer* ASpaceStationGameGameState::GetContainerFromClass(UClass* InputClass)

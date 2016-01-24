@@ -1951,11 +1951,9 @@
   <ItemGroup>
     <ClCompile Include="..\..\Source\SpaceStationGame\Jobs\JobManagerObject.cpp" />
     <ClCompile Include="..\..\Source\SpaceStationGame\Jobs\JobObject.cpp" />
-    <ClCompile Include="..\..\Source\SpaceStationGame\Jobs\Jobs.cpp" />
     <ClCompile Include="..\..\Source\SpaceStationGame\Voxel\Voxel.cpp" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Jobs\JobManagerObject.h" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Jobs\JobObject.h" />
-    <ClInclude Include="..\..\Source\SpaceStationGame\Jobs\Jobs.h" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Voxel\Voxel.h" />
     <None Include="..\..\Source\SpaceStationGame\OpenCL\Kernel\AtmosKernels.cl" />
     <None Include="..\..\SpaceStationGame.uproject" />

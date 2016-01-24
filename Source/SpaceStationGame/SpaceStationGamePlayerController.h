@@ -5,7 +5,6 @@
 #include "GameFramework/PlayerController.h"
 #include "Item.h"
 #include "IDCard.h"
-#include "Jobs.h"
 #include "ChatMessageStruct.h"
 #include "SpaceStationGamePlayerController.generated.h"
 
@@ -97,17 +96,17 @@ public:
 		void Enter();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = Replication)
-		FJobStruct StartingJob;
+		uint8 StartingJob;
 
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = Round)
 		bool RoundStartReady;
 
 	UFUNCTION(BlueprintCallable, Server, WithValidation, Unreliable, Category = Job)
-		void SetStartingJob(FJobStruct Job);
+		void SetStartingJob(uint8 Job);
 
-	bool SetStartingJob_Validate(FJobStruct Job) { return true; };
+	bool SetStartingJob_Validate(uint8 Job) { return true; };
 
-	void SetStartingJob_Implementation(FJobStruct Job);
+	void SetStartingJob_Implementation(uint8 Job);
 
 protected:
 	int64 timeServerTimeRequestWasPlaced;

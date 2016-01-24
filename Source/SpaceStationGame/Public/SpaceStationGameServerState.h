@@ -21,11 +21,6 @@ public:
 
 	////Server stuff
 
-	// Job stuff
-
-	UPROPERTY()
-	class UJobManagerObject* JobManagerObject;
-
 	// MySQL stuff
 	UPROPERTY()
 	class UMySQLObject* MySQLObject;

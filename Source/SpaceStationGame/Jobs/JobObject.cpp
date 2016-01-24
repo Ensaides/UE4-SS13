@@ -2,42 +2,15 @@
 
 #include "SpaceStationGame.h"
 #include "IDCard.h"
-#include "Jobs.h"
 #include "JobObject.h"
 
 UJobObject::UJobObject()
 {
-	UWorld* const World = GetWorld();
-
-	if (World)
-	{
-		FActorSpawnParameters SpawnParams;
-
-		AIDCard* IDCard = World->SpawnActor<AIDCard>(AIDCard::StaticClass(), SpawnParams);
-
-		//Reimplement this please
-		/*if (Cast<ASpaceStationGameCharacter>(Owner))
-		{
-			IDCard->ServerSetAssignedName(Cast<ASpaceStationGameCharacter>(Owner)->GetPawnName());
-
-			IDCard->ServerSetJob(EJobs::EJob_Captain);
-		}*/
-
-		StartingInventory.Items.Add(IDCard);
-		StartingInventory.Index.Add((uint8)EHumanInventorySlot::EHumanInven_Slot_ID);
-	}
+	SetUpJobObject();
 }
 
-UJobObject* UJobObject::GetJobObjectFromJob(EJobs Job)
+void UJobObject::Add(AItem* Item, uint8 inIndex)
 {
-	if (Job == EJobs::EJob_Captain)
-	{
-		return NewObject<UJobObject>();
-	}
-	else
-	{
-		return NewObject<UJobObject>();
-	}
+	StartingInventory.Items.Add(Item);
+	StartingInventory.Index.Add(inIndex);
 }
-
-

@@ -16,7 +16,7 @@ enum class EHumanInventorySlot : uint8
 	EHumanInven_Slot_SuitStorage	UMETA(DisplayName = "Suit Storage")
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FInventory
 {
 	GENERATED_USTRUCT_BODY()
@@ -26,5 +26,4 @@ struct FInventory
 
 	UPROPERTY()
 		TArray<uint8> Index;
-
 };

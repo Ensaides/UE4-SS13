@@ -274,9 +274,6 @@
     <ClInclude Include="..\..\Source\SpaceStationGame\Jobs\JobObject.h">
       <Filter>Source\SpaceStationGame\Jobs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\SpaceStationGame\Jobs\Jobs.h">
-      <Filter>Source\SpaceStationGame\Jobs</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Source\SpaceStationGame\Jobs\JobManagerObject.h">
       <Filter>Source\SpaceStationGame\Jobs</Filter>
     </ClInclude>
@@ -316,9 +313,6 @@
       <Filter>Source\SpaceStationGame\Voxel</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\SpaceStationGame\Jobs\JobObject.cpp">
-      <Filter>Source\SpaceStationGame\Jobs</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\SpaceStationGame\Jobs\Jobs.cpp">
       <Filter>Source\SpaceStationGame\Jobs</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\SpaceStationGame\Jobs\JobManagerObject.cpp">

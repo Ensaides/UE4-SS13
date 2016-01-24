@@ -92,7 +92,7 @@ void ASpaceStationGamePlayerController::JoinGame_Implementation()
 	GetWorld()->GetAuthGameMode()->RestartPlayer(this);
 }
 
-void ASpaceStationGamePlayerController::SetStartingJob_Implementation(FJobStruct Job)
+void ASpaceStationGamePlayerController::SetStartingJob_Implementation(uint8 Job)
 {
 	StartingJob = Job;
 }

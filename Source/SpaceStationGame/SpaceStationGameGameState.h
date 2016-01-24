@@ -27,7 +27,17 @@ class ASpaceStationGameGameState : public AGameState
 
 	FTimerHandle RoundStartTimerHandle;
 
+	//Job Stuff
+
+	UPROPERTY()
+	class UJobManagerObject* JobManagerObject;
+
+public:
+	UFUNCTION(BlueprintNativeEvent, Category = Jobs)
+		void SetUpJobs();
+
 #if UE_SERVER || UE_EDITOR
+private:
 	UPROPERTY()
 		class ASpaceStationGameServerState* ServerState;
 

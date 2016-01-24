@@ -3,7 +3,6 @@
 #pragma once
 
 #include "Object.h"
-#include "JobObject.h"
 #include "JobManagerObject.generated.h"
 
 // REEEEE, singletons!
@@ -13,7 +12,8 @@ class SPACESTATIONGAME_API UJobManagerObject : public UObject
 {
 	GENERATED_BODY()
 
-	UJobManagerObject();
+	TArray<TSubclassOf<class UJobObject>> JobArray;
 
-	TArray<TSubclassOf<UJobObject>> JobArray;
+public:
+	void AddJob(TSubclassOf<UJobObject> NewJob);
 };

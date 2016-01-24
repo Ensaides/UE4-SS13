@@ -1,7 +1,7 @@
 #include "SpaceStationGame.h"
 #include "JobManagerObject.h"
 
-UJobManagerObject::UJobManagerObject()
+void UJobManagerObject::AddJob(TSubclassOf<UJobObject> NewJob)
 {
-	JobArray = {};
+	JobArray.Add(NewJob);
 }

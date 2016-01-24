@@ -3,7 +3,6 @@
 #pragma once
 
 #include "Item.h"
-#include "Jobs.h"
 #include "IDCard.generated.h"
 
 #define PROXY_STATE_ARRAY_SIZE 20
@@ -18,7 +17,7 @@ protected:
 		FString AssignedName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = ID)
-		EJobs AssignedJob;
+		uint8 AssignedJob;
 
 public:
 	// Sets default values for this actor's properties
@@ -35,9 +34,9 @@ public:
 	bool ServerSetAssignedName_Validate(const FString& NewName) { return true; };
 
 	UFUNCTION(BlueprintCallable, Server, WithValidation, Reliable, Category = ID, meta = (DisplayName = "Set Job"))
-		void ServerSetJob(EJobs Job);
+		void ServerSetJob(uint8 Job);
 
-	void ServerSetJob_Implementation(EJobs Job);
+	void ServerSetJob_Implementation(uint8 Job);
 
-	bool ServerSetJob_Validate(EJobs Job) { return true; };
+	bool ServerSetJob_Validate(uint8 Job) { return true; };
 };

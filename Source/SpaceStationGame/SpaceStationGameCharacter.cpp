@@ -87,9 +87,6 @@ void ASpaceStationGameCharacter::BeginPlay()
 
 void ASpaceStationGameCharacter::SetPlayerDefaults()
 {
-	FJobStruct* Struct = Cast<ASpaceStationGamePlayerController>(GetController())->StartingJob.FJobStructConstruct(this);
-
-	InventoryStruct = Struct->StartingInventory;
 }
 
 void ASpaceStationGameCharacter::Tick(float DeltaSeconds)

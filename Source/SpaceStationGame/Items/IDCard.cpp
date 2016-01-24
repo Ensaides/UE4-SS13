@@ -2,7 +2,6 @@
 
 #include "SpaceStationGame.h"
 #include "UnrealNetwork.h"
-#include "Jobs.h"
 #include "IDCard.h"
 
 AIDCard::AIDCard(const FObjectInitializer& ObjectInitializer)
@@ -43,7 +42,7 @@ FString AIDCard::GetAssignedName()
 //
 //}
 
-void AIDCard::ServerSetJob_Implementation(EJobs Job)
+void AIDCard::ServerSetJob_Implementation(uint8 Job)
 {
 	AssignedJob = Job;
 }
