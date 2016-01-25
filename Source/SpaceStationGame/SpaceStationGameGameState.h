@@ -33,8 +33,10 @@ class ASpaceStationGameGameState : public AGameState
 	class UJobManagerObject* JobManagerObject;
 
 public:
-	UFUNCTION(BlueprintNativeEvent, Category = Jobs)
+	UFUNCTION(BlueprintImplementableEvent, Category = Jobs)
 		void SetUpJobs();
+
+	TSubclassOf<class UJobObject> GetJob(uint8 Job);
 
 #if UE_SERVER || UE_EDITOR
 private:

@@ -2,6 +2,8 @@
 
 #include "SpaceStationGame.h"
 #include "SpaceStationGameCharacter.h"
+#include "SpaceStationGameGameState.h"
+#include "JobObject.h"
 #include "SpaceStationGamePlayerController.h"
 #include "SpaceStationGameProjectile.h"
 #include "Animation/AnimInstance.h"
@@ -87,6 +89,20 @@ void ASpaceStationGameCharacter::BeginPlay()
 
 void ASpaceStationGameCharacter::SetPlayerDefaults()
 {
+	UWorld* const World = GetWorld();
+
+	ASpaceStationGameGameState* GameState = Cast<ASpaceStationGameGameState>(World->GetGameState());
+
+	ASpaceStationGamePlayerController* PlayerController = Cast<ASpaceStationGamePlayerController>(GetController());
+
+	if (World && GameState && PlayerController)
+	{
+		TSubclassOf<UJobObject> JobClass = GameState->GetJob(PlayerController->StartingJob);
+
+		UJobObject* NewJobObject = NewObject<UJobObject>(this, JobClass);
+
+		InventoryStruct = NewJobObject->StartingInventory;
+	}
 }
 
 void ASpaceStationGameCharacter::Tick(float DeltaSeconds)

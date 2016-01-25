@@ -41,8 +41,6 @@ class ASpaceStationGameCharacter : public ACharacter
 	UPROPERTY(Replicated)
 		FInventory InventoryStruct;
 
-	//TMap<EHumanInventorySlot, AItem*> InventoryMap;
-
 	UPROPERTY()
 		ULimb* LeftArm;
 
@@ -115,6 +113,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	class UAnimMontage* FireAnimation;
 	
+	/**
+	*	Inventory Stuff
+	*/
+
 	UFUNCTION(BlueprintCallable, Category = Inventory)
 	bool InventoryItemIsValid(EHumanInventorySlot Index);
 
@@ -127,7 +129,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Inventory)
 	void SwapInventoryItem(EHumanInventorySlot Slot1, EHumanInventorySlot Slot2);
 
-	// Make a client and a server function
 	UFUNCTION(Server, WithValidation, Reliable)
 	void SwapInventoryItem_Server(EHumanInventorySlot Slot1, EHumanInventorySlot Slot2);
 
@@ -159,6 +160,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Inventory)
 	EHumanInventorySlot GetSelectedItem();
 	
+	/**
+	*
+	*/
+
 	void Enter();
 
 	UFUNCTION(BlueprintCallable, Category = Name)

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Object.h"
+#include "Inventory.h"
 #include "JobObject.generated.h"
 
 USTRUCT(BlueprintType)
@@ -47,13 +48,13 @@ class SPACESTATIONGAME_API UJobObject : public UObject
 {
 	GENERATED_BODY()
 	
+public:
 	UPROPERTY()
 		FInventory StartingInventory;
 
 	UPROPERTY()
 		FAccess DefaultAccess;
 
-public:
 	UJobObject();
 
 	// Set up your inventory and initialize variables here

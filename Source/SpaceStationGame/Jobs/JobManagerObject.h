@@ -16,4 +16,8 @@ class SPACESTATIONGAME_API UJobManagerObject : public UObject
 
 public:
 	void AddJob(TSubclassOf<UJobObject> NewJob);
+
+	bool GetJobExists(uint8 Job) { return JobArray.IsValidIndex(Job); };
+
+	TSubclassOf<UJobObject> GetJob(uint8 Job) { return JobArray[Job]; };
 };

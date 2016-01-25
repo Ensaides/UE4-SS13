@@ -5,6 +5,7 @@
 #include "Reagents.h"
 #include "UnrealNetwork.h"
 #include "JobManagerObject.h"
+#include "JobObject.h"
 #include "InstancedItemContainer.h"
 #include "SpaceStationGameGameMode.h"
 #include "SpaceStationGamePlayerController.h"
@@ -65,6 +66,18 @@ void ASpaceStationGameGameState::BeginPlay()
 	Super::BeginPlay();
 }
 
+TSubclassOf<UJobObject> ASpaceStationGameGameState::GetJob(uint8 Job)
+{
+	if (JobManagerObject->GetJobExists(Job))
+	{
+		return JobManagerObject->GetJob(Job);
+	}
+	else
+	{
+		return UJobObject::StaticClass();
+	}
+}
+
 void ASpaceStationGameGameState::StartMatchTimer(float TimerLength)
 {
 	GetWorldTimerManager().SetTimer(RoundStartTimerHandle, this, &ASpaceStationGameGameState::StartRound, TimerLength, false);
@@ -73,10 +86,6 @@ void ASpaceStationGameGameState::StartMatchTimer(float TimerLength)
 void ASpaceStationGameGameState::StartRound()
 {
 	Cast<ASpaceStationGameGameMode>(GetWorld()->GetAuthGameMode())->bDelayedStart = false;
-}
-
-void ASpaceStationGameGameState::SetUpJobs_Implementation()
-{
 }
 
 AInstancedItemContainer* ASpaceStationGameGameState::GetContainerFromClass(UClass* InputClass)
