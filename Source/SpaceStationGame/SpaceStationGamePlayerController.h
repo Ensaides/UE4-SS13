@@ -5,6 +5,7 @@
 #include "GameFramework/PlayerController.h"
 #include "Item.h"
 #include "IDCard.h"
+#include "AntagonistRoles.h"
 #include "ChatMessageStruct.h"
 #include "SpaceStationGamePlayerController.generated.h"
 
@@ -102,21 +103,21 @@ public:
 		bool RoundStartReady;
 
 	UFUNCTION(BlueprintCallable, Server, WithValidation, Unreliable, Category = Job)
-		void SetStartingJob(uint8 Job) { StartingJob = Job; };
+		void SetStartingJob(uint8 Job);
 
 	bool SetStartingJob_Validate(uint8 Job) { return true; };
 
-	void SetStartingJob_Implementation(uint8 Job);
+	void SetStartingJob_Implementation(uint8 Job) { StartingJob = Job; };
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = Replication)
-		FPrefferedAntagonistRole PreferredAntagonistRole;
+		FPreferredAntagonistRole PreferredAntagonistRole;
 
-	UFUNCTION(BlueprintCallable, Server, WithValidation, Unreliable, Category = Job)
+	UFUNCTION(Server, WithValidation, Unreliable)
 		void SetPreferredAntagonistRole(uint32 NewPreferredAntagonistRole);
 
 	bool SetPreferredAntagonistRole_Validate(uint32 NewPreferredAntagonistRole) { return true; };
 
-	void SetPreferredAntagonistRole_Implementation(uint32 NewPreferredAntagonistRole) { PrefferedAntagonistRole = NewPreferredAntagonistRole; };
+	void SetPreferredAntagonistRole_Implementation(uint32 NewPreferredAntagonistRole) { PreferredAntagonistRole = *(FPreferredAntagonistRole*)&NewPreferredAntagonistRole; };
 
 protected:
 	int64 timeServerTimeRequestWasPlaced;

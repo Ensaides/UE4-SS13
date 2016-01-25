@@ -5,11 +5,11 @@
 UENUM(BlueprintType)
 enum class EAntagonistRoles : uint8
 {
-
+	EAntagonistRole_Traitro UMETA(DisplayName = "Traitor")
 };
 
 USTRUCT(BlueprintType)
-struct FPrefferedAntagonistRole
+struct FPreferredAntagonistRole
 {
 	GENERATED_USTRUCT_BODY()
 

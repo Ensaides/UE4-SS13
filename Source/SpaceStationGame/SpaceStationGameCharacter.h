@@ -187,12 +187,12 @@ public:
 	// We don't want this replicated, we don't care what the player does with their notes
 	TArray<FString> Notes;
 
-	UFUNCTION(BlueprintCallable, Replicated, NetMulticast, WithValidation, Reliable, Category = Notes)
-		void Server_SetNotes(TArray<FString> NewNotes);
+	UFUNCTION(BlueprintCallable, NetMulticast, WithValidation, Reliable, Category = Notes)
+		void Server_SetNotes(const TArray<FString>& NewNotes);
 
-	bool Server_SetNotes_Validate(TArray<FString> NewNotes) { return true; };
+	bool Server_SetNotes_Validate(const TArray<FString>& NewNotes) { return true; };
 
-	void Server_SetNotes_Implementation(TArray<FString> NewNotes) { Notes = NewNotes; };
+	void Server_SetNotes_Implementation(const TArray<FString>& NewNotes) { Notes = NewNotes; };
 
 	// Call this on the client side
 	void SetNotes(TArray<FString> NewNotes) { Notes = NewNotes; };
