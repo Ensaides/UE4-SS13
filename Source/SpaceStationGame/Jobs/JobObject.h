@@ -11,8 +11,8 @@ struct FAccess
 {
 	GENERATED_USTRUCT_BODY()
 
-		//Security
-		uint32 bBrig : 1;
+	//Security
+	uint32 bBrig : 1;
 	uint32 bWeaponPermit : 1;
 	uint32 bSecurity : 1;
 	uint32 bHoldingCells : 1;

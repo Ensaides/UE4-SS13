@@ -78,6 +78,7 @@ void ASpaceStationGameCharacter::GetLifetimeReplicatedProps(TArray< FLifetimePro
 	DOREPLIFETIME(ASpaceStationGameCharacter, InventoryStruct);
 	DOREPLIFETIME_CONDITION(ASpaceStationGameCharacter, SelectedItem, COND_OwnerOnly);
 	DOREPLIFETIME_CONDITION(ASpaceStationGameCharacter, AffectedItem, COND_OwnerOnly);
+	DOREPLIFETIME_CONDITION(ASpaceStationGameCharacter, AntagonistRole, COND_OwnerOnly);
 
 	DOREPLIFETIME(ASpaceStationGameCharacter, PawnName);
 }
@@ -89,19 +90,22 @@ void ASpaceStationGameCharacter::BeginPlay()
 
 void ASpaceStationGameCharacter::SetPlayerDefaults()
 {
-	UWorld* const World = GetWorld();
-
-	ASpaceStationGameGameState* GameState = Cast<ASpaceStationGameGameState>(World->GetGameState());
-
-	ASpaceStationGamePlayerController* PlayerController = Cast<ASpaceStationGamePlayerController>(GetController());
-
-	if (World && GameState && PlayerController)
+	if (GEngine->GetNetMode(GetWorld()) == NM_DedicatedServer)
 	{
-		TSubclassOf<UJobObject> JobClass = GameState->GetJob(PlayerController->StartingJob);
+		UWorld* const World = GetWorld();
 
-		UJobObject* NewJobObject = NewObject<UJobObject>(this, JobClass);
+		ASpaceStationGameGameState* GameState = Cast<ASpaceStationGameGameState>(World->GetGameState());
 
-		InventoryStruct = NewJobObject->StartingInventory;
+		ASpaceStationGamePlayerController* PlayerController = Cast<ASpaceStationGamePlayerController>(GetController());
+
+		if (World && GameState && PlayerController)
+		{
+			TSubclassOf<UJobObject> JobClass = GameState->GetJob(PlayerController->StartingJob);
+
+			UJobObject* NewJobObject = NewObject<UJobObject>(this, JobClass);
+
+			InventoryStruct = NewJobObject->StartingInventory;
+		}
 	}
 }
 

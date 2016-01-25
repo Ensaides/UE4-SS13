@@ -5,7 +5,6 @@
 #include "Object.h"
 #include "JobManagerObject.generated.h"
 
-// REEEEE, singletons!
 
 UCLASS()
 class SPACESTATIONGAME_API UJobManagerObject : public UObject

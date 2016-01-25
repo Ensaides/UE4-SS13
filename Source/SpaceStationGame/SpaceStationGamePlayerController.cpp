@@ -76,8 +76,10 @@ void ASpaceStationGamePlayerController::GetLifetimeReplicatedProps(TArray< FLife
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(ASpaceStationGamePlayerController, StartingJob);
-	DOREPLIFETIME_CONDITION(ASpaceStationGamePlayerController, RoundStartReady, COND_OwnerOnly);
+	DOREPLIFETIME(ASpaceStationGamePlayerController, RoundStartReady);
+
+	DOREPLIFETIME_CONDITION(ASpaceStationGamePlayerController, StartingJob, COND_OwnerOnly);
+	DOREPLIFETIME_CONDITION(ASpaceStationGamePlayerController, PreferredAntagonistRole, COND_OwnerOnly);
 }
 
 void ASpaceStationGamePlayerController::ToggleRoundStartReady_Implementation()
@@ -90,11 +92,6 @@ void ASpaceStationGamePlayerController::JoinGame_Implementation()
 	RoundStartReady = true;
 
 	GetWorld()->GetAuthGameMode()->RestartPlayer(this);
-}
-
-void ASpaceStationGamePlayerController::SetStartingJob_Implementation(uint8 Job)
-{
-	StartingJob = Job;
 }
 
 void ASpaceStationGamePlayerController::ResetOutline()

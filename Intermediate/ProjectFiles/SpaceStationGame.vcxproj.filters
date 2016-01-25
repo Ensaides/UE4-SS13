@@ -197,12 +197,6 @@
     <ClInclude Include="..\..\Source\SpaceStationGame\Public\Inventory\Inventory.h">
       <Filter>Source\SpaceStationGame\Public\Inventory</Filter>
     </ClInclude>
-    <Filter Include="Source\SpaceStationGame\Public\Jobs">
-      <UniqueIdentifier>{5D92DFD3-5873-40C6-99A3-39799F2446E1}</UniqueIdentifier>
-    </Filter>
-    <ClInclude Include="..\..\Source\SpaceStationGame\Public\Jobs\Jobs.h">
-      <Filter>Source\SpaceStationGame\Public\Jobs</Filter>
-    </ClInclude>
     <Filter Include="Source\SpaceStationGame\Public\Physics">
       <UniqueIdentifier>{9211A436-DE46-4387-9A56-2508E4ABD0C2}</UniqueIdentifier>
     </Filter>
@@ -277,6 +271,9 @@
     <ClInclude Include="..\..\Source\SpaceStationGame\Jobs\JobManagerObject.h">
       <Filter>Source\SpaceStationGame\Jobs</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceStationGame\Public\Antag\AntagonistRoles.h">
+      <Filter>Source\SpaceStationGame\Public\Antag</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\SpaceStationGame\Private\SpaceStationGameServerState.cpp">
@@ -331,6 +328,9 @@
     </Filter>
     <Filter Include="Source\SpaceStationGame\Jobs">
       <UniqueIdentifier>{24729a6a-3df4-4e84-b534-973fc26f858a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\SpaceStationGame\Public\Antag">
+      <UniqueIdentifier>{12eef5c2-5a78-4d06-aa63-e6b52d5dcf39}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

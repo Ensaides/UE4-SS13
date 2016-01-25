@@ -54,6 +54,13 @@ uint8 ASpaceStationGameServerState::GetMySQLPreferredJob(APlayerController* NewP
 	return MySQLObject->GetMySQLPreferredJob(SteamID);
 }
 
+uint32 ASpaceStationGameServerState::GetMySQLPreferredAntagonistRoles(APlayerController* NewPlayer)
+{
+	FString SteamID = NewPlayer->PlayerState->UniqueId->ToString();
+
+	return MySQLObject->GetMySQLPrefferedAntagonistRole(SteamID);
+}
+
 void ASpaceStationGameServerState::SetupRecipes()
 {
 	static const FString ContextString(TEXT("GENERAL"));

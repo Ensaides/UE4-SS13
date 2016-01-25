@@ -33,6 +33,8 @@ public:
 
 	uint8 GetMySQLPreferredJob(APlayerController* NewPlayer);
 
+	uint32 GetMySQLPreferredAntagonistRoles(APlayerController* NewPlayer);
+
 	// Recipe stuff
 
 	UDataTable* RecipeLookupTable;

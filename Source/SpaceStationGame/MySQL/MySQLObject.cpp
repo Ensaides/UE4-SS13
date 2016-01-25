@@ -43,6 +43,7 @@ void UMySQLObject::OpenConnection()
 		stmt->execute("CREATE TABLE IF NOT EXISTS `players` ("
 			"`steamid` BIGINT(20) UNSIGNED NOT NULL,"
 			"`preferredjob` TINYINT(3) UNSIGNED NOT NULL,"
+			"`preferredantagonistroles` BIT(32) NOT NULL,"
 			"PRIMARY KEY (`steamid`));");
 
 		delete stmt;
@@ -148,6 +149,47 @@ uint8 UMySQLObject::GetMySQLPreferredJob(FString SteamID)
 		}
 	}
 	return 19;
+}
+
+uint32 UMySQLObject::GetMySQLPrefferedAntagonistRole(FString SteamID)
+{
+	if (bConnectionActive)
+	{
+		try
+		{
+			sql::Statement* stmt(con->createStatement());
+
+			sql::ResultSet* res;
+
+			IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get("Steam");
+
+			stmt->execute("USE " + StringHelpers::ConvertToString(ServerDatabase));
+
+			if (OnlineSub)
+			{
+				res = stmt->executeQuery("SELECT * FROM players WHERE steamid LIKE " + StringHelpers::ConvertToString(*SteamID));
+			}
+			else
+			{
+				res = stmt->executeQuery("SELECT * FROM players WHERE steamid LIKE 76561198004815982");
+			}
+
+			//delete stmt;
+			if (res->next())
+			{
+				return res->getUInt("preferredantagonistroles");
+			}
+			else return 0;
+		}
+		catch (sql::SQLException &e)
+		{
+			SET_WARN_COLOR(COLOR_YELLOW);
+			UE_LOG(SpaceStationGameLog, Warning, TEXT("MySQL error code: %d"), e.getErrorCode());
+			UE_LOG(SpaceStationGameLog, Warning, TEXT("MySQL failed to connect, please check your mysql server info"));
+			CLEAR_WARN_COLOR();
+		}
+	}
+	return 0;
 }
 
 void UMySQLObject::BeginDestroy()

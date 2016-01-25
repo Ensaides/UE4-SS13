@@ -6,7 +6,10 @@
 
 UJobObject::UJobObject()
 {
-	SetUpJobObject();
+	if (GEngine->GetNetMode(GetWorld()) == NM_DedicatedServer)
+	{
+		SetUpJobObject();
+	}
 }
 
 void UJobObject::Add(AItem* Item, uint8 inIndex)

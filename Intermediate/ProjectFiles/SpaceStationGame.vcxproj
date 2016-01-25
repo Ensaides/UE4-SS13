@@ -1954,6 +1954,7 @@
     <ClCompile Include="..\..\Source\SpaceStationGame\Voxel\Voxel.cpp" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Jobs\JobManagerObject.h" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Jobs\JobObject.h" />
+    <ClInclude Include="..\..\Source\SpaceStationGame\Public\Antag\AntagonistRoles.h" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Voxel\Voxel.h" />
     <None Include="..\..\Source\SpaceStationGame\OpenCL\Kernel\AtmosKernels.cl" />
     <None Include="..\..\SpaceStationGame.uproject" />
@@ -2021,7 +2022,6 @@
     <ClInclude Include="..\..\Source\SpaceStationGame\Public\BloodTypes\BloodTypeStruct.h" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Public\ChatMessages\ChatMessageStruct.h" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Public\Inventory\Inventory.h" />
-    <ClInclude Include="..\..\Source\SpaceStationGame\Public\Jobs\Jobs.h" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Public\Physics\SmoothPhysicsState.h" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Public\Reagents\Reagents.h" />
     <ClCompile Include="..\..\Source\SpaceStationGame\Public\Reagents\RecipeContainer.cpp" />

@@ -2,7 +2,7 @@
 #pragma once
 #include "GameFramework/Character.h"
 #include "Map.h"
-
+#include "AntagonistRoles.h"
 #include "Item.h"
 
 #include "BloodTypeStruct.h"
@@ -165,6 +165,41 @@ public:
 	*/
 
 	void Enter();
+
+	/**
+	*	Antagonist stuff
+	*/
+	
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = Antagonist)
+		EAntagonistRoles AntagonistRole;
+
+	UFUNCTION(BlueprintCallable, Server, WithValidation, Reliable, Category = Antagonist)
+		void SetAntagonistRole(EAntagonistRoles NewAntagonistRole);
+
+	bool SetAntagonistRole_Validate(EAntagonistRoles NewAntagonistRole) { return true; };
+
+	void SetAntagonistRole_Implementation(EAntagonistRoles NewAntagonistRole) { AntagonistRole = NewAntagonistRole; };
+
+	/**
+	*	Notes
+	*/
+
+	// We don't want this replicated, we don't care what the player does with their notes
+	TArray<FString> Notes;
+
+	UFUNCTION(BlueprintCallable, Replicated, NetMulticast, WithValidation, Reliable, Category = Notes)
+		void Server_SetNotes(TArray<FString> NewNotes);
+
+	bool Server_SetNotes_Validate(TArray<FString> NewNotes) { return true; };
+
+	void Server_SetNotes_Implementation(TArray<FString> NewNotes) { Notes = NewNotes; };
+
+	// Call this on the client side
+	void SetNotes(TArray<FString> NewNotes) { Notes = NewNotes; };
+
+	/**
+	*
+	*/
 
 	UFUNCTION(BlueprintCallable, Category = Name)
 	FString GetPawnName();

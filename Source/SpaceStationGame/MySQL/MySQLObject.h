@@ -51,4 +51,6 @@ public:
 	void SetUpMySQLPlayerData(FString SteamID);
 
 	uint8 GetMySQLPreferredJob(FString SteamID);
+
+	uint32 GetMySQLPrefferedAntagonistRole(FString SteamID);
 };

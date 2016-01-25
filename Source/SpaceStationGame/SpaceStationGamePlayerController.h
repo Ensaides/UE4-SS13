@@ -102,11 +102,21 @@ public:
 		bool RoundStartReady;
 
 	UFUNCTION(BlueprintCallable, Server, WithValidation, Unreliable, Category = Job)
-		void SetStartingJob(uint8 Job);
+		void SetStartingJob(uint8 Job) { StartingJob = Job; };
 
 	bool SetStartingJob_Validate(uint8 Job) { return true; };
 
 	void SetStartingJob_Implementation(uint8 Job);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = Replication)
+		FPrefferedAntagonistRole PreferredAntagonistRole;
+
+	UFUNCTION(BlueprintCallable, Server, WithValidation, Unreliable, Category = Job)
+		void SetPreferredAntagonistRole(uint32 NewPreferredAntagonistRole);
+
+	bool SetPreferredAntagonistRole_Validate(uint32 NewPreferredAntagonistRole) { return true; };
+
+	void SetPreferredAntagonistRole_Implementation(uint32 NewPreferredAntagonistRole) { PrefferedAntagonistRole = NewPreferredAntagonistRole; };
 
 protected:
 	int64 timeServerTimeRequestWasPlaced;
