@@ -13,6 +13,11 @@ ARoundTypeTraitor::ARoundTypeTraitor(const FObjectInitializer& ObjectInitializer
 	TraitorRatio = 8;
 }
 
+void ARoundTypeTraitor::InitObjectives()
+{
+	TraitorObjectives[0] = &ARoundTypeTraitor::Objective_Assassinate;
+}
+
 void ARoundTypeTraitor::InitializeRound_Implementation()
 {
 	TArray<AActor*> FoundActors;
@@ -71,4 +76,24 @@ void ARoundTypeTraitor::InitializeRound_Implementation()
 	}
 }
 
+void ARoundTypeTraitor::AddObjective(int32 ObjectiveIndex, ASpaceStationGameCharacter* Character)
+{
+	//valid range check
+	if (ObjectiveIndex >= TRAITOR_OBJECTIVES || ObjectiveIndex < 0) return;
+	//~~
 
+	//Special Thanks to Epic for this Syntax
+	(this->* (TraitorObjectives[ObjectiveIndex]))(Character);
+
+	//the above line plays the appropriate function based on the passed in index!
+}
+
+void ARoundTypeTraitor::SetUpTraitorCharacter(ASpaceStationGameCharacter* Character)
+{
+	for (int32 i = 0; i < MaxNumOfObjectives; i++)
+	{
+		int32 RandomTraitorObjective = FMath::RandRange(0, TRAITOR_OBJECTIVES - 1);
+
+		AddObjective(RandomTraitorObjective, Character);
+	}
+}
