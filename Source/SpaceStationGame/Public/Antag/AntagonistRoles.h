@@ -5,7 +5,8 @@
 UENUM(BlueprintType)
 enum class EAntagonistRoles : uint8
 {
-	EAntagonistRole_Traitro UMETA(DisplayName = "Traitor")
+	EAntagonistRole_None UMETA(DisplayName = "NONE"),
+	EAntagonistRole_Traitor UMETA(DisplayName = "Traitor")
 };
 
 USTRUCT(BlueprintType)

@@ -274,7 +274,10 @@
     <ClInclude Include="..\..\Source\SpaceStationGame\Public\Antag\AntagonistRoles.h">
       <Filter>Source\SpaceStationGame\Public\Antag</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\SpaceStationGame\Roundtypes\Roundtype.h">
+    <ClInclude Include="..\..\Source\SpaceStationGame\Roundtypes\RoundTypeTraitor.h">
+      <Filter>Source\SpaceStationGame\Roundtypes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceStationGame\Roundtypes\RoundType.h">
       <Filter>Source\SpaceStationGame\Roundtypes</Filter>
     </ClInclude>
   </ItemGroup>
@@ -318,7 +321,10 @@
     <ClCompile Include="..\..\Source\SpaceStationGame\Jobs\JobManagerObject.cpp">
       <Filter>Source\SpaceStationGame\Jobs</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\SpaceStationGame\Roundtypes\Roundtype.cpp">
+    <ClCompile Include="..\..\Source\SpaceStationGame\Roundtypes\RoundTypeTraitor.cpp">
+      <Filter>Source\SpaceStationGame\Roundtypes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceStationGame\Roundtypes\RoundType.cpp">
       <Filter>Source\SpaceStationGame\Roundtypes</Filter>
     </ClCompile>
   </ItemGroup>

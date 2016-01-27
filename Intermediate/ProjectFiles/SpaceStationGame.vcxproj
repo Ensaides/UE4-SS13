@@ -1951,12 +1951,14 @@
   <ItemGroup>
     <ClCompile Include="..\..\Source\SpaceStationGame\Jobs\JobManagerObject.cpp" />
     <ClCompile Include="..\..\Source\SpaceStationGame\Jobs\JobObject.cpp" />
-    <ClCompile Include="..\..\Source\SpaceStationGame\Roundtypes\Roundtype.cpp" />
+    <ClCompile Include="..\..\Source\SpaceStationGame\Roundtypes\RoundType.cpp" />
+    <ClCompile Include="..\..\Source\SpaceStationGame\Roundtypes\RoundTypeTraitor.cpp" />
     <ClCompile Include="..\..\Source\SpaceStationGame\Voxel\Voxel.cpp" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Jobs\JobManagerObject.h" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Jobs\JobObject.h" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Public\Antag\AntagonistRoles.h" />
-    <ClInclude Include="..\..\Source\SpaceStationGame\Roundtypes\Roundtype.h" />
+    <ClInclude Include="..\..\Source\SpaceStationGame\Roundtypes\RoundType.h" />
+    <ClInclude Include="..\..\Source\SpaceStationGame\Roundtypes\RoundTypeTraitor.h" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Voxel\Voxel.h" />
     <None Include="..\..\Source\SpaceStationGame\OpenCL\Kernel\AtmosKernels.cl" />
     <None Include="..\..\SpaceStationGame.uproject" />

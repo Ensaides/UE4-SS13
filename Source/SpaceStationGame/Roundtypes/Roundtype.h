@@ -3,15 +3,13 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
-#include "Roundtype.generated.h"
+#include "RoundType.generated.h"
 
 UCLASS()
-class SPACESTATIONGAME_API ARoundtype : public AActor
+class SPACESTATIONGAME_API ARoundType : public AActor
 {
 	GENERATED_UCLASS_BODY()
 
 	UFUNCTION(BlueprintNativeEvent, Category = Round)
 		void InitializeRound();
-
-	virtual void InitializeRound();
 };

@@ -1,7 +1,13 @@
-#include "Roundtype.h"
+#include "SpaceStationGame.h"
+#include "RoundType.h"
 
-ARoundtype::ARoundtype(const FObjectInitializer& ObjectInitializer)
+ARoundType::ARoundType(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
+{
+
+}
+
+void ARoundType::InitializeRound_Implementation()
 {
 
 }
