@@ -16,6 +16,12 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = Round)
 		float RoundStartDelay;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Round)
+		TArray<TSubclassOf<class ARoundtype>> RoundTypeRotation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Round)
+		ARoundtype* RoundType;
+
 	bool bUseRoundStartReady;
 
 	virtual void StartRound();

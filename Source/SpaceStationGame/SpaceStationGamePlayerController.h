@@ -96,13 +96,15 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = UI)
 		void Enter();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = Replication)
-		uint8 StartingJob;
 
+	// Round start preferences
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = Round)
 		bool RoundStartReady;
 
-	UFUNCTION(BlueprintCallable, Server, WithValidation, Unreliable, Category = Job)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = Replication)
+		uint8 StartingJob;
+
+	UFUNCTION(BlueprintCallable, Server, WithValidation, Reliable, Category = Job)
 		void SetStartingJob(uint8 Job);
 
 	bool SetStartingJob_Validate(uint8 Job) { return true; };
@@ -112,7 +114,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = Replication)
 		FPreferredAntagonistRole PreferredAntagonistRole;
 
-	UFUNCTION(Server, WithValidation, Unreliable)
+	UFUNCTION(Server, WithValidation, Reliable)
 		void SetPreferredAntagonistRole(uint32 NewPreferredAntagonistRole);
 
 	bool SetPreferredAntagonistRole_Validate(uint32 NewPreferredAntagonistRole) { return true; };
