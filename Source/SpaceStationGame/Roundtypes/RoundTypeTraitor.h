@@ -24,7 +24,7 @@ class SPACESTATIONGAME_API ARoundTypeTraitor : public ARoundType
 	int32 TraitorRatio;
 
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = Traitor)
-	int32 MaxNumOfObjectives;
+	int32 NumOfObjectives;
 
 	// Objectives
 	typedef void (ARoundTypeTraitor::*FunctionPtrType) (ASpaceStationGameCharacter*);
@@ -38,5 +38,5 @@ class SPACESTATIONGAME_API ARoundTypeTraitor : public ARoundType
 	// Objective functions
 
 	// UPDATE THIS
-	virtual void Objective_Assassinate(ASpaceStationGameCharacter* Character) {};
+	virtual void Objective_Assassinate(ASpaceStationGameCharacter* Character);
 };

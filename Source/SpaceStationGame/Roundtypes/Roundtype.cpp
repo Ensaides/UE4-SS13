@@ -7,7 +7,6 @@ ARoundType::ARoundType(const FObjectInitializer& ObjectInitializer)
 
 }
 
-void ARoundType::InitializeRound_Implementation()
-{
+void ARoundType::InitializeRound_Implementation() {}
 
-}
+void ARoundType::EndRound_Implementation() {}

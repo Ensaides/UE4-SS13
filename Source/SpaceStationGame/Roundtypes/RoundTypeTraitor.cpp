@@ -11,6 +11,8 @@ ARoundTypeTraitor::ARoundTypeTraitor(const FObjectInitializer& ObjectInitializer
 {
 	// One in every 8 people is a traitor
 	TraitorRatio = 8;
+
+	NumOfObjectives = 2;
 }
 
 void ARoundTypeTraitor::InitObjectives()
@@ -90,10 +92,35 @@ void ARoundTypeTraitor::AddObjective(int32 ObjectiveIndex, ASpaceStationGameChar
 
 void ARoundTypeTraitor::SetUpTraitorCharacter(ASpaceStationGameCharacter* Character)
 {
-	for (int32 i = 0; i < MaxNumOfObjectives; i++)
+	for (int32 i = 0; i < NumOfObjectives; i++)
 	{
 		int32 RandomTraitorObjective = FMath::RandRange(0, TRAITOR_OBJECTIVES - 1);
 
 		AddObjective(RandomTraitorObjective, Character);
 	}
+}
+
+void ARoundTypeTraitor::Objective_Assassinate(ASpaceStationGameCharacter* Character)
+{
+	TArray<AActor*> FoundActors;
+
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASpaceStationGameCharacter::StaticClass(), FoundActors);
+
+	// Don't give the character the objective to kill himself
+	FoundActors.RemoveSingle(Character);
+
+	// If hes the only traitor, he can't kill anyone
+	if (FoundActors.Num() == 1) return;
+
+	int32 CharacterIndex = FMath::RandRange(0, FoundActors.Num() - 1);
+
+	TArray<FString> Objective = Character->Notes;
+
+	ASpaceStationGameCharacter* FoundCharacter = Cast<ASpaceStationGameCharacter>(FoundActors[CharacterIndex]);
+
+	Objective.Add("Assassinate " + FoundCharacter->GetPawnName());
+
+	Character->Server_SetNotes(Objective);
+
+
 }

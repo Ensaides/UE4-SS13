@@ -12,4 +12,7 @@ class SPACESTATIONGAME_API ARoundType : public AActor
 
 	UFUNCTION(BlueprintNativeEvent, Category = Round)
 		void InitializeRound();
+
+	UFUNCTION(BlueprintNativeEvent, Category = Round)
+		void EndRound();
 };
