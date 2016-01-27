@@ -2,6 +2,7 @@
 
 #include "SpaceStationGame.h"
 #include "SpaceStationGameCharacter.h"
+#include "SpaceStationGamePlayerController.h"
 #include "AntagonistRoles.h"
 #include "RoundTypeTraitor.h"
 
@@ -18,17 +19,55 @@ void ARoundTypeTraitor::InitializeRound_Implementation()
 
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASpaceStationGameCharacter::StaticClass(), FoundActors);
 
+	// If no one is playing the game, return
+	if (FoundActors.Num() == 0) return;
+
+	TArray<AActor*> FoundActorsCopy = FoundActors;
+
 	int32 NumOfTraitors = FoundActors.Num() / TraitorRatio;
 	if (NumOfTraitors == 0) NumOfTraitors = 1;
 
-	// for each traitor number, find a person to become a traitor
-	for (int32 i = 0; i <= NumOfTraitors;)
+	// For each traitor number, find a person to become a traitor
+	for (int32 i = 0; i < NumOfTraitors;)
 	{
-		int32 RandomNumber = FMath::RandRange(0, FoundActors.Num());
-		
-		Cast<ASpaceStationGameCharacter>(FoundActors[RandomNumber])->SetAntagonistRole(EAntagonistRoles::EAntagonistRole_Traitor);
+		// If no one wants to be a traitor and the array is cleared out
+		if (FoundActorsCopy.Num() == 0)
+		{
+			//Pick a traitor anyway using the original array
+			int32 RandomNumber = FMath::RandRange(0, FoundActors.Num() - 1);
 
-		i++;
+			FoundActors.RemoveSingle(FoundActorsCopy[RandomNumber]);
+			FoundActorsCopy.RemoveAt(RandomNumber);
+
+			i++;
+		}
+		else
+		{
+			int32 RandomNumber = FMath::RandRange(0, FoundActorsCopy.Num() - 1);
+
+			auto FoundCharacter = Cast<ASpaceStationGameCharacter>(FoundActorsCopy[RandomNumber]);
+
+			auto FoundCharacterController = Cast<ASpaceStationGamePlayerController>(FoundCharacter->GetController());
+
+			// If this character doesn't want to be a traitor
+			if (FoundCharacterController->PreferredAntagonistRole.bTraitor == false)
+			{
+				// Remove them from the array and redo the iterator
+				FoundActorsCopy.RemoveAt(RandomNumber);
+
+			}
+			else
+			{
+				// If the person wants to be a traitor, give them the role
+				FoundCharacter->SetAntagonistRole(EAntagonistRoles::EAntagonistRole_Traitor);
+
+				// Remove the character from both arrays so that he can't be found again
+				FoundActors.RemoveSingle(FoundActorsCopy[RandomNumber]);
+				FoundActorsCopy.RemoveAt(RandomNumber);
+
+				i++;
+			}
+		}
 	}
 }
 
