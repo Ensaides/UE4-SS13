@@ -29,6 +29,7 @@ class SPACESTATIONGAME_API ASpaceStationGamePlayerController : public APlayerCon
 
 	TWeakObjectPtr<AIDCard> CardActor;
 
+	//Sends the message to the server
 	UFUNCTION(exec)
 		void ChatFunc(const FString& InputString);
 

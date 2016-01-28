@@ -7,6 +7,8 @@
 #include "SpaceStationGamePlayerState.h"
 #include "SpaceStationGameGameState.h"
 
+#include "RoundTypeTraitor.h"
+
 #if UE_SERVER || UE_EDITOR
 #include "SpaceStationGameServerState.h"
 #endif
@@ -32,6 +34,8 @@ ASpaceStationGameGameMode::ASpaceStationGameGameMode(const FObjectInitializer& O
 	RoundStartDelay = 30.f;
 
 	bDelayedStart = false;
+
+	RoundTypeRotation.Add(ARoundTypeTraitor::StaticClass());
 }
 
 void ASpaceStationGameGameMode::BeginPlay()
@@ -172,6 +176,7 @@ void ASpaceStationGameGameMode::RestartPlayer(AController* NewPlayer)
 			return;
 		}
 	}
+
 	// try to create a pawn to use of the default class for this player
 	if (NewPlayer->GetPawn() == NULL && GetDefaultPawnClassForController(NewPlayer) != NULL)
 	{

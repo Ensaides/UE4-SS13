@@ -18,14 +18,13 @@ class ASpaceStationGameGameState : public AGameState
 
 	TArray<FChatMessageStruct*> ChatMessages;
 
+	// Send the messages to the client
 	UFUNCTION(Client, Reliable, WithValidation)
 		void SendNewChatMessage(const FString& Msg, const FString& PlayerName, FVector Location);
 
 	bool SendNewChatMessage_Validate(const FString& Msg, const FString& PlayerName, FVector Location) { return true; };
 
 	void SendNewChatMessage_Implementation(const FString& Msg, const FString& PlayerName, FVector Location);
-
-	FTimerHandle RoundStartTimerHandle;
 
 	//Job Stuff
 
@@ -51,12 +50,10 @@ public:
 public:
 	ASpaceStationGameGameState(const FObjectInitializer& ObjectInitializer);
 
-	void StartMatchTimer(float TimerLength);
-
-	void StartRound();
-
 	UPROPERTY(Replicated)
 		TArray<AInstancedItemContainer*> InstancedItemContainers;
+
+	// Round stuff
 
 	UPROPERTY(Replicated)
 		bool bDelayedStart;
@@ -64,13 +61,21 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Round)
 	bool GetDelayedStart() { return bDelayedStart; };
 
+	void StartMatchTimer(float TimerLength);
+
+	void StartRound();
+
+private:
+	FTimerHandle RoundStartTimerHandle;
+
+
+public:
 	UPROPERTY(EditAnywhere, Category = Item)
 		TArray<TSubclassOf<class AInstancedItemContainer>> InstancedItemContainerClasses;
 
 	virtual void BeginPlay() override;
 
 	AInstancedItemContainer* GetContainerFromClass(UClass* InputClass);
-
 
 	void AddChatMessage(const FString& Msg, FVector PlayerLocation, const FString& PlayerName);
 

@@ -13,6 +13,7 @@ public:
 
 	virtual void BeginPlay() override;
 
+	// Round stuff
 	UPROPERTY(EditDefaultsOnly, Category = Round)
 		float RoundStartDelay;
 

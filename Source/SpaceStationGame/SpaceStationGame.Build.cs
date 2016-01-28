@@ -28,6 +28,7 @@ public class SpaceStationGame : ModuleRules
                 "SpaceStationGame/Items/InstancedItems",
                 "SpaceStationGame/Items/InstancedItems/TiledItems",
 		        "SpaceStationGame/Items/ReagentContainers",
+				"SpaceStationGame/RoundTypes",
                 "SpaceStationGame/Voxel",
                 "SpaceStationGame/OpenCL",
                 "SpaceStationGame/MySQL",
