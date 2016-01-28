@@ -18,16 +18,18 @@ public:
 		float RoundStartDelay;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Round)
-		TArray<TSubclassOf<class ARoundtype>> RoundTypeRotation;
+		TArray<TSubclassOf<class ARoundType>> RoundTypeRotation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Round)
-		ARoundtype* RoundType;
+		ARoundType* RoundType;
 
 	bool bUseRoundStartReady;
 
 	virtual void StartRound();
 
 	virtual void HandleMatchHasStarted() override;
+
+	virtual void HandleMatchHasEnded() override;
 
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 

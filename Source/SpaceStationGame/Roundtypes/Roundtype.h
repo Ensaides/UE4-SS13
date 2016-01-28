@@ -15,4 +15,7 @@ class SPACESTATIONGAME_API ARoundType : public AActor
 
 	UFUNCTION(BlueprintNativeEvent, Category = Round)
 		void EndRound();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Round)
+	FString RoundTypeName;
 };

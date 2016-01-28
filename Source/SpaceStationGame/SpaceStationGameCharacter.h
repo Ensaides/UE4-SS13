@@ -201,25 +201,42 @@ public:
 	*
 	*/
 
+protected:
+	UPROPERTY(Replicated, EditAnywhere, Category = Name)
+		FString PawnName;
+
+public:
 	UFUNCTION(BlueprintCallable, Category = Name)
-	FString GetPawnName();
+		FString GetPawnName() { return PawnName; };
 
 	UFUNCTION(BlueprintCallable, Server, WithValidation, Reliable, Category = Name)
 	void SetPawnName(const FString& NewName);
 	
 	bool SetPawnName_Validate(const FString& NewName) { return true; };
 
-	void SetPawnName_Implementation(const FString& NewName);
+	void SetPawnName_Implementation(const FString& NewName) { PawnName = NewName; };
+
+protected:
+	UPROPERTY(Replicated, EditAnywhere, Category = Job)
+		uint8 Job;
+
+public:
+	UFUNCTION(BlueprintCallable, Server, WithValidation, Reliable, Category = Item)
+	void SetJob(uint8 inJob);
+
+	bool SetJob_Validate(uint8 inJob) { return true; };
+
+	void SetJob_Implementation(uint8 inJob) { Job = inJob; };
 
 	UFUNCTION(BlueprintCallable, Server, WithValidation, Reliable, Category = Item)
 	void SetAffectedItem(AItem* Item);
 
 	bool SetAffectedItem_Validate(AItem* Item) { return true; };
 
-	void SetAffectedItem_Implementation(AItem* Item);
+	void SetAffectedItem_Implementation(AItem* Item) { AffectedItem = Item; };
 
 	UFUNCTION(BlueprintCallable, Category = Item)
-		AItem* GetAffectedItem();
+		AItem* GetAffectedItem() { return AffectedItem; };
 
 	UPROPERTY(config, EditAnywhere, Category = Health, meta = (
 		ConsoleVariable = "r.Character.HealthCalculationMethod", DisplayName = "Health Calculation Method",
@@ -235,10 +252,6 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Networking)
 		FString OwnedPlayerID;
-
-protected:
-	UPROPERTY(Replicated, EditAnywhere, Category = Name)
-		FString PawnName;
 
 	/** Fires a projectile. */
 	void OnFire();

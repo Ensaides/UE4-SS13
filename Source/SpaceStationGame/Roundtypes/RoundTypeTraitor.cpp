@@ -13,6 +13,8 @@ ARoundTypeTraitor::ARoundTypeTraitor(const FObjectInitializer& ObjectInitializer
 	TraitorRatio = 8;
 
 	NumOfObjectives = 2;
+
+	RoundTypeName = "Traitor";
 }
 
 void ARoundTypeTraitor::InitObjectives()

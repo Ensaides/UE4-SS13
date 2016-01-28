@@ -7,6 +7,7 @@
 #include "SpaceStationGamePlayerState.h"
 #include "SpaceStationGameGameState.h"
 
+#include "RoundType.h"
 #include "RoundTypeTraitor.h"
 
 #if UE_SERVER || UE_EDITOR
@@ -40,6 +41,12 @@ ASpaceStationGameGameMode::ASpaceStationGameGameMode(const FObjectInitializer& O
 
 void ASpaceStationGameGameMode::BeginPlay()
 {
+	int32 RandomGameType = FMath::RandRange(0, RoundTypeRotation.Num() - 1);
+
+	UWorld* const World = GetWorld();
+
+	RoundType = World->SpawnActor<ARoundType>(RoundTypeRotation[RandomGameType], FVector(0, 0, 0), FRotator(0, 0, 0));
+
 	if (bDelayedStart)
 	{
 		SetMatchState(MatchState::WaitingToStart);
@@ -65,7 +72,7 @@ void ASpaceStationGameGameMode::HandleMatchHasStarted()
 {
 	// most of this crap was copied from an engine function
 
-	UE_LOG(SpaceStationGameLog, Warning, TEXT("Starting round"));
+	UE_LOG(SpaceStationGameLog, Log, TEXT("Starting round"));
 
 	GameSession->HandleMatchHasStarted();
 
@@ -120,6 +127,11 @@ void ASpaceStationGameGameMode::HandleMatchHasStarted()
 	{
 		GetGameInstance()->StartRecordingReplay(GetWorld()->GetMapName(), GetWorld()->GetMapName());
 	}
+
+	//Initialize the round
+	RoundType->InitializeRound();
+
+	UE_LOG(SpaceStationGameLog, Log, TEXT("Round type is: %s"), *RoundType->RoundTypeName);
 }
 
 void ASpaceStationGameGameMode::PostLogin(APlayerController* NewPlayer)
@@ -227,6 +239,7 @@ void ASpaceStationGameGameMode::RestartPlayer(AController* NewPlayer)
 			NewControllerRot.Roll = 0.f;
 			NewPlayer->SetControlRotation(NewControllerRot);
 
+			// Sets defaults and also sets up the character's job, starting inventory
 			SetPlayerDefaults(NewPlayer->GetPawn());
 
 			K2_OnRestartPlayer(NewPlayer);
@@ -244,4 +257,11 @@ void ASpaceStationGameGameMode::RestartPlayer(AController* NewPlayer)
 		}
 	}
 #endif	//!UE_WITH_PHYSICS
+}
+
+void ASpaceStationGameGameMode::HandleMatchHasEnded()
+{
+	RoundType->EndRound();
+
+	Super::HandleMatchHasEnded();
 }

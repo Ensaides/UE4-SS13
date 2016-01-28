@@ -71,11 +71,12 @@ void ASpaceStationGameCharacter::GetLifetimeReplicatedProps(TArray< FLifetimePro
 	// Replicate to only owner
 	DOREPLIFETIME_CONDITION(ASpaceStationGameCharacter, Health, COND_OwnerOnly);
 
+	DOREPLIFETIME_CONDITION(ASpaceStationGameCharacter, Job, COND_OwnerOnly);
 	DOREPLIFETIME_CONDITION(ASpaceStationGameCharacter, BloodType, COND_OwnerOnly);
 	DOREPLIFETIME_CONDITION(ASpaceStationGameCharacter, BloodVolume, COND_OwnerOnly);
 
-	//DOREPLIFETIME_CONDITION(ASpaceStationGameCharacter, InventoryStruct, COND_OwnerOnly);
-	DOREPLIFETIME(ASpaceStationGameCharacter, InventoryStruct);
+	DOREPLIFETIME_CONDITION(ASpaceStationGameCharacter, InventoryStruct, COND_OwnerOnly);
+	//DOREPLIFETIME(ASpaceStationGameCharacter, InventoryStruct);
 	DOREPLIFETIME_CONDITION(ASpaceStationGameCharacter, SelectedItem, COND_OwnerOnly);
 	DOREPLIFETIME_CONDITION(ASpaceStationGameCharacter, AffectedItem, COND_OwnerOnly);
 	DOREPLIFETIME_CONDITION(ASpaceStationGameCharacter, AntagonistRole, COND_OwnerOnly);
@@ -105,6 +106,9 @@ void ASpaceStationGameCharacter::SetPlayerDefaults()
 			UJobObject* NewJobObject = NewObject<UJobObject>(this, JobClass);
 
 			InventoryStruct = NewJobObject->StartingInventory;
+
+			// We can set job from here, its on the server
+			Job = PlayerController->StartingJob;
 		}
 	}
 }
@@ -638,26 +642,6 @@ float ASpaceStationGameCharacter::GetHealth()
 void ASpaceStationGameCharacter::SetHealth_Implementation(float NewHealth)
 {
 	Health = NewHealth;
-}
-
-FString ASpaceStationGameCharacter::GetPawnName()
-{
-	return PawnName;
-}
-
-void ASpaceStationGameCharacter::SetPawnName_Implementation(const FString& NewName)
-{
-	PawnName = NewName;
-}
-
-void ASpaceStationGameCharacter::SetAffectedItem_Implementation(AItem* Item)
-{
-	AffectedItem = Item;
-}
-
-AItem* ASpaceStationGameCharacter::GetAffectedItem()
-{
-	return AffectedItem;
 }
 
 void ASpaceStationGameCharacter::Enter()
