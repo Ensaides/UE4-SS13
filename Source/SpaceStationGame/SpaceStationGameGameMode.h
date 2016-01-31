@@ -20,7 +20,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Round)
 		TArray<TSubclassOf<class ARoundType>> RoundTypeRotation;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Round)
+	UPROPERTY(BlueprintReadOnly, Category = Round)
 		ARoundType* RoundType;
 
 	bool bUseRoundStartReady;

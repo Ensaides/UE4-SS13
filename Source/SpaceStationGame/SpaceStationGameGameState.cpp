@@ -21,9 +21,7 @@ ASpaceStationGameGameState::ASpaceStationGameGameState(const FObjectInitializer&
 {	
 	InstancedItemContainerClasses.Add(AInstancedItemContainer::StaticClass());
 
-	JobManagerObject = ObjectInitializer.CreateDefaultSubobject<UJobManagerObject>(this, TEXT("Job Manager Object"));
-
-	SetUpJobs();
+	JobManagerObject = ObjectInitializer.CreateDefaultSubobject<UJobManagerObject>(this, TEXT("Job Manager Object"), true);
 }
 
 void ASpaceStationGameGameState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
@@ -36,6 +34,12 @@ void ASpaceStationGameGameState::GetLifetimeReplicatedProps(TArray< FLifetimePro
 
 void ASpaceStationGameGameState::BeginPlay()
 {
+	// Please fix this, the object shouldn't be staying around after the game ends
+	JobManagerObject->JobArrayNames = {};
+	JobManagerObject->JobArray = {};
+
+	SetUpJobs();
+
 	if (!HasAuthority())
 	{
 		UWorld* const World = GetWorld();
@@ -76,6 +80,16 @@ TSubclassOf<UJobObject> ASpaceStationGameGameState::GetJob(uint8 Job)
 	{
 		return UJobObject::StaticClass();
 	}
+}
+
+TArray<TSubclassOf<UJobObject>> ASpaceStationGameGameState::GetJobArray()
+{
+	return JobManagerObject->GetJobArray();
+}
+
+TArray<FString> ASpaceStationGameGameState::GetJobNames()
+{
+	return JobManagerObject->GetJobNames();
 }
 
 void ASpaceStationGameGameState::StartMatchTimer(float TimerLength)

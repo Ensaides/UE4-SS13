@@ -64,5 +64,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Inventory)
 		void Add(AItem* Item, uint8 inIndex);
 
-	static FString Name;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Job)
+		FString Name;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Job)
+		FString JobMessage;
+
+	UFUNCTION(BlueprintCallable, Category = Inventory)
+		UObject* GetOwner() { return GetOuter(); };
+
+	UFUNCTION(BlueprintCallable, Category = Inventory)
+		AItem* SpawnInventoryActor(TSubclassOf<class AItem> Class);
 };

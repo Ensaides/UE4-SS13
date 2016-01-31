@@ -45,13 +45,17 @@ void ARoundTypeTraitor::InitializeRound_Implementation()
 			//Pick a traitor anyway using the original array
 			int32 RandomNumber = FMath::RandRange(0, FoundActors.Num() - 1);
 
-			FoundActors.RemoveSingle(FoundActorsCopy[RandomNumber]);
-			FoundActorsCopy.RemoveAt(RandomNumber);
+			auto FoundCharacter = Cast<ASpaceStationGameCharacter>(FoundActors[RandomNumber]);
+
+			FoundCharacter->SetAntagonistRole(EAntagonistRoles::EAntagonistRole_Traitor);
+
+			FoundActors.RemoveAt(RandomNumber);
 
 			i++;
 		}
 		else
 		{
+			// If there are still people who want to be the antag
 			int32 RandomNumber = FMath::RandRange(0, FoundActorsCopy.Num() - 1);
 
 			auto FoundCharacter = Cast<ASpaceStationGameCharacter>(FoundActorsCopy[RandomNumber]);

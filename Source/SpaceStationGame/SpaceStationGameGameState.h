@@ -8,6 +8,9 @@
 #include "Reagents.h"
 #include "SpaceStationGameGameState.generated.h"
 
+class UJobManagerObject;
+class UJobObject;
+
 /**
 *
 */
@@ -27,15 +30,22 @@ class ASpaceStationGameGameState : public AGameState
 	void SendNewChatMessage_Implementation(const FString& Msg, const FString& PlayerName, FVector Location);
 
 	//Job Stuff
-
-	UPROPERTY()
-	class UJobManagerObject* JobManagerObject;
+public:
+	UPROPERTY(BlueprintReadOnly, Category = Jobs)
+	UJobManagerObject* JobManagerObject;
 
 public:
 	UFUNCTION(BlueprintImplementableEvent, Category = Jobs)
 		void SetUpJobs();
 
-	TSubclassOf<class UJobObject> GetJob(uint8 Job);
+	UFUNCTION(BlueprintCallable, Category = Jobs)
+	TSubclassOf<UJobObject> GetJob(uint8 Job);
+
+	UFUNCTION(BlueprintCallable, Category = Jobs)
+	TArray<TSubclassOf<UJobObject>> GetJobArray();
+
+	UFUNCTION(BlueprintCallable, Category = Jobs)
+	TArray<FString> GetJobNames();
 
 #if UE_SERVER || UE_EDITOR
 private:
