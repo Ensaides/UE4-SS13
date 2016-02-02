@@ -1,14 +1,31 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "SpaceStationGame.h"
+#include "SpaceStationGameGameState.h"
 #include "Item.h"
 #include "JobObject.h"
 
 UJobObject::UJobObject()
 {
+	//UWorld* const World = GetWorld();
+
+	//auto GameState = Cast<ASpaceStationGameGameState>(World->GetGameState());
+
+	//if (GEngine->GetNetMode(GetWorld()) == NM_DedicatedServer)
+	//{
+	//	SetUpJobObject(GameState->GetJobIndex(this->StaticClass()));
+	//}
+}
+
+void UJobObject::InitializeJob()
+{
+	UWorld* const World = GetWorld();
+
+	auto GameState = Cast<ASpaceStationGameGameState>(World->GetGameState());
+
 	if (GEngine->GetNetMode(GetWorld()) == NM_DedicatedServer)
 	{
-		SetUpJobObject();
+		SetUpJobObject(GameState->GetJobIndex(this->StaticClass()));
 	}
 }
 

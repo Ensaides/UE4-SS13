@@ -82,6 +82,11 @@ TSubclassOf<UJobObject> ASpaceStationGameGameState::GetJob(uint8 Job)
 	}
 }
 
+uint8 ASpaceStationGameGameState::GetJobIndex(TSubclassOf<UJobObject> Job)
+{
+	return JobManagerObject->JobArray.Find(Job);
+}
+
 TArray<TSubclassOf<UJobObject>> ASpaceStationGameGameState::GetJobArray()
 {
 	return JobManagerObject->GetJobArray();

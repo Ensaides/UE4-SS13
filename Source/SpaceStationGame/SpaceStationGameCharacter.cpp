@@ -105,6 +105,8 @@ void ASpaceStationGameCharacter::SetPlayerDefaults()
 
 			UJobObject* NewJobObject = NewObject<UJobObject>(this, JobClass);
 
+			NewJobObject->InitializeJob();
+
 			InventoryStruct = NewJobObject->StartingInventory;
 
 			// We can set job from here, its on the server

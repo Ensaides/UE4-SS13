@@ -57,9 +57,11 @@ public:
 
 	UJobObject();
 
+	void InitializeJob();
+
 	// Set up your inventory and initialize variables here
 	UFUNCTION(BlueprintImplementableEvent, Category = Job)
-		void SetUpJobObject();
+		void SetUpJobObject(uint8 JobIndex);
 
 	UFUNCTION(BlueprintCallable, Category = Inventory)
 		void Add(AItem* Item, uint8 inIndex);
