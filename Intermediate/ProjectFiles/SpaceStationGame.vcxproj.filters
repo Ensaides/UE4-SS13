@@ -280,6 +280,9 @@
     <ClInclude Include="..\..\Source\SpaceStationGame\Items\ID\IDCard.h">
       <Filter>Source\SpaceStationGame\Items\ID</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceStationGame\Items\ID\Cartridge\Cartridge.h">
+      <Filter>Source\SpaceStationGame\Items\ID\Cartridge</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\SpaceStationGame\Private\SpaceStationGameServerState.cpp">
@@ -333,6 +336,9 @@
     <ClCompile Include="..\..\Source\SpaceStationGame\Items\ID\IDCard.cpp">
       <Filter>Source\SpaceStationGame\Items\ID</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceStationGame\Items\ID\Cartridge\Cartridge.cpp">
+      <Filter>Source\SpaceStationGame\Items\ID\Cartridge</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source\SpaceStationGame\OpenCL">
@@ -355,6 +361,9 @@
     </Filter>
     <Filter Include="Source\SpaceStationGame\Items\ID">
       <UniqueIdentifier>{9d8b30e6-0b56-4d10-b3f9-4aca8673e693}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\SpaceStationGame\Items\ID\Cartridge">
+      <UniqueIdentifier>{bd49df46-d572-4638-b25b-c6de3aef2e79}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -21,7 +21,8 @@ void AIDCard::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifeti
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(AIDCard, AssignedName);
+	DOREPLIFETIME_CONDITION(AIDCard, AssignedName, COND_OwnerOnly);
+	DOREPLIFETIME_CONDITION(AIDCard, AssignedJob, COND_OwnerOnly);
 }
 
 void AIDCard::ServerSetAssignedName_Implementation(const FString& NewName)

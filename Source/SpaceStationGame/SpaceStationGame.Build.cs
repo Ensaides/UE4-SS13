@@ -69,16 +69,18 @@ public class SpaceStationGame : ModuleRules
             isLibrarySupported = true;
 
             //string PlatformString = (Target.Platform == UnrealTargetPlatform.Win64) ? "x64" : "x86";
+            string IncludesPath = Path.Combine(ThirdPartyPath, "MySQL", "Includes");
             string LibrariesPath = Path.Combine(ThirdPartyPath, "MySQL", "Libraries");
 
-            PublicAdditionalLibraries.Add(Path.Combine(LibrariesPath, "mysqlcppconn.lib"));
+            PublicIncludePaths.Add(IncludesPath);
+            PublicAdditionalLibraries.Add(Path.Combine(LibrariesPath, "mysqlcppconn-static.lib"));
         }
 
-        if (isLibrarySupported)
-        {
-            // Include path
-            PublicIncludePaths.Add(Path.Combine(ThirdPartyPath, "MySQL", "Includes"));
-        }
+        //if (isLibrarySupported)
+        //{
+        //    // Include path
+        //    PublicIncludePaths.Add(Path.Combine(ThirdPartyPath, "MySQL", "Includes"));
+        //}
 
         Definitions.Add(string.Format("WITH_MYSQL_BINDING={0}", isLibrarySupported ? 1 : 0));
 
