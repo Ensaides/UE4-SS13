@@ -72,6 +72,15 @@ public class SpaceStationGame : ModuleRules
             string IncludesPath = Path.Combine(ThirdPartyPath, "MySQL", "Includes");
             string LibrariesPath = Path.Combine(ThirdPartyPath, "MySQL", "Libraries");
 
+            if (Target.Platform == UnrealTargetPlatform.Win64)
+            {
+                LibrariesPath = Path.Combine(LibrariesPath, "x64");
+            }
+            else if (Target.Platform == UnrealTargetPlatform.Win32)
+            {
+                LibrariesPath = Path.Combine(LibrariesPath, "Win32");
+            }
+
             PublicIncludePaths.Add(IncludesPath);
             PublicAdditionalLibraries.Add(Path.Combine(LibrariesPath, "mysqlcppconn-static.lib"));
         }
