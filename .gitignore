@@ -27,6 +27,7 @@ Plugins/
 Saved/
 Build/
 ThirdParty/
+!ThirdParty/MySQL
 
 #Filetypes
 *.pdb
