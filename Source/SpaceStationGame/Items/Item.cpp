@@ -12,6 +12,8 @@
 AItem::AItem(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	State = EItemState::EState_InGame;
+
 	Scene = ObjectInitializer.CreateDefaultSubobject<USceneComponent>(this, TEXT("Scene"));
 	RootComponent = Scene;
 
@@ -63,6 +65,7 @@ void AItem::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetime
 
 	DOREPLIFETIME(AItem, ServerPhysicsState);
 	DOREPLIFETIME(AItem, bEnableLagCompensation);
+	DOREPLIFETIME(AItem, State);
 	DOREPLIFETIME_CONDITION(AItem, ItemStack, COND_OwnerOnly);
 }
 
@@ -108,6 +111,11 @@ void AItem::Tick( float DeltaTime )
 			ServerPhysicsState.timestamp = ASpaceStationGamePlayerController::GetLocalTime();
 		}
 	}
+}
+
+void AItem::OnRep_SetItemState_Implementation()
+{
+
 }
 
 void AItem::Use_Implementation(APawn* Pawn)

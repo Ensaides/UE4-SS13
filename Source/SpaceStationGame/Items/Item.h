@@ -12,6 +12,14 @@
 
 #define PROXY_STATE_ARRAY_SIZE 20
 
+UENUM(BlueprintType)
+enum class EItemState : uint8
+{
+	EState_InGame			UMETA(DisplayName = "In game"),
+	EState_InInventory		UMETA(DisplayName = "In inventory"),
+	EState_BeingDropped		UMETA(DisplayName = "Being dropped")
+};
+
 UCLASS()
 class SPACESTATIONGAME_API AItem : public AActor
 {
@@ -57,6 +65,12 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Item)
 		UStaticMeshComponent* CustomDepthMesh;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, ReplicatedUsing = OnRep_SetItemState, Category = Item)
+		EItemState State;
+
+	UFUNCTION(BlueprintNativeEvent, Category=State)
+		void OnRep_SetItemState();
+
 	UFUNCTION(NetMulticast, Reliable, WithValidation, BlueprintCallable, Category = Default, meta = (DisplayName = "Item: Used"))
 		virtual void Use(APawn* Pawn);
 
@@ -86,6 +100,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = Item)
 		TArray<AItem*> ItemStack;
+
+
 
 	// Use the hologram when dropping this item?
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Item)

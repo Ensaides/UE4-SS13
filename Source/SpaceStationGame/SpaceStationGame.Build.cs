@@ -82,7 +82,7 @@ public class SpaceStationGame : ModuleRules
             }
 
             PublicIncludePaths.Add(IncludesPath);
-            PublicAdditionalLibraries.Add(Path.Combine(LibrariesPath, "mysqlcppconn-static.lib"));
+            PublicAdditionalLibraries.Add(Path.Combine(LibrariesPath, "mysqlcppconn.lib"));
         }
 
         //if (isLibrarySupported)
