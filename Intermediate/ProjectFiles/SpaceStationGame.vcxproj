@@ -1949,11 +1949,15 @@
     <NMakeOutput>..\..\Binaries\HTML5\SpaceStationGameServer-HTML5-Test.exe</NMakeOutput>
   </PropertyGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\SpaceStationGame\Items\ID\IDCard.cpp" />
+    <ClCompile Include="..\..\Source\SpaceStationGame\Items\ID\PDA.cpp" />
     <ClCompile Include="..\..\Source\SpaceStationGame\Jobs\JobManagerObject.cpp" />
     <ClCompile Include="..\..\Source\SpaceStationGame\Jobs\JobObject.cpp" />
     <ClCompile Include="..\..\Source\SpaceStationGame\Roundtypes\RoundType.cpp" />
     <ClCompile Include="..\..\Source\SpaceStationGame\Roundtypes\RoundTypeTraitor.cpp" />
     <ClCompile Include="..\..\Source\SpaceStationGame\Voxel\Voxel.cpp" />
+    <ClInclude Include="..\..\Source\SpaceStationGame\Items\ID\IDCard.h" />
+    <ClInclude Include="..\..\Source\SpaceStationGame\Items\ID\PDA.h" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Jobs\JobManagerObject.h" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Jobs\JobObject.h" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Public\Antag\AntagonistRoles.h" />
@@ -2001,8 +2005,6 @@
     <ClInclude Include="..\..\Source\SpaceStationGame\StringHelpers.h" />
     <ClCompile Include="..\..\Source\SpaceStationGame\Atmospherics\AtmosVolume.cpp" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Atmospherics\AtmosVolume.h" />
-    <ClCompile Include="..\..\Source\SpaceStationGame\Items\IDCard.cpp" />
-    <ClInclude Include="..\..\Source\SpaceStationGame\Items\IDCard.h" />
     <ClCompile Include="..\..\Source\SpaceStationGame\Items\Item.cpp" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Items\Item.h" />
     <ClCompile Include="..\..\Source\SpaceStationGame\Items\InstancedItems\InstancedItem.cpp" />

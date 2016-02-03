@@ -12,6 +12,9 @@ class SPACESTATIONGAME_API AIDCard : public AItem
 {
 	GENERATED_BODY()
 
+	// Sets default values for this actor's properties
+	AIDCard(const FObjectInitializer& ObjectInitializer);
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = ID)
 		FString AssignedName;
@@ -20,8 +23,6 @@ protected:
 		uint8 AssignedJob;
 
 public:
-	// Sets default values for this actor's properties
-	AIDCard(const FObjectInitializer& ObjectInitializer);
 
 	UFUNCTION(BlueprintCallable, Category = ID, meta = (DisplayName = "Get ID Name"))
 		FString GetAssignedName();

@@ -25,6 +25,7 @@ public class SpaceStationGame : ModuleRules
 		        "SpaceStationGame/Mobs",
                 "SpaceStationGame/Jobs",
                 "SpaceStationGame/Items",
+                "SpaceStationGame/Items/ID",
                 "SpaceStationGame/Items/InstancedItems",
                 "SpaceStationGame/Items/InstancedItems/TiledItems",
 		        "SpaceStationGame/Items/ReagentContainers",
