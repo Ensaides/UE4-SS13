@@ -101,8 +101,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = Item)
 		TArray<AItem*> ItemStack;
 
-
-
 	// Use the hologram when dropping this item?
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Item)
 		bool bUseHologram;

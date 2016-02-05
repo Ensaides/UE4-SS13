@@ -4,6 +4,9 @@
 
 #include "Object.h"
 #include <memory>
+#include <thread>
+#include <mutex>
+#include <vector>
 
 #include "mysql_connection.h"
 #include "mysql_driver.h"
@@ -11,7 +14,17 @@
 
 #include "MySQLObject.generated.h"
 
+struct ThreadInputStruct
+{
+	FString SteamID;
+	class ASpaceStationGamePlayerController* Player;
+};
 
+struct ThreadOutputStruct
+{
+	uint8 PrefferedJob;
+	uint32 PrefferedAntagonistRoles;
+};
 
 /**
  * 
@@ -20,7 +33,20 @@ UCLASS(config = Game)
 class SPACESTATIONGAME_API UMySQLObject : public UObject
 {
 	GENERATED_BODY()
+
+	void GetMySQLData();
+
+	void RetryConnection();
+
+	std::mutex InputLock;
+
+	std::mutex CharacterLock;
+
+	std::vector<ThreadInputStruct> ThreadInput;
+
 public:
+	void Initialize();
+
 	UPROPERTY()
 		bool bConnectionActive;
 
@@ -37,6 +63,8 @@ public:
 		FString ServerDatabase;
 
 protected:
+
+	std::thread* MySQLThread;
 
 	sql::mysql::MySQL_Driver* driver;
 

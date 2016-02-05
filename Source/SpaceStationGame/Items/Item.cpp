@@ -115,26 +115,47 @@ void AItem::Tick( float DeltaTime )
 
 void AItem::OnRep_SetItemState_Implementation()
 {
+	switch (State) {
+		case EItemState::EState_InInventory:
+			if (Mesh)
+			{
+				Mesh->UnregisterComponent(); // physical item has been picked up, destroy its visible component
+			}
 
+			if (CustomDepthMesh)
+			{
+				CustomDepthMesh->UnregisterComponent();
+			}
+			break;
+
+		case EItemState::EState_InGame:
+			if (Mesh)
+			{
+				Mesh->RegisterComponent();
+			}
+
+			if (CustomDepthMesh)
+			{
+				CustomDepthMesh->RegisterComponent();
+			}
+			break;
+
+		case EItemState::EState_BeingDropped:
+			break;
+
+		default:
+			break;
+	}
 }
 
 void AItem::Use_Implementation(APawn* Pawn)
 {
 	if (!Cast<ASpaceStationGameCharacter>(Pawn)->InventoryItemIsValid(Cast<ASpaceStationGameCharacter>(Pawn)->GetSelectedItem()))
 	{
-
-		if (Mesh)
-		{
-			Mesh->UnregisterComponent(); // physical item has been picked up, destroy its visible component
-		}
-
-		if (CustomDepthMesh)
-		{
-			CustomDepthMesh->UnregisterComponent();
-		}
-
 		if (GetWorld()->IsServer())
 		{
+			State = EItemState::EState_InInventory;
+
 			SetOwner(Pawn);
 			Cast<ASpaceStationGameCharacter>(Pawn)->AddInventoryItemIndex(this, Cast<ASpaceStationGameCharacter>(Pawn)->GetSelectedItem());
 		}
@@ -151,16 +172,8 @@ void AItem::Use_Implementation(APawn* Pawn)
 				{
 					Item->ItemStack.Add(this);
 					SetOwner(Pawn);
-				}
 
-				if (Mesh)
-				{
-					Mesh->UnregisterComponent(); // physical item has been picked up, destroy its visible component
-				}
-
-				if (CustomDepthMesh)
-				{
-					CustomDepthMesh->UnregisterComponent();
+					State = EItemState::EState_InInventory;
 				}
 			}
 		}
@@ -175,14 +188,9 @@ void AItem::Drop_Implementation(APawn* Pawn)
 
 		if (bStackable && ItemStack.Num() > 0)
 		{
-			if (ItemStack.Last()->Mesh)
+			if (GetWorld()->IsServer())
 			{
-				ItemStack.Last()->Mesh->RegisterComponent();
-			}
-
-			if (ItemStack.Last()->CustomDepthMesh)
-			{
-				ItemStack.Last()->CustomDepthMesh->RegisterComponent();
+				ItemStack.Last()->State = EItemState::EState_InGame;
 			}
 
 			if (HasAuthority())
@@ -250,14 +258,9 @@ void AItem::Drop_Implementation(APawn* Pawn)
 		}
 		else
 		{
-			if (Mesh)
+			if (GetWorld()->IsServer())
 			{
-				Mesh->RegisterComponent();
-			}
-
-			if (CustomDepthMesh)
-			{
-				CustomDepthMesh->RegisterComponent();
+				State = EItemState::EState_InGame;
 			}
 
 			if (HasAuthority())

@@ -10,6 +10,8 @@
 #include "mysql_driver.h"
 #include "mysql_error.h"
 
+#include "SpaceStationGamePlayerController.h"
+
 #include <cppconn/driver.h>
 #include <cppconn/exception.h>
 #include <cppconn/resultset.h>
@@ -19,12 +21,66 @@
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
+#include <thread>
 
 #include "StringConv.h"
 #include "StringHelpers.h"
 
 #include "Online.h"
 #include "OnlineSubsystem.h"
+
+// The duration to wait before retrying the mysql connection, in milliseconds
+#define MYSQL_RETRY_DURATION 1000.0;
+
+
+void UMySQLObject::Initialize()
+{
+	MySQLThread = new std::thread(GetMySQLData);
+}
+
+void UMySQLObject::GetMySQLData()
+{
+	// Start up the connection on this thread
+	if (!bConnectionActive)
+	{
+		OpenConnection();
+	}
+
+	while (ThreadInput.size > 0 && bConnectionActive)
+	{
+		ThreadOutputStruct Output;
+
+		Output.PrefferedJob = GetMySQLPreferredJob(ThreadInput.back().SteamID);
+
+		Output.PrefferedAntagonistRoles = GetMySQLPrefferedAntagonistRole(ThreadInput.back().SteamID);
+
+		std::lock_guard<std::mutex> guard(CharacterLock);
+		ThreadInput.back().Player->SetStartingJob(Output.PrefferedJob);
+		ThreadInput.back().Player->SetPreferredAntagonistRole(Output.PrefferedAntagonistRoles);
+
+		ThreadInput.popback();
+	}
+	else if (!bConnectionActive)
+	{	
+		RetryConnection();
+	}
+}
+
+void UMySQLObject::RetryConnection()
+{
+	while (!bConnectionActive)
+	{
+		// Retry the connection after waiting
+		std::this_thread::sleep_for(std::chrono::milliseconds(MYSQL_RETRY_DURATION));
+
+		SET_WARN_COLOR(COLOR_YELLOW);
+		UE_LOG(SpaceStationGameLog, Warning, TEXT("Retrying connection to MySQL server..."));
+		CLEAR_WARN_COLOR();
+
+		OpenConnection();
+	}
+	else return;
+}
 
 void UMySQLObject::OpenConnection()
 {
@@ -106,6 +162,8 @@ void UMySQLObject::SetUpMySQLPlayerData(FString SteamID)
 			UE_LOG(SpaceStationGameLog, Warning, TEXT("MySQL error code: %d"), e.getErrorCode());
 			UE_LOG(SpaceStationGameLog, Warning, TEXT("MySQL failed to connect, please check your mysql server info"));
 			CLEAR_WARN_COLOR();
+
+			bConnectionActive = false;
 		}
 	}
 }
@@ -146,6 +204,8 @@ uint8 UMySQLObject::GetMySQLPreferredJob(FString SteamID)
 			UE_LOG(SpaceStationGameLog, Warning, TEXT("MySQL error code: %d"), e.getErrorCode());
 			UE_LOG(SpaceStationGameLog, Warning, TEXT("MySQL failed to connect, please check your mysql server info"));
 			CLEAR_WARN_COLOR();
+
+			bConnectionActive = false;
 		}
 	}
 	return 19;
@@ -187,6 +247,8 @@ uint32 UMySQLObject::GetMySQLPrefferedAntagonistRole(FString SteamID)
 			UE_LOG(SpaceStationGameLog, Warning, TEXT("MySQL error code: %d"), e.getErrorCode());
 			UE_LOG(SpaceStationGameLog, Warning, TEXT("MySQL failed to connect, please check your mysql server info"));
 			CLEAR_WARN_COLOR();
+
+			bConnectionActive = false;
 		}
 	}
 	return 0;
@@ -201,6 +263,11 @@ void UMySQLObject::BeginDestroy()
 		con = nullptr;
 
 		bConnectionActive = false;
+	}
+
+	if (MySQLThread)
+	{
+		delete MySQLThread;
 	}
 
 	Super::BeginDestroy();
