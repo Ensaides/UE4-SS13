@@ -29,6 +29,12 @@
 #include "Online.h"
 #include "OnlineSubsystem.h"
 
+// Lock/unlock crap
+#define GUARD_LOCK() \
+	std::unique_lock<std::mutex> guard(MySQLLock);
+#define GUARD_UNLOCK() \
+	guard.unlock();
+
 
 void UMySQLObject::Initialize()
 {
@@ -51,7 +57,7 @@ void UMySQLObject::GetMySQLData()
 
 		Output.PrefferedAntagonistRoles = GetMySQLPrefferedAntagonistRole(ThreadInput.back().SteamID);
 
-		std::lock_guard<std::mutex> guard(CharacterLock);
+		GUARD_LOCK();
 		ThreadInput.back().Player->SetStartingJob(Output.PrefferedJob);
 		ThreadInput.back().Player->SetPreferredAntagonistRole(Output.PrefferedAntagonistRoles);
 
@@ -72,15 +78,19 @@ void UMySQLObject::RetryConnection()
 		{
 			if (i == 6 && !bConnectionActive)
 			{
+				GUARD_LOCK();
 				UE_LOG(SpaceStationGameLog, Fatal, TEXT("FATAL ERROR: MySQL failed to connect after 5 retries! Closing server"));
 			}
 
 			// Retry the connection after waiting
 			std::this_thread::sleep_for(std::chrono::milliseconds( MySQLRetryDuration ));
 
+			GUARD_LOCK();
 			SET_WARN_COLOR(COLOR_YELLOW);
 			UE_LOG(SpaceStationGameLog, Warning, TEXT("Retrying connection to MySQL server..."));
 			CLEAR_WARN_COLOR();
+			GUARD_UNLOCK();
+
 
 			OpenConnection();
 
@@ -117,19 +127,23 @@ void UMySQLObject::OpenConnection()
 	}
 	catch (sql::SQLException &e)
 	{
+		GUARD_LOCK();
 		SET_WARN_COLOR(COLOR_YELLOW);
 		UE_LOG(SpaceStationGameLog, Warning, TEXT("MySQL error code: %d"), e.getErrorCode());
 		UE_LOG(SpaceStationGameLog, Warning, TEXT("MySQL failed to connect, please check your mysql server info"));
 		CLEAR_WARN_COLOR();
+		GUARD_UNLOCK();
 
 		bConnectionActive = false;
 
 		return;
 	}
 
+	GUARD_LOCK();
 	SET_WARN_COLOR(COLOR_CYAN);
 	UE_LOG(SpaceStationGameLog, Log, TEXT("Connected to MySQL server on %s"), *ServerUrl);
 	CLEAR_WARN_COLOR();
+	GUARD_UNLOCK();
 
 	bConnectionActive = true;
 }
@@ -148,18 +162,22 @@ void UMySQLObject::SetUpMySQLPlayerData(FString SteamID)
 
 			if (OnlineSub)
 			{
+				GUARD_LOCK();
 				SET_WARN_COLOR(COLOR_CYAN);
 				UE_LOG(SpaceStationGameLog, Log, TEXT("Steam subsystem initialized"));
 				CLEAR_WARN_COLOR();
+				GUARD_UNLOCK();
 
 				// 19 is the assistant id
 				stmt->execute("INSERT IGNORE INTO players (steamid, preferredjob) VALUES (" + StringHelpers::ConvertToString(*SteamID) + ", 19);");
 			}
 			else
 			{
+				GUARD_LOCK();
 				SET_WARN_COLOR(COLOR_YELLOW);
 				UE_LOG(SpaceStationGameLog, Warning, TEXT("Steam subsystem failed to initialize!"));
 				CLEAR_WARN_COLOR();
+				GUARD_UNLOCK();
 
 				//My steam id
 				stmt->execute("INSERT IGNORE INTO players (steamid, preferredjob) VALUES (76561198004815982, 19);");
@@ -169,10 +187,12 @@ void UMySQLObject::SetUpMySQLPlayerData(FString SteamID)
 		}
 		catch (sql::SQLException &e)
 		{
+			GUARD_LOCK();
 			SET_WARN_COLOR(COLOR_YELLOW);
 			UE_LOG(SpaceStationGameLog, Warning, TEXT("MySQL error code: %d"), e.getErrorCode());
 			UE_LOG(SpaceStationGameLog, Warning, TEXT("MySQL failed to connect, please check your mysql server info"));
 			CLEAR_WARN_COLOR();
+			GUARD_UNLOCK();
 
 			bConnectionActive = false;
 		}
@@ -211,10 +231,12 @@ uint8 UMySQLObject::GetMySQLPreferredJob(FString SteamID)
 		}
 		catch (sql::SQLException &e)
 		{
+			GUARD_LOCK();
 			SET_WARN_COLOR(COLOR_YELLOW);
 			UE_LOG(SpaceStationGameLog, Warning, TEXT("MySQL error code: %d"), e.getErrorCode());
 			UE_LOG(SpaceStationGameLog, Warning, TEXT("MySQL failed to connect, please check your mysql server info"));
 			CLEAR_WARN_COLOR();
+			GUARD_UNLOCK();
 
 			bConnectionActive = false;
 		}
@@ -254,10 +276,12 @@ uint32 UMySQLObject::GetMySQLPrefferedAntagonistRole(FString SteamID)
 		}
 		catch (sql::SQLException &e)
 		{
+			GUARD_LOCK();
 			SET_WARN_COLOR(COLOR_YELLOW);
 			UE_LOG(SpaceStationGameLog, Warning, TEXT("MySQL error code: %d"), e.getErrorCode());
 			UE_LOG(SpaceStationGameLog, Warning, TEXT("MySQL failed to connect, please check your mysql server info"));
 			CLEAR_WARN_COLOR();
+			GUARD_UNLOCK();
 
 			bConnectionActive = false;
 		}

@@ -38,9 +38,7 @@ class SPACESTATIONGAME_API UMySQLObject : public UObject
 
 	void RetryConnection();
 
-	std::mutex InputLock;
-
-	std::mutex CharacterLock;
+	std::mutex MySQLLock;
 
 	std::vector<ThreadInputStruct> ThreadInput;
 
