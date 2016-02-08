@@ -32,6 +32,7 @@
 // Lock/unlock crap
 #define GUARD_LOCK() \
 	std::unique_lock<std::mutex> guard(MySQLLock);
+
 #define GUARD_UNLOCK() \
 	guard.unlock();
 
