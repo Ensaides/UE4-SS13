@@ -420,6 +420,11 @@ void ASpaceStationGameCharacter::CalculateHealth(float Damage, struct FDamageEve
 			Health -= LimbDamageEvent->LimbDamage.Burn_Damage;
 			Health -= LimbDamageEvent->LimbDamage.Suffocation_Damage;
 			Health -= LimbDamageEvent->LimbDamage.Toxin_Damage;
+
+			if (Health <= 0)
+			{
+
+			}
 		}
 		else
 		{

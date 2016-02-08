@@ -78,6 +78,13 @@ public:
 
 	void SetHealth_Implementation(float NewHealth);
 
+	UFUNCTION(NetMulticast, Reliable, WithValidation, Category = Health)
+		void Kill();
+
+	bool Kill_Validate() { return Health <= 0; };
+
+	void Kill_Implementation();
+
 	UPROPERTY(EditAnyWhere, Replicated, Category = Inventory)
 		EHumanInventorySlot SelectedItem;
 
