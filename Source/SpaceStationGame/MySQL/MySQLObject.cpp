@@ -35,7 +35,7 @@
 
 void UMySQLObject::Initialize()
 {
-	MySQLThread = new std::thread(GetMySQLData);
+	MySQLThread = std::thread(&UMySQLObject::GetMySQLData, this);
 }
 
 void UMySQLObject::GetMySQLData()
@@ -265,10 +265,7 @@ void UMySQLObject::BeginDestroy()
 		bConnectionActive = false;
 	}
 
-	if (MySQLThread)
-	{
-		delete MySQLThread;
-	}
+	if (MySQLThread.joinable()) MySQLThread.join();
 
 	Super::BeginDestroy();
 }

@@ -86,11 +86,6 @@ void ASpaceStationGameCharacter::GetLifetimeReplicatedProps(TArray< FLifetimePro
 
 void ASpaceStationGameCharacter::BeginPlay()
 {
-
-}
-
-void ASpaceStationGameCharacter::SetPlayerDefaults()
-{
 	if (GEngine->GetNetMode(GetWorld()) == NM_DedicatedServer)
 	{
 		UWorld* const World = GetWorld();
@@ -113,6 +108,11 @@ void ASpaceStationGameCharacter::SetPlayerDefaults()
 			Job = PlayerController->StartingJob;
 		}
 	}
+}
+
+void ASpaceStationGameCharacter::SetPlayerDefaults()
+{
+
 }
 
 void ASpaceStationGameCharacter::Tick(float DeltaSeconds)

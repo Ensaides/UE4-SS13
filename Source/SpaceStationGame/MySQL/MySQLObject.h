@@ -64,7 +64,7 @@ public:
 
 protected:
 
-	std::thread* MySQLThread;
+	std::thread MySQLThread;
 
 	sql::mysql::MySQL_Driver* driver;
 
