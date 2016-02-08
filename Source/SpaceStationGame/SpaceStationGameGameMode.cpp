@@ -239,7 +239,10 @@ void ASpaceStationGameGameMode::RestartPlayer(AController* NewPlayer)
 			NewControllerRot.Roll = 0.f;
 			NewPlayer->SetControlRotation(NewControllerRot);
 
-			// Sets defaults and also sets up the character's job, starting inventory
+			// Initialize the job on the new player
+			auto Character =  Cast<ASpaceStationGameCharacter>(NewPlayer->GetPawn());
+			Character->bInitializeJob = true;
+
 			SetPlayerDefaults(NewPlayer->GetPawn());
 
 			K2_OnRestartPlayer(NewPlayer);

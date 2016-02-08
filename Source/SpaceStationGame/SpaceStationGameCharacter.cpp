@@ -62,6 +62,8 @@ ASpaceStationGameCharacter::ASpaceStationGameCharacter(const FObjectInitializer&
 
 	bReplicates = true;
 	bReplicateMovement = true;
+
+	bInitializeJob = false;
 }
 
 void ASpaceStationGameCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
@@ -86,7 +88,7 @@ void ASpaceStationGameCharacter::GetLifetimeReplicatedProps(TArray< FLifetimePro
 
 void ASpaceStationGameCharacter::BeginPlay()
 {
-	if (GEngine->GetNetMode(GetWorld()) == NM_DedicatedServer)
+	if (GEngine->GetNetMode(GetWorld()) == NM_DedicatedServer && bInitializeJob)
 	{
 		UWorld* const World = GetWorld();
 
@@ -108,11 +110,6 @@ void ASpaceStationGameCharacter::BeginPlay()
 			Job = PlayerController->StartingJob;
 		}
 	}
-}
-
-void ASpaceStationGameCharacter::SetPlayerDefaults()
-{
-
 }
 
 void ASpaceStationGameCharacter::Tick(float DeltaSeconds)

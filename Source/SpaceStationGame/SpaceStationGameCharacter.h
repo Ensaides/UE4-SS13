@@ -63,8 +63,6 @@ public:
 
 	virtual void BeginPlay() override;
 
-	virtual void SetPlayerDefaults() override;
-
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 	UPROPERTY(EditAnywhere, Replicated, Category = Health)
@@ -215,6 +213,9 @@ public:
 	bool SetPawnName_Validate(const FString& NewName) { return true; };
 
 	void SetPawnName_Implementation(const FString& NewName) { PawnName = NewName; };
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Job)
+		bool bInitializeJob;
 
 protected:
 	UPROPERTY(Replicated, EditAnywhere, Category = Job)
