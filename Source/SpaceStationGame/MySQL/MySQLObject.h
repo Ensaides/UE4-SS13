@@ -62,6 +62,9 @@ public:
 	UPROPERTY(config)
 		FString ServerDatabase;
 
+	UPROPERTY(config)
+		uint32 MySQLRetryDuration;
+
 protected:
 
 	std::thread MySQLThread;

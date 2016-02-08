@@ -29,9 +29,6 @@
 #include "Online.h"
 #include "OnlineSubsystem.h"
 
-// The duration to wait before retrying the mysql connection, in milliseconds
-#define MYSQL_RETRY_DURATION 1000.0;
-
 
 void UMySQLObject::Initialize()
 {
@@ -46,7 +43,7 @@ void UMySQLObject::GetMySQLData()
 		OpenConnection();
 	}
 
-	while (ThreadInput.size > 0 && bConnectionActive)
+	while (ThreadInput.size() > 0 && bConnectionActive)
 	{
 		ThreadOutputStruct Output;
 
@@ -58,9 +55,10 @@ void UMySQLObject::GetMySQLData()
 		ThreadInput.back().Player->SetStartingJob(Output.PrefferedJob);
 		ThreadInput.back().Player->SetPreferredAntagonistRole(Output.PrefferedAntagonistRoles);
 
-		ThreadInput.popback();
+		ThreadInput.pop_back();
 	}
-	else if (!bConnectionActive)
+
+	while (!bConnectionActive)
 	{	
 		RetryConnection();
 	}
@@ -68,16 +66,29 @@ void UMySQLObject::GetMySQLData()
 
 void UMySQLObject::RetryConnection()
 {
-	while (!bConnectionActive)
+	if (!bConnectionActive)
 	{
-		// Retry the connection after waiting
-		std::this_thread::sleep_for(std::chrono::milliseconds(MYSQL_RETRY_DURATION));
+		for (uint32 i = 0; i < 6; i++)
+		{
+			if (i == 6 && !bConnectionActive)
+			{
+				UE_LOG(SpaceStationGameLog, Fatal, TEXT("FATAL ERROR: MySQL failed to connect after 5 retries! Closing server"));
+			}
 
-		SET_WARN_COLOR(COLOR_YELLOW);
-		UE_LOG(SpaceStationGameLog, Warning, TEXT("Retrying connection to MySQL server..."));
-		CLEAR_WARN_COLOR();
+			// Retry the connection after waiting
+			std::this_thread::sleep_for(std::chrono::milliseconds( MySQLRetryDuration ));
 
-		OpenConnection();
+			SET_WARN_COLOR(COLOR_YELLOW);
+			UE_LOG(SpaceStationGameLog, Warning, TEXT("Retrying connection to MySQL server..."));
+			CLEAR_WARN_COLOR();
+
+			OpenConnection();
+
+			if (bConnectionActive)
+			{
+				return;
+			}
+		}
 	}
 	else return;
 }
