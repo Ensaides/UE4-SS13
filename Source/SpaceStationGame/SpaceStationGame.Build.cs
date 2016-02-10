@@ -72,7 +72,7 @@ public class SpaceStationGame : ModuleRules
 
             string IncludesPath = Path.Combine(ThirdPartyPath, "OTL", "Includes");
 
-            PublicIncludePath.Add(IncludesPath);
+            PublicIncludePaths.Add(IncludesPath);
         }
     }
 
