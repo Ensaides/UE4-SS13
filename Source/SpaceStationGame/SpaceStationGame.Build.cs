@@ -58,13 +58,29 @@ public class SpaceStationGame : ModuleRules
         LoadMySQL(Target);
 
         LoadBoost(Target);
+
+        LoadOTL(Target);
+    }
+
+    public bool LoadOTL(TargetInfo Target)
+    {
+        bool isLibrarySupported = false;
+
+        if ((Target.Type == TargetRules.TargetType.Server) || (Target.Type == TargetRules.TargetType.Editor))
+        {
+            isLibrarySupported = true;
+
+            string IncludesPath = Path.Combine(ThirdPartyPath, "OTL", "Includes");
+
+            PublicIncludesPath.Add(IncludesPath);
+        }
     }
 
     public bool LoadMySQL(TargetInfo Target)
     {
         bool isLibrarySupported = false;
 
-        if ((Target.Platform == UnrealTargetPlatform.Win64) || (Target.Platform == UnrealTargetPlatform.Win32))
+        if (((Target.Platform == UnrealTargetPlatform.Win64) || (Target.Platform == UnrealTargetPlatform.Win32)) && ((Target.Type == TargetRules.TargetType.Server) || (Target.Type == TargetRules.TargetType.Editor)))
         {
             isLibrarySupported = true;
 
@@ -100,7 +116,7 @@ public class SpaceStationGame : ModuleRules
     {
         bool isLibrarySupported = false;
 
-        if ((Target.Platform == UnrealTargetPlatform.Win64) || (Target.Platform == UnrealTargetPlatform.Win32))
+        if (((Target.Platform == UnrealTargetPlatform.Win64) || (Target.Platform == UnrealTargetPlatform.Win32)) && ((Target.Type == TargetRules.TargetType.Server) || (Target.Type == TargetRules.TargetType.Editor)))
         {
             isLibrarySupported = true;
 
