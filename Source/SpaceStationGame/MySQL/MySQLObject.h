@@ -12,6 +12,8 @@
 #include "mysql_driver.h"
 #include "mysql_error.h"
 
+#include <otlv4.h>
+
 #include "MySQLObject.generated.h"
 
 struct ThreadInputStruct
@@ -67,6 +69,12 @@ protected:
 
 	std::thread MySQLThread;
 
+	// OTL stuff
+	otl_connect db;
+
+	otl_stream stream;
+
+	// MySQL stuff
 	sql::mysql::MySQL_Driver* driver;
 
 	sql::Connection* con;

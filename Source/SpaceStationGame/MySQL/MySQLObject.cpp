@@ -10,12 +10,15 @@
 #include "mysql_driver.h"
 #include "mysql_error.h"
 
-#include "SpaceStationGamePlayerController.h"
-
 #include <cppconn/driver.h>
 #include <cppconn/exception.h>
 #include <cppconn/resultset.h>
 #include <cppconn/statement.h>
+
+
+#define OTL_ODBC_MSSQL_2008 // Compile OTL 4/ODBC, MS SQL 2008
+//#define OTL_ODBC // Compile OTL 4/ODBC. Uncomment this when used with MS SQL 7.0/ 2000
+#include <otlv4.h> // include the OTL 4.0 header file
 
 #include <stdlib.h>
 #include <iostream>
@@ -25,6 +28,8 @@
 
 #include "StringConv.h"
 #include "StringHelpers.h"
+
+#include "SpaceStationGamePlayerController.h"
 
 #include "Online.h"
 #include "OnlineSubsystem.h"
@@ -106,6 +111,25 @@ void UMySQLObject::RetryConnection()
 
 void UMySQLObject::OpenConnection()
 {
+	// Initialize OTL
+	otl_connect::otl_initialize();
+
+	try
+	{
+		std::string LoginString;
+
+		LoginString += StringHelpers::ConvertToString(ServerUsername)
+			+ "/" + StringHelpers::ConvertToString(ServerPassword)
+			+ "@" + StringHelpers::ConvertToString(ServerUrl);
+
+		db.rlogon(LoginString);
+	}
+	catch (otl_exception& p)
+	{
+
+	}
+
+	// DEPRECATED MYSQL CODE
 	try
 	{
 		driver = sql::mysql::get_mysql_driver_instance();
