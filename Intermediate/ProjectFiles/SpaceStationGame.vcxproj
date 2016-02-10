@@ -1966,6 +1966,7 @@
     <ClInclude Include="..\..\Source\SpaceStationGame\Roundtypes\RoundType.h" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Roundtypes\RoundTypeTraitor.h" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Voxel\Voxel.h" />
+    <ClInclude Include="..\..\ThirdParty\OTL\Includes\otlv4.h" />
     <None Include="..\..\Source\SpaceStationGame\OpenCL\Kernel\AtmosKernels.cl" />
     <None Include="..\..\SpaceStationGame.uproject" />
     <None Include="..\..\Source\SpaceStationGame.Target.cs" />

@@ -283,6 +283,9 @@
     <ClInclude Include="..\..\Source\SpaceStationGame\Items\ID\Cartridge\Cartridge.h">
       <Filter>Source\SpaceStationGame\Items\ID\Cartridge</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\ThirdParty\OTL\Includes\otlv4.h">
+      <Filter>Source\ThirdParty\OTL</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\SpaceStationGame\Private\SpaceStationGameServerState.cpp">
@@ -364,6 +367,12 @@
     </Filter>
     <Filter Include="Source\SpaceStationGame\Items\ID\Cartridge">
       <UniqueIdentifier>{bd49df46-d572-4638-b25b-c6de3aef2e79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\ThirdParty">
+      <UniqueIdentifier>{8eb286e3-b7b5-444b-859a-83896e56480d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\ThirdParty\OTL">
+      <UniqueIdentifier>{b7c83a18-3656-4317-8ef6-932ef7f599b2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
