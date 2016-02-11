@@ -26,7 +26,8 @@ Intermediate/ProjectFiles/SpaceStationGame.vcxproj.user
 Plugins/
 Saved/
 Build/
-ThirdParty/Boost
+ThirdParty/MySQL/
+ThirdParty/Boost/
 
 #Filetypes
 *.pdb

@@ -83,6 +83,7 @@ public:
 
 	bool Kill_Validate() { return Health <= 0; };
 
+	// Implement this later
 	void Kill_Implementation() {};
 
 	UPROPERTY(EditAnyWhere, Replicated, Category = Inventory)

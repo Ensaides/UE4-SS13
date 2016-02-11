@@ -55,9 +55,9 @@ public class SpaceStationGame : ModuleRules
 
         DynamicallyLoadedModuleNames.Add("OnlineSubsystemSteam");
 
-        LoadMySQL(Target);
+        //LoadMySQL(Target);
 
-        LoadBoost(Target);
+        //LoadBoost(Target);
 
         LoadOTL(Target);
     }
@@ -80,7 +80,9 @@ public class SpaceStationGame : ModuleRules
         return isLibrarySupported;
     }
 
-    public bool LoadMySQL(TargetInfo Target)
+
+    // no more mysql + boost crap
+    /*public bool LoadMySQL(TargetInfo Target)
     {
         bool isLibrarySupported = false;
 
@@ -139,5 +141,5 @@ public class SpaceStationGame : ModuleRules
         Definitions.Add(string.Format("WITH_BOOST_BINDING={0}", isLibrarySupported ? 1 : 0));
 
         return isLibrarySupported;
-    }
+    } */
 }

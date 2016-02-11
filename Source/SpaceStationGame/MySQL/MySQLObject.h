@@ -10,12 +10,11 @@
 
 // OTL
 #pragma warning(push)
-#pragma warning(disable: 4946) // so that OTL doesn't clog up the compiler output. disabling warnings is probably really stupid to do
+#pragma warning(disable: 4946) // so that OTL doesn't clog up the compiler output. disabling warnings is probably a really bad idea
 #define OTL_ODBC // Compile OTL 4.0/ODBC
 // The following #define is required with MyODBC 5.1 and higher
 #define OTL_ODBC_SELECT_STM_EXECUTE_BEFORE_DESCRIBE
 #define OTL_UNICODE // Compile OTL with Unicode 
-#define OTL_EXPLICIT_NAMESPACES
 #define OTL_CPP_11_ON
 
 #include "AllowWindowsPlatformTypes.h"
@@ -83,7 +82,7 @@ protected:
 	std::thread MySQLThread;
 
 	// OTL stuff
-	//odbc::otl_connect database;
+	//otl_connect* database;
 
 	//odbc::otl_stream stream;
 

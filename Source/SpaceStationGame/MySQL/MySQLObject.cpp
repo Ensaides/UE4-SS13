@@ -6,15 +6,6 @@
 
 #include "MySQLObject.h"
 
-#include "mysql_connection.h"
-#include "mysql_driver.h"
-#include "mysql_error.h"
-
-#include <cppconn/driver.h>
-#include <cppconn/exception.h>
-#include <cppconn/resultset.h>
-#include <cppconn/statement.h>
-
 #include <stdlib.h>
 #include <iostream>
 #include <sstream>
@@ -29,13 +20,14 @@
 #include "Online.h"
 #include "OnlineSubsystem.h"
 
+otl_connect database;
+
 // Lock/unlock crap
 #define GUARD_LOCK() \
 	std::unique_lock<std::mutex> guard(MySQLLock);
 
 #define GUARD_UNLOCK() \
 	guard.unlock();
-
 
 void UMySQLObject::Initialize()
 {
@@ -106,46 +98,62 @@ void UMySQLObject::RetryConnection()
 
 void UMySQLObject::OpenConnection()
 {
-	// Initialize OTL
-	//otl_connect::otl_initialize();
+	//Initialize OTL
+	otl_connect::otl_initialize();
 
-	//try
-	//{
-	//	std::string LoginString;
+	try
+	{
+		std::string LoginString;
 
-	//	LoginString += StringHelpers::ConvertToString(ServerUsername)
-	//		+ "/" + StringHelpers::ConvertToString(ServerPassword)
-	//		+ "@" + StringHelpers::ConvertToString(ServerUrl);
+		LoginString += StringHelpers::ConvertToString(ServerUsername)
+			+ "/" + StringHelpers::ConvertToString(ServerPassword)
+			+ "@" + StringHelpers::ConvertToString(ServerUrl);
 
-	//	database.rlogon(LoginString);
+		database.rlogon(LoginString.c_str());
 
-	//	otl_cursor::direct_exec
-	//		(
-	//			db,
-	//			"CREATE TABLE IF NOT EXISTS `players` ("
-	//			"`steamid` BIGINT(20) UNSIGNED NOT NULL,"
-	//			"`preferredjob` TINYINT(3) UNSIGNED NOT NULL,"
-	//			"`preferredantagonistroles` BIT(32) NOT NULL,"
-	//			"PRIMARY KEY (`steamid`));",
-	//			otl_exception::enabled
-	//		);
+		otl_cursor::direct_exec
+			(
+				database,
+				("CREATE DATABASE IF NOT EXISTS " + StringHelpers::ConvertToString(ServerDatabase)).c_str(),
+				otl_exception::enabled
+			);
+
+		otl_cursor::direct_exec
+			(
+				database,
+				("USE " + StringHelpers::ConvertToString(ServerDatabase)).c_str(),
+				otl_exception::enabled
+			);
+
+		otl_cursor::direct_exec
+			(
+				database,
+				"CREATE TABLE IF NOT EXISTS `players` ("
+				"`steamid` BIGINT(20) UNSIGNED NOT NULL,"
+				"`preferredjob` TINYINT(3) UNSIGNED NOT NULL,"
+				"`preferredantagonistroles` BIT(32) NOT NULL,"
+				"PRIMARY KEY (`steamid`));",
+				otl_exception::enabled
+			);
 
 
-	//}
-	//catch (otl_exception& p)
-	//{
-	//	GUARD_LOCK();
-	//	SET_WARN_COLOR(COLOR_YELLOW);
-	//	// OTL is so verbose!
-	//	UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL error code:\t\t		%d"), p.code);
-	//	UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL state:\t\t\t			" + p.sqlstate));
-	//	UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL error message:\t\t		" + p.msg));
-	//	UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL bad statement:\t\t		" + p.stm_text));
-	//	UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL bad variable:\t\t		" + p.var_info));
-	//	UE_LOG(SpaceStationGameLog, Warning, TEXT("MySQL failed to connect, please check your mysql server info"));
-	//	CLEAR_WARN_COLOR();
-	//	GUARD_UNLOCK();
-	//}
+	}
+	catch (otl_exception& p)
+	{
+		GUARD_LOCK();
+		SET_WARN_COLOR(COLOR_YELLOW);
+		// OTL is so verbose!
+		UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL error code:\t\t		%d"), p.code);
+		//UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL state:\t\t\t			" + p.sqlstate));
+		//UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL error message:\t\t		" + p.msg));
+		//UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL bad statement:\t\t		" + p.stm_text));
+		//UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL bad variable:\t\t		" + p.var_info));
+		UE_LOG(SpaceStationGameLog, Warning, TEXT("MySQL failed to connect, please check your mysql server info"));
+		CLEAR_WARN_COLOR();
+		GUARD_UNLOCK();
+
+		return;
+	}
 
 	//// DEPRECATED MYSQL CODE
 	//try
