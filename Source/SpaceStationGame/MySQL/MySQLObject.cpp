@@ -123,46 +123,69 @@ void UMySQLObject::OpenConnection()
 			+ "@" + StringHelpers::ConvertToString(ServerUrl);
 
 		db.rlogon(LoginString);
+
+		otl_cursor::direct_exec
+			(
+				db,
+				"CREATE TABLE IF NOT EXISTS `players` ("
+				"`steamid` BIGINT(20) UNSIGNED NOT NULL,"
+				"`preferredjob` TINYINT(3) UNSIGNED NOT NULL,"
+				"`preferredantagonistroles` BIT(32) NOT NULL,"
+				"PRIMARY KEY (`steamid`));",
+				otl_exception::enabled
+			);
+
+
 	}
 	catch (otl_exception& p)
 	{
-
-	}
-
-	// DEPRECATED MYSQL CODE
-	try
-	{
-		driver = sql::mysql::get_mysql_driver_instance();
-
-		con = driver->connect(StringHelpers::ConvertToString(ServerUrl), StringHelpers::ConvertToString(ServerUsername), StringHelpers::ConvertToString(ServerPassword));
-
-		sql::Statement* stmt(con->createStatement());
-
-		stmt->execute("CREATE DATABASE IF NOT EXISTS " + StringHelpers::ConvertToString(ServerDatabase));
-
-		stmt->execute("USE " + StringHelpers::ConvertToString(ServerDatabase));
-
-		stmt->execute("CREATE TABLE IF NOT EXISTS `players` ("
-			"`steamid` BIGINT(20) UNSIGNED NOT NULL,"
-			"`preferredjob` TINYINT(3) UNSIGNED NOT NULL,"
-			"`preferredantagonistroles` BIT(32) NOT NULL,"
-			"PRIMARY KEY (`steamid`));");
-
-		delete stmt;
-	}
-	catch (sql::SQLException &e)
-	{
 		GUARD_LOCK();
 		SET_WARN_COLOR(COLOR_YELLOW);
-		UE_LOG(SpaceStationGameLog, Warning, TEXT("MySQL error code: %d"), e.getErrorCode());
+		// OTL is so verbose!
+		UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL error code:\t\t		%d"), p.code);
+		UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL state:\t\t\t			" + p.sqlstate));
+		UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL error message:\t\t		" + p.msg));
+		UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL bad statement:\t\t		" + p.stm_text));
+		UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL bad variable:\t\t		" + p.var_info));
 		UE_LOG(SpaceStationGameLog, Warning, TEXT("MySQL failed to connect, please check your mysql server info"));
 		CLEAR_WARN_COLOR();
 		GUARD_UNLOCK();
-
-		bConnectionActive = false;
-
-		return;
 	}
+
+	//// DEPRECATED MYSQL CODE
+	//try
+	//{
+	//	driver = sql::mysql::get_mysql_driver_instance();
+
+	//	con = driver->connect(StringHelpers::ConvertToString(ServerUrl), StringHelpers::ConvertToString(ServerUsername), StringHelpers::ConvertToString(ServerPassword));
+
+	//	sql::Statement* stmt(con->createStatement());
+
+	//	stmt->execute("CREATE DATABASE IF NOT EXISTS " + StringHelpers::ConvertToString(ServerDatabase));
+
+	//	stmt->execute("USE " + StringHelpers::ConvertToString(ServerDatabase));
+
+	//	stmt->execute("CREATE TABLE IF NOT EXISTS `players` ("
+	//		"`steamid` BIGINT(20) UNSIGNED NOT NULL,"
+	//		"`preferredjob` TINYINT(3) UNSIGNED NOT NULL,"
+	//		"`preferredantagonistroles` BIT(32) NOT NULL,"
+	//		"PRIMARY KEY (`steamid`));");
+
+	//	delete stmt;
+	//}
+	//catch (sql::SQLException &e)
+	//{
+	//	GUARD_LOCK();
+	//	SET_WARN_COLOR(COLOR_YELLOW);
+	//	UE_LOG(SpaceStationGameLog, Warning, TEXT("MySQL error code: %d"), e.getErrorCode());
+	//	UE_LOG(SpaceStationGameLog, Warning, TEXT("MySQL failed to connect, please check your mysql server info"));
+	//	CLEAR_WARN_COLOR();
+	//	GUARD_UNLOCK();
+
+	//	bConnectionActive = false;
+
+	//	return;
+	//}
 
 	GUARD_LOCK();
 	SET_WARN_COLOR(COLOR_CYAN);

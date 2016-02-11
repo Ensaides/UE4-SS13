@@ -74,6 +74,10 @@ public class SpaceStationGame : ModuleRules
 
             PublicIncludePaths.Add(IncludesPath);
         }
+
+        Definitions.Add(string.Format("WITH_OTL_BINDING={0}", isLibrarySupported ? 1 : 0));
+
+        return isLibrarySupported;
     }
 
     public bool LoadMySQL(TargetInfo Target)
