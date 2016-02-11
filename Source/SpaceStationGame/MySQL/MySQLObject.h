@@ -8,11 +8,24 @@
 #include <mutex>
 #include <vector>
 
-#include "mysql_connection.h"
-#include "mysql_driver.h"
-#include "mysql_error.h"
+// OTL
+#pragma warning(push)
+#pragma warning(disable: 4946) // so that OTL doesn't clog up the compiler output. disabling warnings is probably really stupid to do
+#define OTL_ODBC // Compile OTL 4.0/ODBC
+// The following #define is required with MyODBC 5.1 and higher
+#define OTL_ODBC_SELECT_STM_EXECUTE_BEFORE_DESCRIBE
+#define OTL_UNICODE // Compile OTL with Unicode 
+#define OTL_EXPLICIT_NAMESPACES
+#define OTL_CPP_11_ON
 
-#include <otlv4.h>
+#include "AllowWindowsPlatformTypes.h"
+#include <otlv4.h> // include the OTL 4.0 header file
+#include "HideWindowsPlatformTypes.h"
+#pragma warning(pop)
+
+//#include "mysql_connection.h"
+//#include "mysql_driver.h"
+//#include "mysql_error.h"
 
 #include "MySQLObject.generated.h"
 
@@ -70,17 +83,16 @@ protected:
 	std::thread MySQLThread;
 
 	// OTL stuff
-	otl_connect db;
+	//odbc::otl_connect database;
 
-	otl_stream stream;
+	//odbc::otl_stream stream;
 
 	// MySQL stuff
-	sql::mysql::MySQL_Driver* driver;
+	/*sql::mysql::MySQL_Driver* driver;
 
-	sql::Connection* con;
+	sql::Connection* con;*/
 
 public:
-
 	void OpenConnection();
 
 	virtual void BeginDestroy() override;

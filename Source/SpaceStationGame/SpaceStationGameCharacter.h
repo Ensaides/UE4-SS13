@@ -83,7 +83,7 @@ public:
 
 	bool Kill_Validate() { return Health <= 0; };
 
-	void Kill_Implementation();
+	void Kill_Implementation() {};
 
 	UPROPERTY(EditAnyWhere, Replicated, Category = Inventory)
 		EHumanInventorySlot SelectedItem;
