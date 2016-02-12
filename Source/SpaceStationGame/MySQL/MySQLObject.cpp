@@ -105,9 +105,10 @@ void UMySQLObject::OpenConnection()
 	{
 		std::string LoginString;
 
-		LoginString += StringHelpers::ConvertToString(ServerUsername)
-			+ "/" + StringHelpers::ConvertToString(ServerPassword)
-			+ "@" + StringHelpers::ConvertToString(ServerUrl);
+		LoginString = "Server = " + StringHelpers::ConvertToString(ServerAddress) 
+					+ "; Port = " + StringHelpers::ConvertToString(ServerPort) 
+					+ "; Uid = " + StringHelpers::ConvertToString(ServerUsername) 
+					+ "; Pwd = " + StringHelpers::ConvertToString(ServerPassword) + ";";
 
 		database.rlogon(LoginString.c_str());
 
@@ -192,7 +193,7 @@ void UMySQLObject::OpenConnection()
 
 	GUARD_LOCK();
 	SET_WARN_COLOR(COLOR_CYAN);
-	UE_LOG(SpaceStationGameLog, Log, TEXT("Connected to MySQL server on %s"), *ServerUrl);
+	UE_LOG(SpaceStationGameLog, Log, TEXT("Connected to MySQL server on %s"), *ServerAddress);
 	CLEAR_WARN_COLOR();
 	GUARD_UNLOCK();
 

@@ -63,10 +63,13 @@ public:
 		bool bConnectionActive;
 
 	UPROPERTY(config)
-		FString ServerUrl;
+		FString ServerAddress;
 
 	UPROPERTY(config)
 		FString ServerUsername;
+
+	UPROPERTY(config)
+		FString ServerPort;
 
 	UPROPERTY(config)
 		FString ServerPassword;
