@@ -105,10 +105,17 @@ void UMySQLObject::OpenConnection()
 	{
 		std::string LoginString;
 
-		LoginString = "Server = " + StringHelpers::ConvertToString(ServerAddress) 
-					+ "; Port = " + StringHelpers::ConvertToString(ServerPort) 
-					+ "; Uid = " + StringHelpers::ConvertToString(ServerUsername) 
-					+ "; Pwd = " + StringHelpers::ConvertToString(ServerPassword) + ";";
+		//LoginString = "Server = " + StringHelpers::ConvertToString(ServerAddress) 
+		//			+ "; Port = " + StringHelpers::ConvertToString(ServerPort) 
+		//			+ "; Uid = " + StringHelpers::ConvertToString(ServerUsername) 
+		//			+ "; Pwd = " + StringHelpers::ConvertToString(ServerPassword) + ";";
+
+		//LoginString = "Driver = { MySQL ODBC 5.2 UNICODE Driver }; Server = " + StringHelpers::ConvertToString(ServerAddress)
+		//	+ "; Port = " + StringHelpers::ConvertToString(ServerPort)
+		//	+ "; User = " + StringHelpers::ConvertToString(ServerUsername)
+		//	+ "; Password = " + StringHelpers::ConvertToString(ServerPassword) + "; Option = 3;";
+
+		LoginString = StringHelpers::ConvertToString(ServerUsername) + "/" + StringHelpers::ConvertToString(ServerPassword) + "@" + StringHelpers::ConvertToString(ServerODBCName);
 
 		database.rlogon(LoginString.c_str());
 
@@ -193,7 +200,7 @@ void UMySQLObject::OpenConnection()
 
 	GUARD_LOCK();
 	SET_WARN_COLOR(COLOR_CYAN);
-	UE_LOG(SpaceStationGameLog, Log, TEXT("Connected to MySQL server on %s"), *ServerAddress);
+	UE_LOG(SpaceStationGameLog, Log, TEXT("Connected to MySQL server on %s"), *ServerODBCName);
 	CLEAR_WARN_COLOR();
 	GUARD_UNLOCK();
 

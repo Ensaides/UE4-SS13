@@ -63,7 +63,7 @@ public:
 		bool bConnectionActive;
 
 	UPROPERTY(config)
-		FString ServerAddress;
+		FString ServerODBCName;
 
 	UPROPERTY(config)
 		FString ServerUsername;
