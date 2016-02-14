@@ -31,34 +31,19 @@ void ASpaceStationGameServerState::BeginPlay()
 	{
 		MySQLObject = NewObject<UMySQLObject>(this);
 
-		MySQLObject->OpenConnection();
+		MySQLObject->Initialize();
 
 		OpenCLObject = NewObject<UOpenCLObject>(this);
 	}
 
 	Super::BeginPlay();
-	
 }
 
 void ASpaceStationGameServerState::SetUpMySQLPlayerData(APlayerController* NewPlayer)
 {
 	FString SteamID = NewPlayer->PlayerState->UniqueId->ToString();
 
-	MySQLObject->SetUpMySQLPlayerData(SteamID);
-}
-
-uint8 ASpaceStationGameServerState::GetMySQLPreferredJob(APlayerController* NewPlayer)
-{
-	FString SteamID = NewPlayer->PlayerState->UniqueId->ToString();
-
-	return MySQLObject->GetMySQLPreferredJob(SteamID);
-}
-
-uint32 ASpaceStationGameServerState::GetMySQLPreferredAntagonistRoles(APlayerController* NewPlayer)
-{
-	FString SteamID = NewPlayer->PlayerState->UniqueId->ToString();
-
-	return MySQLObject->GetMySQLPrefferedAntagonistRole(SteamID);
+	MySQLObject->AddPlayerData(SteamID, Cast<ASpaceStationGamePlayerController>(NewPlayer));
 }
 
 void ASpaceStationGameServerState::SetupRecipes()

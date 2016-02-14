@@ -6,6 +6,7 @@
 #include <memory>
 #include <thread>
 #include <mutex>
+#include <atomic>
 #include <vector>
 
 // OTL
@@ -22,16 +23,14 @@
 #include "HideWindowsPlatformTypes.h"
 #pragma warning(pop)
 
-//#include "mysql_connection.h"
-//#include "mysql_driver.h"
-//#include "mysql_error.h"
+#include "SpaceStationGamePlayerController.h"
 
 #include "MySQLObject.generated.h"
 
 struct ThreadInputStruct
 {
 	FString SteamID;
-	class ASpaceStationGamePlayerController* Player;
+	ASpaceStationGamePlayerController* Player;
 };
 
 struct ThreadOutputStruct
@@ -59,9 +58,6 @@ class SPACESTATIONGAME_API UMySQLObject : public UObject
 public:
 	void Initialize();
 
-	UPROPERTY()
-		bool bConnectionActive;
-
 	UPROPERTY(config)
 		FString ServerODBCName;
 
@@ -80,21 +76,17 @@ public:
 	UPROPERTY(config)
 		uint32 MySQLRetryDuration;
 
+	void AddPlayerData(FString SteamID, ASpaceStationGamePlayerController* Player);
+
 protected:
 
 	std::thread MySQLThread;
 
-	// OTL stuff
-	//otl_connect* database;
+	std::atomic<bool> bThreadRunning;
 
-	//odbc::otl_stream stream;
+	std::atomic<bool> bConnectionActive;
 
-	// MySQL stuff
-	/*sql::mysql::MySQL_Driver* driver;
-
-	sql::Connection* con;*/
-
-public:
+private:
 	void OpenConnection();
 
 	virtual void BeginDestroy() override;

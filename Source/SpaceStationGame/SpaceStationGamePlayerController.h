@@ -3,11 +3,12 @@
 #pragma once
 
 #include "GameFramework/PlayerController.h"
-#include "Item.h"
-#include "IDCard.h"
 #include "AntagonistRoles.h"
 #include "ChatMessageStruct.h"
 #include "SpaceStationGamePlayerController.generated.h"
+
+class AIDCard;
+class AItem;
 
 /**
 *
@@ -97,12 +98,20 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = UI)
 		void Enter();
 
-
 	// Round start preferences
-	UPROPERTY(Replicated, BlueprintReadWrite, Category = Round)
+	UPROPERTY(BlueprintReadWrite, Replicated, Category = "Player Data")
+		bool bMySQLPlayerDataLoaded;
+
+	UPROPERTY(BlueprintReadWrite, Replicated, Category = "Player Data")
+		FString LoadingState;
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Player Data")
+		void OpenLoadingScreen();
+
+	UPROPERTY(Replicated, BlueprintReadWrite, Category = "Player Data")
 		bool RoundStartReady;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = Replication)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = "Player Data")
 		uint8 StartingJob;
 
 	UFUNCTION(BlueprintCallable, Server, WithValidation, Reliable, Category = Job)

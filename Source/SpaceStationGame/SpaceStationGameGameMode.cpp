@@ -139,19 +139,11 @@ void ASpaceStationGameGameMode::PostLogin(APlayerController* NewPlayer)
 #if UE_SERVER || UE_EDITOR
 	if (Cast<ASpaceStationGameGameState>(GetWorld()->GetGameState()) && GEngine->GetNetMode(GetWorld()) == NM_DedicatedServer)
 	{
+		Cast<ASpaceStationGamePlayerController>(NewPlayer)->LoadingState = "Loading MySQL player data";
+
 		ASpaceStationGameGameState* GameState = Cast<ASpaceStationGameGameState>(GetWorld()->GetGameState());
 
 		GameState->GetServerState()->SetUpMySQLPlayerData(NewPlayer);
-		
-
-		// Variable initialization
-		uint8 Job = GameState->GetServerState()->GetMySQLPreferredJob(NewPlayer);
-
-		uint32 PrefferedAntagonistRoles = GameState->GetServerState()->GetMySQLPreferredAntagonistRoles(NewPlayer);
-
-		Cast<ASpaceStationGamePlayerController>(NewPlayer)->SetStartingJob(Job);
-
-		Cast<ASpaceStationGamePlayerController>(NewPlayer)->SetPreferredAntagonistRole(PrefferedAntagonistRoles);
 	}
 #endif
 

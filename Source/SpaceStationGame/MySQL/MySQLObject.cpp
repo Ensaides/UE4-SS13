@@ -22,15 +22,21 @@
 
 otl_connect database;
 
-// Lock/unlock crap
-#define GUARD_LOCK() \
-	std::unique_lock<std::mutex> guard(MySQLLock);
+void UMySQLObject::AddPlayerData(FString SteamID, ASpaceStationGamePlayerController* Player)
+{
+	ThreadInputStruct NewStruct;
 
-#define GUARD_UNLOCK() \
-	guard.unlock();
+	NewStruct.SteamID = SteamID;
+	NewStruct.Player = Player;
+
+	std::unique_lock<std::mutex> guard(MySQLLock);
+	ThreadInput.push_back(NewStruct);
+}
 
 void UMySQLObject::Initialize()
 {
+	bThreadRunning = true;
+
 	MySQLThread = std::thread(&UMySQLObject::GetMySQLData, this);
 }
 
@@ -42,25 +48,38 @@ void UMySQLObject::GetMySQLData()
 		OpenConnection();
 	}
 
-	while (ThreadInput.size() > 0 && bConnectionActive)
+	// Load the player data
+	while (bThreadRunning)
 	{
-		ThreadOutputStruct Output;
+		if (ThreadInput.size() > 0 && bConnectionActive)
+		{
+			ThreadOutputStruct Output;
 
-		Output.PrefferedJob = GetMySQLPreferredJob(ThreadInput.back().SteamID);
+			Output.PrefferedJob = GetMySQLPreferredJob(ThreadInput.back().SteamID);
 
-		Output.PrefferedAntagonistRoles = GetMySQLPrefferedAntagonistRole(ThreadInput.back().SteamID);
+			Output.PrefferedAntagonistRoles = GetMySQLPrefferedAntagonistRole(ThreadInput.back().SteamID);
 
-		GUARD_LOCK();
-		ThreadInput.back().Player->SetStartingJob(Output.PrefferedJob);
-		ThreadInput.back().Player->SetPreferredAntagonistRole(Output.PrefferedAntagonistRoles);
+			std::unique_lock<std::mutex> guard(MySQLLock);
+			ThreadInput.back().Player->SetStartingJob(Output.PrefferedJob);
+			ThreadInput.back().Player->SetPreferredAntagonistRole(Output.PrefferedAntagonistRoles);
+			guard.unlock();
 
-		ThreadInput.pop_back();
+#if !UE_BUILD_SHIPPING
+			std::this_thread::sleep_for(std::chrono::seconds(2)); // Make it wait for a bit- for debug purposes
+#endif// !UE_BUILD_SHIPPING
+			
+			guard.lock();
+			ThreadInput.back().Player->bMySQLPlayerDataLoaded = true;
+
+			ThreadInput.pop_back();
+		}
+		else if (!bConnectionActive)
+		{
+			RetryConnection();
+		}
 	}
 
-	while (!bConnectionActive)
-	{	
-		RetryConnection();
-	}
+	database.logoff();
 }
 
 void UMySQLObject::RetryConnection()
@@ -71,19 +90,15 @@ void UMySQLObject::RetryConnection()
 		{
 			if (i == 6 && !bConnectionActive)
 			{
-				GUARD_LOCK();
 				UE_LOG(SpaceStationGameLog, Fatal, TEXT("FATAL ERROR: MySQL failed to connect after 5 retries! Closing server"));
 			}
 
 			// Retry the connection after waiting
 			std::this_thread::sleep_for(std::chrono::milliseconds( MySQLRetryDuration ));
 
-			GUARD_LOCK();
 			SET_WARN_COLOR(COLOR_YELLOW);
 			UE_LOG(SpaceStationGameLog, Warning, TEXT("Retrying connection to MySQL server..."));
 			CLEAR_WARN_COLOR();
-			GUARD_UNLOCK();
-
 
 			OpenConnection();
 
@@ -138,7 +153,6 @@ void UMySQLObject::OpenConnection()
 	}
 	catch (otl_exception& p)
 	{
-		GUARD_LOCK();
 		SET_WARN_COLOR(COLOR_YELLOW);
 		// OTL is so verbose!
 		UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL error code:\t\t		%d"), p.code);
@@ -148,18 +162,15 @@ void UMySQLObject::OpenConnection()
 		//UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL bad variable:\t\t		" + p.var_info));
 		UE_LOG(SpaceStationGameLog, Warning, TEXT("MySQL failed to connect, please check your mysql server info"));
 		CLEAR_WARN_COLOR();
-		GUARD_UNLOCK();
 
 		bConnectionActive = false;
 
 		return;
 	}
 
-	GUARD_LOCK();
 	SET_WARN_COLOR(COLOR_CYAN);
 	UE_LOG(SpaceStationGameLog, Log, TEXT("Connected to MySQL server on %s"), *ServerODBCName);
 	CLEAR_WARN_COLOR();
-	GUARD_UNLOCK();
 
 	bConnectionActive = true;
 }
@@ -181,11 +192,9 @@ void UMySQLObject::SetUpMySQLPlayerData(FString SteamID)
 
 			if (OnlineSub)
 			{
-				GUARD_LOCK();
 				SET_WARN_COLOR(COLOR_CYAN);
 				UE_LOG(SpaceStationGameLog, Log, TEXT("Steam subsystem initialized"));
 				CLEAR_WARN_COLOR();
-				GUARD_UNLOCK();
 
 				FString Statement = "INSERT IGNORE INTO players (steamid, preferredjob) VALUES (" + SteamID + ", 19);";
 
@@ -199,11 +208,9 @@ void UMySQLObject::SetUpMySQLPlayerData(FString SteamID)
 			}
 			else
 			{
-				GUARD_LOCK();
 				SET_WARN_COLOR(COLOR_YELLOW);
 				UE_LOG(SpaceStationGameLog, Warning, TEXT("Steam subsystem failed to initialize!"));
 				CLEAR_WARN_COLOR();
-				GUARD_UNLOCK();
 
 #if !UE_BUILD_SHIPPING
 				//My steam id
@@ -218,7 +225,6 @@ void UMySQLObject::SetUpMySQLPlayerData(FString SteamID)
 		}
 		catch (otl_exception& p)
 		{
-			GUARD_LOCK();
 			SET_WARN_COLOR(COLOR_YELLOW);
 			// OTL is so verbose!
 			UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL error code:\t\t		%d"), p.code);
@@ -228,7 +234,6 @@ void UMySQLObject::SetUpMySQLPlayerData(FString SteamID)
 			//UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL bad variable:\t\t		" + p.var_info));
 			UE_LOG(SpaceStationGameLog, Warning, TEXT("MySQL failed to connect, please check your mysql server info"));
 			CLEAR_WARN_COLOR();
-			GUARD_UNLOCK();
 
 			bConnectionActive = false;
 
@@ -290,17 +295,14 @@ uint8 UMySQLObject::GetMySQLPreferredJob(FString SteamID)
 #else // UE_BUILD_SHIPPING
 			else
 			{
-				GUARD_LOCK();
 				SET_WARN_COLOR(COLOR_YELLOW);
 				UE_LOG(SpaceStationGameLog, Warning, TEXT("Steam subsystem failed to initialize!"));
 				CLEAR_WARN_COLOR();
-				GUARD_UNLOCK();
 			}
 #endif
 		}
 		catch (otl_exception& p)
 		{
-			GUARD_LOCK();
 			SET_WARN_COLOR(COLOR_YELLOW);
 			// OTL is so verbose!
 			UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL error code:\t\t		%d"), p.code);
@@ -310,7 +312,6 @@ uint8 UMySQLObject::GetMySQLPreferredJob(FString SteamID)
 			//UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL bad variable:\t\t		" + p.var_info));
 			UE_LOG(SpaceStationGameLog, Warning, TEXT("MySQL failed to connect, please check your mysql server info"));
 			CLEAR_WARN_COLOR();
-			GUARD_UNLOCK();
 
 			bConnectionActive = false;
 		}
@@ -365,16 +366,14 @@ uint32 UMySQLObject::GetMySQLPrefferedAntagonistRole(FString SteamID)
 
 void UMySQLObject::BeginDestroy()
 {
-	GUARD_LOCK();
+	bThreadRunning = false;
+
 	if (bConnectionActive)
 	{
-		database.logoff();
-
 		bConnectionActive = false;
 	}
-	GUARD_UNLOCK();
 
-	if (MySQLThread.joinable()) MySQLThread.join();
+	MySQLThread.join();
 
 	Super::BeginDestroy();
 }

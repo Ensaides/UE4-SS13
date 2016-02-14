@@ -16,6 +16,7 @@ ASpaceStationGamePlayerController::ASpaceStationGamePlayerController(const FObje
 : Super(ObjectInitializer)
 {
 	bHighlightUsableItems = true;
+	bMySQLPlayerDataLoaded = false;
 }
 
 void ASpaceStationGamePlayerController::BeginPlay()
@@ -77,6 +78,9 @@ void ASpaceStationGamePlayerController::GetLifetimeReplicatedProps(TArray< FLife
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ASpaceStationGamePlayerController, RoundStartReady);
+	DOREPLIFETIME_CONDITION(ASpaceStationGamePlayerController, bMySQLPlayerDataLoaded, COND_OwnerOnly);
+	DOREPLIFETIME_CONDITION(ASpaceStationGamePlayerController, LoadingState, COND_OwnerOnly);
+
 
 	DOREPLIFETIME_CONDITION(ASpaceStationGamePlayerController, StartingJob, COND_OwnerOnly);
 	DOREPLIFETIME_CONDITION(ASpaceStationGamePlayerController, PreferredAntagonistRole, COND_OwnerOnly);
@@ -250,8 +254,3 @@ TArray<FClientChatMessageStruct> ASpaceStationGamePlayerController::GetChatMessa
 {
 	return ChatMessages;
 }
-
-//void ASpaceStationGamePlayerController::Enter()
-//{
-//
-//}
