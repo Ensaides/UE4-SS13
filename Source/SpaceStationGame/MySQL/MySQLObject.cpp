@@ -323,43 +323,75 @@ uint32 UMySQLObject::GetMySQLPrefferedAntagonistRole(FString SteamID)
 {
 	if (bConnectionActive)
 	{
-		//try
-		//{
-		//	sql::Statement* stmt(con->createStatement());
+		try
+		{
+		otl_cursor::direct_exec
+			(
+				database,
+				("USE " + StringHelpers::ConvertToString(ServerDatabase)).c_str(),
+				otl_exception::enabled
+				);
 
-		//	sql::ResultSet* res;
+		IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get("Steam");
 
-		//	IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get("Steam");
+		FString Statement = "SELECT preferredantagonistroles FROM players WHERE steamid LIKE " + SteamID;
 
-		//	stmt->execute("USE " + StringHelpers::ConvertToString(ServerDatabase));
+		if (OnlineSub)
+		{
+			otl_stream i(50000, // buffer size
+				StringHelpers::ConvertToString(Statement).c_str(),
+				database
+				);
 
-		//	if (OnlineSub)
-		//	{
-		//		res = stmt->executeQuery("SELECT * FROM players WHERE steamid LIKE " + StringHelpers::ConvertToString(*SteamID));
-		//	}
-		//	else
-		//	{
-		//		res = stmt->executeQuery("SELECT * FROM players WHERE steamid LIKE 76561198004815982");
-		//	}
+			int ReturnValue;
 
-		//	//delete stmt;
-		//	if (res->next())
-		//	{
-		//		return res->getUInt("preferredantagonistroles");
-		//	}
-		//	else return 0;
-		//}
-		//catch (sql::SQLException &e)
-		//{
-		//	GUARD_LOCK();
-		//	SET_WARN_COLOR(COLOR_YELLOW);
-		//	UE_LOG(SpaceStationGameLog, Warning, TEXT("MySQL error code: %d"), e.getErrorCode());
-		//	UE_LOG(SpaceStationGameLog, Warning, TEXT("MySQL failed to connect, please check your mysql server info"));
-		//	CLEAR_WARN_COLOR();
-		//	GUARD_UNLOCK();
+			while (!i.eof())
+			{
+				i >> ReturnValue;
 
-		//	bConnectionActive = false;
-		//}
+				return ReturnValue;
+			}
+		}
+#if !UE_BUILD_SHIPPING
+		else
+		{
+			otl_stream i(50000, // buffer size
+				"SELECT preferredantagonistroles FROM players WHERE steamid LIKE 76561198004815982",
+				database
+				);
+
+			int ReturnValue;
+
+			while (!i.eof())
+			{
+				i >> ReturnValue;
+
+				return ReturnValue;
+			}
+		}
+#else // UE_BUILD_SHIPPING
+		else
+		{
+			SET_WARN_COLOR(COLOR_YELLOW);
+			UE_LOG(SpaceStationGameLog, Warning, TEXT("Steam subsystem failed to initialize!"));
+			CLEAR_WARN_COLOR();
+		}
+#endif
+		}
+		catch (otl_exception& p)
+		{
+			SET_WARN_COLOR(COLOR_YELLOW);
+			// OTL is so verbose!
+			UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL error code:\t\t		%d"), p.code);
+			//UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL state:\t\t\t			" + p.sqlstate));
+			//UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL error message:\t\t		" + p.msg));
+			//UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL bad statement:\t\t		" + p.stm_text));
+			//UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL bad variable:\t\t		" + p.var_info));
+			UE_LOG(SpaceStationGameLog, Warning, TEXT("MySQL failed to connect, please check your mysql server info"));
+			CLEAR_WARN_COLOR();
+
+			bConnectionActive = false;
+		}
 	}
 	return 0;
 }
