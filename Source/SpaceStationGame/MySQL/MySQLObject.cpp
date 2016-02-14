@@ -77,6 +77,10 @@ void UMySQLObject::GetMySQLData()
 		{
 			RetryConnection();
 		}
+		//else
+		//{
+			std::this_thread::sleep_for(std::chrono::milliseconds(32));
+		//}
 	}
 
 	database.logoff();
@@ -398,6 +402,8 @@ uint32 UMySQLObject::GetMySQLPrefferedAntagonistRole(FString SteamID)
 
 void UMySQLObject::BeginDestroy()
 {
+	Super::BeginDestroy();
+
 	bThreadRunning = false;
 
 	if (bConnectionActive)
@@ -405,7 +411,5 @@ void UMySQLObject::BeginDestroy()
 		bConnectionActive = false;
 	}
 
-	MySQLThread.join();
-
-	Super::BeginDestroy();
+	//MySQLThread.join();
 }

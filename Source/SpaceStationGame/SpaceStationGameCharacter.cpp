@@ -423,7 +423,7 @@ void ASpaceStationGameCharacter::CalculateHealth(float Damage, struct FDamageEve
 
 			if (Health <= 0)
 			{
-
+				Kill();
 			}
 		}
 		else
@@ -434,6 +434,16 @@ void ASpaceStationGameCharacter::CalculateHealth(float Damage, struct FDamageEve
 	else if (HealthCalculationMethod == EHealthCalculationMethod::Realistic)
 	{
 		//welp i'll do this shit later
+	}
+}
+
+void ASpaceStationGameCharacter::Kill_Implementation()
+{
+	if (HasAuthority())
+	{
+		GetMesh()->SetSimulatePhysics(true);
+
+		DisableInput(Cast<APlayerController>(GetController()));
 	}
 }
 

@@ -82,9 +82,9 @@ protected:
 
 	std::thread MySQLThread;
 
-	std::atomic<bool> bThreadRunning;
+	bool bThreadRunning;
 
-	std::atomic<bool> bConnectionActive;
+	bool bConnectionActive;
 
 private:
 	void OpenConnection();
