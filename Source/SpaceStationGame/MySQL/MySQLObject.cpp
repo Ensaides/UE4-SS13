@@ -402,7 +402,7 @@ void UMySQLObject::BeginDestroy()
 		bConnectionActive = false;
 	}
 
-	MySQLThread.join();
+	if (MySQLThread.joinable()) MySQLThread.join();
 
 	database.logoff();
 }
