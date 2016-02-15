@@ -27,6 +27,7 @@ otl_connect database;
 	{ \
 		SET_WARN_COLOR(COLOR_YELLOW); \
 		UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL error code:\t\t		%d"), p.code); \
+		UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL error message:\t\t		%s"), p.msg); \
 		UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL variable error:\t\t	%s"), *p.var_info); \
 		if (p.code == 32000) \
 		{ \
