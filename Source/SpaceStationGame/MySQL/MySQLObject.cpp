@@ -23,11 +23,17 @@
 otl_connect database;
 
 #if !UE_BUILD_SHIPPING
-	#define PRINT_ERRORS() \
+#define PRINT_ERRORS() \
 	{ \
 		SET_WARN_COLOR(COLOR_YELLOW); \
 		UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL error code:\t\t		%d"), p.code); \
-		UE_LOG(SpaceStationGameLog, Warning, TEXT("MySQL failed to connect, please check your mysql server info")); \
+		UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL error message:\t\t		%s"), p.msg); \
+		UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL variable error:\t\t	%s"), *p.var_info); \
+		if (p.code == 32000) \
+		{ \
+			UE_LOG(SpaceStationGameLog, Warning, TEXT("Incompatible MySQL data types!")); \
+		} \
+		else UE_LOG(SpaceStationGameLog, Warning, TEXT("MySQL failed to connect, please check your mysql server info")); \
 		CLEAR_WARN_COLOR(); \
 		UE_LOG(SpaceStationGameLog, Warning, TEXT("Line Number:		%d"), __LINE__); \
 		UE_LOG(SpaceStationGameLog, Warning, TEXT("Function:		%s"), *FString(__FUNCTION__)); \
@@ -98,7 +104,7 @@ void UMySQLObject::GetMySQLData()
 		//std::this_thread::sleep_for(std::chrono::seconds(4)); // Make it wait for a bit- for debug purposes
 #endif// !UE_BUILD_SHIPPING
 
-		std::this_thread::sleep_for(std::chrono::milliseconds(32));
+		std::this_thread::sleep_for(std::chrono::milliseconds(16)); // Run the thread at about 60 ticks/sec
 	}
 }
 
