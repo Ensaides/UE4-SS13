@@ -26,9 +26,9 @@ otl_connect database;
 #define PRINT_ERRORS() \
 	{ \
 		SET_WARN_COLOR(COLOR_YELLOW); \
+		std::string var_info(p.var_info); \
 		UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL error code:\t\t		%d"), p.code); \
-		UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL error message:\t\t		%s"), p.msg); \
-		UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL variable error:\t\t	%s"), *p.var_info); \
+		UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL variable error:\t\t	%s"), *StringHelpers::ConvertToFString(var_info)); \
 		if (p.code == 32000) \
 		{ \
 			UE_LOG(SpaceStationGameLog, Warning, TEXT("Incompatible MySQL data types!")); \
@@ -172,7 +172,7 @@ void UMySQLObject::OpenConnection()
 					"CREATE TABLE IF NOT EXISTS `players` ("
 					"`steamid` BIGINT(20) UNSIGNED NOT NULL,"
 					"`preferredjob` TINYINT(3) UNSIGNED NOT NULL,"
-					"`preferredantagonistroles` BIT(32) NOT NULL,"
+					"`preferredantagonistroles` INT(10) UNSIGNED NOT NULL,"
 					"PRIMARY KEY (`steamid`));",
 					otl_exception::enabled
 					);
@@ -368,7 +368,7 @@ uint32 UMySQLObject::GetMySQLPrefferedAntagonistRole(FString SteamID)
 				database
 				);
 
-			long ReturnValue;
+			int ReturnValue;
 
 			while (!i.eof())
 			{
