@@ -58,6 +58,8 @@ class SPACESTATIONGAME_API UMySQLObject : public UObject
 public:
 	void Initialize();
 
+	virtual void BeginDestroy() override;
+
 	UPROPERTY(config)
 		FString ServerODBCName;
 
@@ -88,8 +90,6 @@ protected:
 
 private:
 	void OpenConnection();
-
-	virtual void BeginDestroy() override;
 
 	void SetUpMySQLPlayerData(FString SteamID);
 

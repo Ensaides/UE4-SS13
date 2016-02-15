@@ -440,18 +440,25 @@ void ASpaceStationGameCharacter::CalculateHealth(float Damage, struct FDamageEve
 void ASpaceStationGameCharacter::Kill_Implementation()
 {
 	//DisableInput(Cast<APlayerController>(GetController()));
-
+	
+	// Ragdoll the character
 	GetMesh()->SetSimulatePhysics(true);
 
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
-	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
 
+	// Set up ragdoll collision responses
 	GetMesh()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
+
+	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
+
+	// Make the mesh visible to the owner
+	GetMesh()->SetOwnerNoSee(false);
 
 	if (!HasAuthority())
 	{
-		GetMesh()->SetOwnerNoSee(false);
+		//GetMesh()->SetOwnerNoSee(false);
 
 		GetMesh1P()->SetVisibility(false);
 	}

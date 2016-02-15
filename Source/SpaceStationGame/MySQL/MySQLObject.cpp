@@ -22,6 +22,26 @@
 
 otl_connect database;
 
+#if !UE_BUILD_SHIPPING
+	#define PRINT_ERRORS() \
+	{ \
+		SET_WARN_COLOR(COLOR_YELLOW); \
+		UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL error code:\t\t		%d"), p.code); \
+		UE_LOG(SpaceStationGameLog, Warning, TEXT("MySQL failed to connect, please check your mysql server info")); \
+		CLEAR_WARN_COLOR(); \
+		UE_LOG(SpaceStationGameLog, Warning, TEXT("Line Number:		%d"), __LINE__); \
+		UE_LOG(SpaceStationGameLog, Warning, TEXT("Function:		%s"), *FString(__FUNCTION__)); \
+	}
+#else
+	#define PRINT_ERRORS() \
+	{ \
+		SET_WARN_COLOR(COLOR_YELLOW); \
+		UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL error code:\t\t		%d"), p.code); \
+		UE_LOG(SpaceStationGameLog, Warning, TEXT("MySQL failed to connect, please check your mysql server info")); \
+		CLEAR_WARN_COLOR(); \
+	}
+#endif
+
 void UMySQLObject::AddPlayerData(FString SteamID, ASpaceStationGamePlayerController* Player)
 {
 	ThreadInputStruct NewStruct;
@@ -51,36 +71,34 @@ void UMySQLObject::GetMySQLData()
 	// Load the player data
 	while (bThreadRunning)
 	{
-		if (ThreadInput.size() > 0 && bConnectionActive)
 		{
-			ThreadOutputStruct Output;
-
-			Output.PrefferedJob = GetMySQLPreferredJob(ThreadInput.back().SteamID);
-
-			Output.PrefferedAntagonistRoles = GetMySQLPrefferedAntagonistRole(ThreadInput.back().SteamID);
-
 			std::unique_lock<std::mutex> guard(MySQLLock);
-			ThreadInput.back().Player->SetStartingJob(Output.PrefferedJob);
-			ThreadInput.back().Player->SetPreferredAntagonistRole(Output.PrefferedAntagonistRoles);
-			guard.unlock();
+
+			if (ThreadInput.size() > 0 && bConnectionActive)
+			{
+				ThreadInputStruct NewStruct = ThreadInput.back();
+				ThreadInput.pop_back();
+				guard.unlock();
+
+				// Set the player preferences
+				NewStruct.Player->SetStartingJob(GetMySQLPreferredJob(NewStruct.SteamID));
+				NewStruct.Player->SetPreferredAntagonistRole(GetMySQLPrefferedAntagonistRole(NewStruct.SteamID));
+
+				NewStruct.Player->bMySQLPlayerDataLoaded = true;
+			}
+			else if (!bConnectionActive)
+			{
+				guard.unlock();
+
+				RetryConnection();
+			}
+		}
 
 #if !UE_BUILD_SHIPPING
-			std::this_thread::sleep_for(std::chrono::seconds(1)); // Make it wait for a bit- for debug purposes
+		//std::this_thread::sleep_for(std::chrono::seconds(1)); // Make it wait for a bit- for debug purposes
 #endif// !UE_BUILD_SHIPPING
-			
-			guard.lock();
-			ThreadInput.back().Player->bMySQLPlayerDataLoaded = true;
 
-			ThreadInput.pop_back();
-		}
-		else if (!bConnectionActive)
-		{
-			RetryConnection();
-		}
-		//else
-		//{
-			std::this_thread::sleep_for(std::chrono::milliseconds(32));
-		//}
+		std::this_thread::sleep_for(std::chrono::milliseconds(32));
 	}
 }
 
@@ -118,56 +136,55 @@ void UMySQLObject::OpenConnection()
 	//Initialize OTL
 	otl_connect::otl_initialize();
 
-	try
+	if (!database.connected)
 	{
-		std::string LoginString;
+		try
+		{
+			std::string LoginString;
 
-		LoginString = StringHelpers::ConvertToString(ServerUsername) + "/" + StringHelpers::ConvertToString(ServerPassword) + "@" + StringHelpers::ConvertToString(ServerODBCName);
+			LoginString = StringHelpers::ConvertToString(ServerUsername) + "/" + StringHelpers::ConvertToString(ServerPassword) + "@" + StringHelpers::ConvertToString(ServerODBCName);
 
-		database.rlogon(LoginString.c_str());
+			database.rlogon(LoginString.c_str());
 
-		otl_cursor::direct_exec
-			(
-				database,
-				("CREATE DATABASE IF NOT EXISTS " + StringHelpers::ConvertToString(ServerDatabase)).c_str(),
-				otl_exception::enabled
-			);
+			otl_cursor::direct_exec
+				(
+					database,
+					("CREATE DATABASE IF NOT EXISTS " + StringHelpers::ConvertToString(ServerDatabase)).c_str(),
+					otl_exception::enabled
+					);
 
-		otl_cursor::direct_exec
-			(
-				database,
-				("USE " + StringHelpers::ConvertToString(ServerDatabase)).c_str(),
-				otl_exception::enabled
-			);
+			otl_cursor::direct_exec
+				(
+					database,
+					("USE " + StringHelpers::ConvertToString(ServerDatabase)).c_str(),
+					otl_exception::enabled
+					);
 
-		otl_cursor::direct_exec
-			(
-				database,
-				"CREATE TABLE IF NOT EXISTS `players` ("
-				"`steamid` BIGINT(20) UNSIGNED NOT NULL,"
-				"`preferredjob` TINYINT(3) UNSIGNED NOT NULL,"
-				"`preferredantagonistroles` BIT(32) NOT NULL,"
-				"PRIMARY KEY (`steamid`));",
-				otl_exception::enabled
-			);
+			otl_cursor::direct_exec
+				(
+					database,
+					"CREATE TABLE IF NOT EXISTS `players` ("
+					"`steamid` BIGINT(20) UNSIGNED NOT NULL,"
+					"`preferredjob` TINYINT(3) UNSIGNED NOT NULL,"
+					"`preferredantagonistroles` BIT(32) NOT NULL,"
+					"PRIMARY KEY (`steamid`));",
+					otl_exception::enabled
+					);
 
 
+		}
+		catch (otl_exception& p)
+		{
+			PRINT_ERRORS();
+
+			bConnectionActive = false;
+
+			return;
+		}
 	}
-	catch (otl_exception& p)
+	else
 	{
-		SET_WARN_COLOR(COLOR_YELLOW);
-		// OTL is so verbose!
-		UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL error code:\t\t		%d"), p.code);
-		//UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL state:\t\t\t			" + p.sqlstate));
-		//UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL error message:\t\t		" + p.msg));
-		//UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL bad statement:\t\t		" + p.stm_text));
-		//UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL bad variable:\t\t		" + p.var_info));
-		UE_LOG(SpaceStationGameLog, Warning, TEXT("MySQL failed to connect, please check your mysql server info"));
-		CLEAR_WARN_COLOR();
-
-		bConnectionActive = false;
-
-		return;
+		bConnectionActive = true;
 	}
 
 	SET_WARN_COLOR(COLOR_CYAN);
@@ -227,15 +244,7 @@ void UMySQLObject::SetUpMySQLPlayerData(FString SteamID)
 		}
 		catch (otl_exception& p)
 		{
-			SET_WARN_COLOR(COLOR_YELLOW);
-			// OTL is so verbose!
-			UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL error code:\t\t		%d"), p.code);
-			//UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL state:\t\t\t			" + p.sqlstate));
-			//UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL error message:\t\t		" + p.msg));
-			//UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL bad statement:\t\t		" + p.stm_text));
-			//UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL bad variable:\t\t		" + p.var_info));
-			UE_LOG(SpaceStationGameLog, Warning, TEXT("MySQL failed to connect, please check your mysql server info"));
-			CLEAR_WARN_COLOR();
+			PRINT_ERRORS();
 
 			bConnectionActive = false;
 
@@ -305,15 +314,7 @@ uint8 UMySQLObject::GetMySQLPreferredJob(FString SteamID)
 		}
 		catch (otl_exception& p)
 		{
-			SET_WARN_COLOR(COLOR_YELLOW);
-			// OTL is so verbose!
-			UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL error code:\t\t		%d"), p.code);
-			//UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL state:\t\t\t			" + p.sqlstate));
-			//UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL error message:\t\t		" + p.msg));
-			//UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL bad statement:\t\t		" + p.stm_text));
-			//UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL bad variable:\t\t		" + p.var_info));
-			UE_LOG(SpaceStationGameLog, Warning, TEXT("MySQL failed to connect, please check your mysql server info"));
-			CLEAR_WARN_COLOR();
+			PRINT_ERRORS();
 
 			bConnectionActive = false;
 		}
@@ -382,15 +383,7 @@ uint32 UMySQLObject::GetMySQLPrefferedAntagonistRole(FString SteamID)
 		}
 		catch (otl_exception& p)
 		{
-			SET_WARN_COLOR(COLOR_YELLOW);
-			// OTL is so verbose!
-			UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL error code:\t\t		%d"), p.code);
-			//UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL state:\t\t\t			" + p.sqlstate));
-			//UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL error message:\t\t		" + p.msg));
-			//UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL bad statement:\t\t		" + p.stm_text));
-			//UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL bad variable:\t\t		" + p.var_info));
-			UE_LOG(SpaceStationGameLog, Warning, TEXT("MySQL failed to connect, please check your mysql server info"));
-			CLEAR_WARN_COLOR();
+			PRINT_ERRORS();
 
 			bConnectionActive = false;
 		}
