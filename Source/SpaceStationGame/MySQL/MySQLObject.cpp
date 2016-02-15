@@ -232,11 +232,10 @@ void UMySQLObject::SetUpMySQLPlayerData(FString SteamID)
 				CLEAR_WARN_COLOR();
 
 #if !UE_BUILD_SHIPPING
-				//My steam id
 				otl_cursor::direct_exec
 					(
 						database,
-						"INSERT IGNORE INTO players (steamid, preferredjob) VALUES (76561198004815982, 19);",
+						"INSERT IGNORE INTO players (steamid, preferredjob) VALUES (76561198004815982, 19);", // Use my steam id for debug
 						otl_exception::enabled
 					);
 #endif // !UE_BUILD_SHIPPING
@@ -363,7 +362,7 @@ uint32 UMySQLObject::GetMySQLPrefferedAntagonistRole(FString SteamID)
 				database
 				);
 
-			int ReturnValue;
+			long ReturnValue;
 
 			while (!i.eof())
 			{
