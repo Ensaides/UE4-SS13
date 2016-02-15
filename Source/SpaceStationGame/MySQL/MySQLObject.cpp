@@ -95,7 +95,7 @@ void UMySQLObject::GetMySQLData()
 		}
 
 #if !UE_BUILD_SHIPPING
-		//std::this_thread::sleep_for(std::chrono::seconds(1)); // Make it wait for a bit- for debug purposes
+		//std::this_thread::sleep_for(std::chrono::seconds(4)); // Make it wait for a bit- for debug purposes
 #endif// !UE_BUILD_SHIPPING
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(32));
