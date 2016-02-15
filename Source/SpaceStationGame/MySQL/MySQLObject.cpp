@@ -65,7 +65,7 @@ void UMySQLObject::GetMySQLData()
 			guard.unlock();
 
 #if !UE_BUILD_SHIPPING
-			std::this_thread::sleep_for(std::chrono::seconds(2)); // Make it wait for a bit- for debug purposes
+			std::this_thread::sleep_for(std::chrono::seconds(1)); // Make it wait for a bit- for debug purposes
 #endif// !UE_BUILD_SHIPPING
 			
 			guard.lock();
@@ -82,8 +82,6 @@ void UMySQLObject::GetMySQLData()
 			std::this_thread::sleep_for(std::chrono::milliseconds(32));
 		//}
 	}
-
-	database.logoff();
 }
 
 void UMySQLObject::RetryConnection()
@@ -411,5 +409,7 @@ void UMySQLObject::BeginDestroy()
 		bConnectionActive = false;
 	}
 
-	//MySQLThread.join();
+	MySQLThread.join();
+
+	database.logoff();
 }

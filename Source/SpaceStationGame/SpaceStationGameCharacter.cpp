@@ -439,11 +439,21 @@ void ASpaceStationGameCharacter::CalculateHealth(float Damage, struct FDamageEve
 
 void ASpaceStationGameCharacter::Kill_Implementation()
 {
-	if (HasAuthority())
-	{
-		GetMesh()->SetSimulatePhysics(true);
+	//DisableInput(Cast<APlayerController>(GetController()));
 
-		DisableInput(Cast<APlayerController>(GetController()));
+	GetMesh()->SetSimulatePhysics(true);
+
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+
+	GetMesh()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
+
+	if (!HasAuthority())
+	{
+		GetMesh()->SetOwnerNoSee(false);
+
+		GetMesh1P()->SetVisibility(false);
 	}
 }
 

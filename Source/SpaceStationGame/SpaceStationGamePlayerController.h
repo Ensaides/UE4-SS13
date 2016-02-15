@@ -5,6 +5,7 @@
 #include "GameFramework/PlayerController.h"
 #include "AntagonistRoles.h"
 #include "ChatMessageStruct.h"
+#include "SpaceStationGameCharacter.h"
 #include "SpaceStationGamePlayerController.generated.h"
 
 class AIDCard;
@@ -37,9 +38,25 @@ class SPACESTATIONGAME_API ASpaceStationGamePlayerController : public APlayerCon
 	UFUNCTION(reliable, server, WithValidation)
 		void ServerChatFunc(const FString& InputString);
 
+	bool ServerChatFunc_Validate(const FString& InputString) { return true; };
+
 	void ServerChatFunc_Implementation(const FString& InputString);
 
-	bool ServerChatFunc_Validate(const FString& InputString) { return true; };
+	// Debug function to test death
+//#if !UE_BUILD_SHIPPING
+	UFUNCTION(exec)
+		void Kill() { ServerKill(); };
+
+	UFUNCTION(reliable, server, WithValidation)
+		void ServerKill();
+
+	bool ServerKill_Validate() { return true; };
+
+	void ServerKill_Implementation() 
+	{
+		if (Cast<ASpaceStationGameCharacter>(GetPawn())) Cast<ASpaceStationGameCharacter>(GetPawn())->Kill_Multicast();
+	};
+//#endif // !UE_BUILD_SHIPPING
 
 	TArray<FClientChatMessageStruct> ChatMessages;
 

@@ -78,13 +78,16 @@ public:
 
 	void SetHealth_Implementation(float NewHealth);
 
+	// Always call this one
 	UFUNCTION(NetMulticast, Reliable, WithValidation, Category = Health)
-		void Kill();
+		void Kill_Multicast();
 
-	bool Kill_Validate() { return Health <= 0; };
+	bool Kill_Multicast_Validate() { return true; };
 
-	// Implement this later
-	void Kill_Implementation();
+	void Kill_Multicast_Implementation() { Kill(); };
+
+	UFUNCTION(BlueprintNativeEvent, Category = Health)
+	void Kill();
 
 	UPROPERTY(EditAnyWhere, Replicated, Category = Inventory)
 		EHumanInventorySlot SelectedItem;
