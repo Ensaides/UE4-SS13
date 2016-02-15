@@ -64,6 +64,8 @@ ASpaceStationGameCharacter::ASpaceStationGameCharacter(const FObjectInitializer&
 	bReplicateMovement = true;
 
 	bInitializeJob = false;
+
+	bAlive = true;
 }
 
 void ASpaceStationGameCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
@@ -84,6 +86,7 @@ void ASpaceStationGameCharacter::GetLifetimeReplicatedProps(TArray< FLifetimePro
 	DOREPLIFETIME_CONDITION(ASpaceStationGameCharacter, AntagonistRole, COND_OwnerOnly);
 
 	DOREPLIFETIME(ASpaceStationGameCharacter, PawnName);
+	DOREPLIFETIME(ASpaceStationGameCharacter, bAlive);
 }
 
 void ASpaceStationGameCharacter::BeginPlay()
@@ -423,7 +426,7 @@ void ASpaceStationGameCharacter::CalculateHealth(float Damage, struct FDamageEve
 
 			if (Health <= 0)
 			{
-				Kill();
+				SetAlive(false);
 			}
 		}
 		else
@@ -437,30 +440,37 @@ void ASpaceStationGameCharacter::CalculateHealth(float Damage, struct FDamageEve
 	}
 }
 
-void ASpaceStationGameCharacter::Kill_Implementation()
+void ASpaceStationGameCharacter::OnRep_SetAlive()
 {
-	//DisableInput(Cast<APlayerController>(GetController()));
-	
-	// Ragdoll the character
-	GetMesh()->SetSimulatePhysics(true);
-
-	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-
-	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
-
-	// Set up ragdoll collision responses
-	GetMesh()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
-
-	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
-
-	// Make the mesh visible to the owner
-	GetMesh()->SetOwnerNoSee(false);
-
-	if (!HasAuthority())
+	if (bAlive)
 	{
-		//GetMesh()->SetOwnerNoSee(false);
 
-		GetMesh1P()->SetVisibility(false);
+	}
+	else
+	{
+		//DisableInput(Cast<APlayerController>(GetController()));
+
+		// Ragdoll the character
+		GetMesh()->SetSimulatePhysics(true);
+
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+
+		GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+
+		// Set up ragdoll collision responses
+		GetMesh()->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
+
+		GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
+
+		// Make the mesh visible to the owner
+		GetMesh()->SetOwnerNoSee(false);
+
+		if (!HasAuthority())
+		{
+			//GetMesh()->SetOwnerNoSee(false);
+
+			GetMesh1P()->SetVisibility(false);
+		}
 	}
 }
 
