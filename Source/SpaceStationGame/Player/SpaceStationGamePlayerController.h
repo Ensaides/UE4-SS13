@@ -139,7 +139,7 @@ public:
 	void SetStartingJob_Implementation(uint8 Job) { StartingJob = Job; };
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = Replication)
-		FPreferredAntagonistRole PreferredAntagonistRole;
+	FPreferredAntagonistRole PreferredAntagonistRole;
 
 	UFUNCTION(Server, WithValidation, Reliable)
 		void SetPreferredAntagonistRole(uint32 NewPreferredAntagonistRole);
