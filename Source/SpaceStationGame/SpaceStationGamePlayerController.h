@@ -54,12 +54,7 @@ class SPACESTATIONGAME_API ASpaceStationGamePlayerController : public APlayerCon
 
 	void ServerKill_Implementation() 
 	{
-		if (Cast<ASpaceStationGameCharacter>(GetPawn()))
-		{
-			Cast<ASpaceStationGameCharacter>(GetPawn())->SetHealth(0);
-
-			Cast<ASpaceStationGameCharacter>(GetPawn())->Kill_Multicast();
-		}
+		if (Cast<ASpaceStationGameCharacter>(GetPawn())) Cast<ASpaceStationGameCharacter>(GetPawn())->SetHealth(0);
 	};
 //#endif // !UE_BUILD_SHIPPING
 
