@@ -277,13 +277,13 @@
     <ClInclude Include="..\..\ThirdParty\OTL\Includes\otlv4.h">
       <Filter>Source\ThirdParty\OTL</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\SpaceStationGame\SpaceStationGameCharacter.h">
+    <ClInclude Include="..\..\Source\SpaceStationGame\Player\SpaceStationGameCharacter.h">
       <Filter>Source\SpaceStationGame\Player</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\SpaceStationGame\SpaceStationGamePlayerController.h">
+    <ClInclude Include="..\..\Source\SpaceStationGame\Player\SpaceStationGamePlayerController.h">
       <Filter>Source\SpaceStationGame\Player</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\SpaceStationGame\SpaceStationGamePlayerState.h">
+    <ClInclude Include="..\..\Source\SpaceStationGame\Player\SpaceStationGamePlayerState.h">
       <Filter>Source\SpaceStationGame\Player</Filter>
     </ClInclude>
   </ItemGroup>
@@ -333,13 +333,13 @@
     <ClCompile Include="..\..\Source\SpaceStationGame\Items\ID\Cartridge\Cartridge.cpp">
       <Filter>Source\SpaceStationGame\Items\ID\Cartridge</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\SpaceStationGame\SpaceStationGameCharacter.cpp">
+    <ClCompile Include="..\..\Source\SpaceStationGame\Player\SpaceStationGameCharacter.cpp">
       <Filter>Source\SpaceStationGame\Player</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\SpaceStationGame\SpaceStationGamePlayerController.cpp">
+    <ClCompile Include="..\..\Source\SpaceStationGame\Player\SpaceStationGamePlayerController.cpp">
       <Filter>Source\SpaceStationGame\Player</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\SpaceStationGame\SpaceStationGamePlayerState.cpp">
+    <ClCompile Include="..\..\Source\SpaceStationGame\Player\SpaceStationGamePlayerState.cpp">
       <Filter>Source\SpaceStationGame\Player</Filter>
     </ClCompile>
   </ItemGroup>

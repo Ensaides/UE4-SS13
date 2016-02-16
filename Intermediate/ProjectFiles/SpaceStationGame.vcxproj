@@ -1954,6 +1954,9 @@
     <ClCompile Include="..\..\Source\SpaceStationGame\Items\ID\PDA.cpp" />
     <ClCompile Include="..\..\Source\SpaceStationGame\Jobs\JobManagerObject.cpp" />
     <ClCompile Include="..\..\Source\SpaceStationGame\Jobs\JobObject.cpp" />
+    <ClCompile Include="..\..\Source\SpaceStationGame\Player\SpaceStationGameCharacter.cpp" />
+    <ClCompile Include="..\..\Source\SpaceStationGame\Player\SpaceStationGamePlayerController.cpp" />
+    <ClCompile Include="..\..\Source\SpaceStationGame\Player\SpaceStationGamePlayerState.cpp" />
     <ClCompile Include="..\..\Source\SpaceStationGame\Roundtypes\RoundType.cpp" />
     <ClCompile Include="..\..\Source\SpaceStationGame\Roundtypes\RoundTypeTraitor.cpp" />
     <ClCompile Include="..\..\Source\SpaceStationGame\Voxel\Voxel.cpp" />
@@ -1962,6 +1965,9 @@
     <ClInclude Include="..\..\Source\SpaceStationGame\Items\ID\PDA.h" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Jobs\JobManagerObject.h" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Jobs\JobObject.h" />
+    <ClInclude Include="..\..\Source\SpaceStationGame\Player\SpaceStationGameCharacter.h" />
+    <ClInclude Include="..\..\Source\SpaceStationGame\Player\SpaceStationGamePlayerController.h" />
+    <ClInclude Include="..\..\Source\SpaceStationGame\Player\SpaceStationGamePlayerState.h" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Public\Antag\AntagonistRoles.h" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Roundtypes\RoundType.h" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Roundtypes\RoundTypeTraitor.h" />
@@ -1987,10 +1993,8 @@
     <None Include="..\..\Source\SpaceStationGame\SpaceStationGame.Build.cs" />
     <ClCompile Include="..\..\Source\SpaceStationGame\OpenCL\OpenCLObject.cpp" />
     <ClCompile Include="..\..\Source\SpaceStationGame\Private\SpaceStationGameServerState.cpp" />
-    <ClCompile Include="..\..\Source\SpaceStationGame\SpaceStationGameCharacter.cpp" />
     <ClInclude Include="..\..\Source\SpaceStationGame\OpenCL\OpenCLObject.h" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Public\SpaceStationGameServerState.h" />
-    <ClInclude Include="..\..\Source\SpaceStationGame\SpaceStationGameCharacter.h" />
     <ClCompile Include="..\..\Source\SpaceStationGame\SpaceStationGameGameMode.cpp" />
     <ClInclude Include="..\..\Source\SpaceStationGame\SpaceStationGameGameMode.h" />
     <ClCompile Include="..\..\Source\SpaceStationGame\SpaceStationGameGameResources.cpp" />
@@ -1999,10 +2003,6 @@
     <ClInclude Include="..\..\Source\SpaceStationGame\SpaceStationGameGameState.h" />
     <ClCompile Include="..\..\Source\SpaceStationGame\SpaceStationGameHUD.cpp" />
     <ClInclude Include="..\..\Source\SpaceStationGame\SpaceStationGameHUD.h" />
-    <ClCompile Include="..\..\Source\SpaceStationGame\SpaceStationGamePlayerController.cpp" />
-    <ClInclude Include="..\..\Source\SpaceStationGame\SpaceStationGamePlayerController.h" />
-    <ClCompile Include="..\..\Source\SpaceStationGame\SpaceStationGamePlayerState.cpp" />
-    <ClInclude Include="..\..\Source\SpaceStationGame\SpaceStationGamePlayerState.h" />
     <ClCompile Include="..\..\Source\SpaceStationGame\SpaceStationGameProjectile.cpp" />
     <ClInclude Include="..\..\Source\SpaceStationGame\SpaceStationGameProjectile.h" />
     <ClInclude Include="..\..\Source\SpaceStationGame\StringHelpers.h" />

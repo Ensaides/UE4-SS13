@@ -139,7 +139,7 @@ void ASpaceStationGameGameMode::PostLogin(APlayerController* NewPlayer)
 #if UE_SERVER || UE_EDITOR
 	if (Cast<ASpaceStationGameGameState>(GetWorld()->GetGameState()) && GEngine->GetNetMode(GetWorld()) == NM_DedicatedServer)
 	{
-		Cast<ASpaceStationGamePlayerController>(NewPlayer)->LoadingState = "Loading MySQL player data";
+		Cast<ASpaceStationGamePlayerController>(NewPlayer)->LoadingState.Add("Loading MySQL player data");
 
 		ASpaceStationGameGameState* GameState = Cast<ASpaceStationGameGameState>(GetWorld()->GetGameState());
 

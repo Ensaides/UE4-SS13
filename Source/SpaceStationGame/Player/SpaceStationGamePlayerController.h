@@ -120,7 +120,7 @@ public:
 		bool bMySQLPlayerDataLoaded;
 
 	UPROPERTY(BlueprintReadWrite, Replicated, Category = "Player Data")
-		FString LoadingState;
+		TArray<FString> LoadingState;
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Player Data")
 		void OpenLoadingScreen();

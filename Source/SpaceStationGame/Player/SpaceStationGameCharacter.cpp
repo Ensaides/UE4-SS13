@@ -669,10 +669,6 @@ void ASpaceStationGameCharacter::RemoveInventoryItem_Implementation(EHumanInvent
 	
 	InventoryStruct.Index.RemoveAt(NewIndex);
 	InventoryStruct.Items.RemoveAt(NewIndex);
-
-
-
-	//InventoryMap.Remove(Index);
 }
 
 float ASpaceStationGameCharacter::GetHealth()
