@@ -23,6 +23,7 @@ public class SpaceStationGame : ModuleRules
 		        "SpaceStationGame",
 				"SpaceStationGame/Atmospherics",
 		        "SpaceStationGame/Mobs",
+				"SpaceStationGame/Player",
                 "SpaceStationGame/Jobs",
                 "SpaceStationGame/Items",
                 "SpaceStationGame/Items/ID",

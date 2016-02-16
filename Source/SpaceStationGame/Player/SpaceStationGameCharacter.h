@@ -74,7 +74,7 @@ public:
 	UFUNCTION(BlueprintCallable, Server, Reliable, WithValidation, Category = Health)
 		void SetHealth(float NewHealth);
 
-	bool SetHealth_Validate(float NewHealth) {	return true; };
+	bool SetHealth_Validate(float NewHealth) { return true; };
 
 	void SetHealth_Implementation(float NewHealth);
 

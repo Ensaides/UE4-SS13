@@ -683,6 +683,11 @@ float ASpaceStationGameCharacter::GetHealth()
 void ASpaceStationGameCharacter::SetHealth_Implementation(float NewHealth)
 {
 	Health = NewHealth;
+
+	if (Health <= 0)
+	{
+		SetAlive(false);
+	}
 }
 
 void ASpaceStationGameCharacter::Enter()

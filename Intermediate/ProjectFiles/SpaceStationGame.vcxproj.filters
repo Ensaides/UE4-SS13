@@ -235,19 +235,10 @@
     <ClInclude Include="..\..\Source\SpaceStationGame\SpaceStationGameHUD.h">
       <Filter>Source\SpaceStationGame\Public</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\SpaceStationGame\SpaceStationGamePlayerState.h">
-      <Filter>Source\SpaceStationGame\Public</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\SpaceStationGame\SpaceStationGamePlayerController.h">
-      <Filter>Source\SpaceStationGame\Public</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Source\SpaceStationGame\SpaceStationGameProjectile.h">
       <Filter>Source\SpaceStationGame\Public</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\SpaceStationGame\SpaceStationGameGameResources.h">
-      <Filter>Source\SpaceStationGame\Public</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\SpaceStationGame\SpaceStationGameCharacter.h">
       <Filter>Source\SpaceStationGame\Public</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\SpaceStationGame\StringHelpers.h">
@@ -286,15 +277,21 @@
     <ClInclude Include="..\..\ThirdParty\OTL\Includes\otlv4.h">
       <Filter>Source\ThirdParty\OTL</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceStationGame\SpaceStationGameCharacter.h">
+      <Filter>Source\SpaceStationGame\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceStationGame\SpaceStationGamePlayerController.h">
+      <Filter>Source\SpaceStationGame\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceStationGame\SpaceStationGamePlayerState.h">
+      <Filter>Source\SpaceStationGame\Player</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\SpaceStationGame\Private\SpaceStationGameServerState.cpp">
       <Filter>Source\SpaceStationGame\Private</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\SpaceStationGame\SpaceStationGameProjectile.cpp">
-      <Filter>Source\SpaceStationGame\Private</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\SpaceStationGame\SpaceStationGameCharacter.cpp">
       <Filter>Source\SpaceStationGame\Private</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\SpaceStationGame\SpaceStationGameGameMode.cpp">
@@ -307,12 +304,6 @@
       <Filter>Source\SpaceStationGame\Private</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\SpaceStationGame\SpaceStationGameHUD.cpp">
-      <Filter>Source\SpaceStationGame\Private</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\SpaceStationGame\SpaceStationGamePlayerController.cpp">
-      <Filter>Source\SpaceStationGame\Private</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\SpaceStationGame\SpaceStationGamePlayerState.cpp">
       <Filter>Source\SpaceStationGame\Private</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\SpaceStationGame\OpenCL\OpenCLObject.cpp">
@@ -341,6 +332,15 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\SpaceStationGame\Items\ID\Cartridge\Cartridge.cpp">
       <Filter>Source\SpaceStationGame\Items\ID\Cartridge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceStationGame\SpaceStationGameCharacter.cpp">
+      <Filter>Source\SpaceStationGame\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceStationGame\SpaceStationGamePlayerController.cpp">
+      <Filter>Source\SpaceStationGame\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceStationGame\SpaceStationGamePlayerState.cpp">
+      <Filter>Source\SpaceStationGame\Player</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -373,6 +373,9 @@
     </Filter>
     <Filter Include="Source\ThirdParty\OTL">
       <UniqueIdentifier>{b7c83a18-3656-4317-8ef6-932ef7f599b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\SpaceStationGame\Player">
+      <UniqueIdentifier>{63f32969-2be3-46ec-906d-9ca6c1d25ea3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
