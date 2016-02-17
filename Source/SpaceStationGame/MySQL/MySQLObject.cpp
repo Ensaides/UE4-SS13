@@ -146,37 +146,69 @@ void UMySQLObject::OpenConnection()
 	{
 		try
 		{
-			std::string LoginString;
-
-			LoginString = StringHelpers::ConvertToString(ServerUsername) + "/" + StringHelpers::ConvertToString(ServerPassword) + "@" + StringHelpers::ConvertToString(ServerODBCName);
-
-			database.rlogon(LoginString.c_str());
+			// Log into the database
+			database.rlogon(StringHelpers::ConvertToString(ServerUsername + "/" + ServerPassword + "@" + ServerODBCName).c_str());
 
 			otl_cursor::direct_exec
 				(
 					database,
-					("CREATE DATABASE IF NOT EXISTS " + StringHelpers::ConvertToString(ServerDatabase)).c_str(),
+					StringHelpers::ConvertToString("CREATE DATABASE IF NOT EXISTS " + ServerDatabase + " DEFAULT CHARACTER SET utf8;").c_str(),
 					otl_exception::enabled
 					);
 
 			otl_cursor::direct_exec
 				(
 					database,
-					("USE " + StringHelpers::ConvertToString(ServerDatabase)).c_str(),
+					StringHelpers::ConvertToString("USE " + ServerDatabase + ";").c_str(),
 					otl_exception::enabled
 					);
 
+			// Player table
 			otl_cursor::direct_exec
 				(
 					database,
-					"CREATE TABLE IF NOT EXISTS `players` ("
+					StringHelpers::ConvertToString("CREATE TABLE IF NOT EXISTS `" + ServerDatabase + "`.`playerpreferences` ("
 					"`steamid` BIGINT(20) UNSIGNED NOT NULL,"
 					"`preferredjob` TINYINT(3) UNSIGNED NOT NULL,"
-					"`preferredantagonistroles` INT(10) UNSIGNED NOT NULL,"
-					"PRIMARY KEY (`steamid`));",
+					"`preferredantagonistroles` INT(11) UNSIGNED NOT NULL,"
+					"PRIMARY KEY (`steamid`))"
+					"DEFAULT CHARACTER SET = utf8;").c_str(),
 					otl_exception::enabled
 					);
 
+			// Deaths table
+			otl_cursor::direct_exec
+				(
+					database,
+					StringHelpers::ConvertToString("CREATE TABLE IF NOT EXISTS `" + ServerDatabase + "`.`death` ("
+						"`steamid` BIGINT(20) UNSIGNED NOT NULL,"
+						"`coord` TEXT NOT NULL COMMENT 'X, Y, Z POD',"
+						"`job` TEXT NOT NULL,"
+						"`name` TEXT NOT NULL,"
+						"`laname` TEXT NOT NULL COMMENT 'Last attacker name',"
+						"`laid` TEXT NOT NULL COMMENT 'Last attacker steam id',"
+						"`gender` TEXT NOT NULL,"
+						"`bruteloss` INT(11) NOT NULL,"
+						"PRIMARY KEY (`steamid`))"
+						"DEFAULT CHARACTER SET = utf8;").c_str(),
+					otl_exception::enabled
+					);
+
+			// Bans table
+			otl_cursor::direct_exec
+				(
+					database,
+					StringHelpers::ConvertToString("CREATE TABLE IF NOT EXISTS `" + ServerDatabase + "`.`ban` ("
+						"`steamid` BIGINT(20) UNSIGNED NOT NULL,"
+						"`banningid` BIGINT(20) UNSIGNED NOT NULL COMMENT 'The player that banned this player'"
+						"`banlength` INT(11) SIGNED NOT NULL,"
+						"`bandate` BIGINT(20) NOT NULL COMMENT 'Ban date in UTC time',"
+						"`bancomment` TEXT,"
+						"`ipaddress` TEXT NOT NULL,"
+						"PRIMARY KEY (`steamid`))"
+						"DEFAULT CHARACTER SET = utf8;").c_str(),
+					otl_exception::enabled
+					);
 
 		}
 		catch (otl_exception& p)
@@ -221,13 +253,11 @@ void UMySQLObject::SetUpMySQLPlayerData(FString SteamID)
 				UE_LOG(SpaceStationGameLog, Log, TEXT("Steam subsystem initialized"));
 				CLEAR_WARN_COLOR();
 
-				FString Statement = "INSERT IGNORE INTO players (steamid, preferredjob) VALUES (" + SteamID + ", 19);";
-
 				// 19 is the assistant id
 				otl_cursor::direct_exec
 					(
 						database,
-						StringHelpers::ConvertToString(Statement).c_str(),
+						StringHelpers::ConvertToString("INSERT IGNORE INTO playerpreferences (steamid, preferredjob) VALUES (" + SteamID + ", 19);").c_str(),
 						otl_exception::enabled
 					);
 			}
@@ -241,7 +271,7 @@ void UMySQLObject::SetUpMySQLPlayerData(FString SteamID)
 				otl_cursor::direct_exec
 					(
 						database,
-						"INSERT IGNORE INTO players (steamid, preferredjob) VALUES (76561198004815982, 19);", // Use my steam id for debug
+						"INSERT IGNORE INTO playerpreferences (steamid, preferredjob) VALUES (76561198004815982, 19);", // Use my steam id for debug
 						otl_exception::enabled
 					);
 #endif // !UE_BUILD_SHIPPING
@@ -267,18 +297,16 @@ uint8 UMySQLObject::GetMySQLPreferredJob(FString SteamID)
 			otl_cursor::direct_exec
 				(
 					database,
-					("USE " + StringHelpers::ConvertToString(ServerDatabase)).c_str(),
+					StringHelpers::ConvertToString("USE " + ServerDatabase + ";").c_str(),
 					otl_exception::enabled
 				);
 
 			IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get("Steam");
 
-			FString Statement = "SELECT preferredjob FROM players WHERE steamid LIKE " + SteamID;
-
 			if (OnlineSub)
 			{
 				otl_stream i(50000, // buffer size
-					StringHelpers::ConvertToString(Statement).c_str(),
+					StringHelpers::ConvertToString("SELECT preferredjob FROM playerpreferences WHERE steamid LIKE " + SteamID).c_str(),
 					database
 					);
 
@@ -295,7 +323,7 @@ uint8 UMySQLObject::GetMySQLPreferredJob(FString SteamID)
 			else
 			{
 				otl_stream i(50000, // buffer size
-					"SELECT preferredjob FROM players WHERE steamid LIKE 76561198004815982",
+					"SELECT preferredjob FROM playerpreferences WHERE steamid LIKE 76561198004815982",
 					database
 					);
 
@@ -336,13 +364,13 @@ uint32 UMySQLObject::GetMySQLPrefferedAntagonistRole(FString SteamID)
 		otl_cursor::direct_exec
 			(
 				database,
-				("USE " + StringHelpers::ConvertToString(ServerDatabase)).c_str(),
+				StringHelpers::ConvertToString("USE " + ServerDatabase + ";").c_str(),
 				otl_exception::enabled
 				);
 
 		IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get("Steam");
 
-		FString Statement = "SELECT preferredantagonistroles FROM players WHERE steamid LIKE " + SteamID;
+		FString Statement = "SELECT preferredantagonistroles FROM playerpreferences WHERE steamid LIKE " + SteamID;
 
 		if (OnlineSub)
 		{
@@ -364,7 +392,7 @@ uint32 UMySQLObject::GetMySQLPrefferedAntagonistRole(FString SteamID)
 		else
 		{
 			otl_stream i(50000, // buffer size
-				"SELECT preferredantagonistroles FROM players WHERE steamid LIKE 76561198004815982",
+				"SELECT preferredantagonistroles FROM playerpreferences WHERE steamid LIKE 76561198004815982",
 				database
 				);
 

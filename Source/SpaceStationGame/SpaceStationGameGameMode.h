@@ -31,6 +31,8 @@ public:
 
 	virtual void HandleMatchHasEnded() override;
 
+	virtual void PreLogin(const FString & Options, const FString & Address, const TSharedPtr< const FUniqueNetId > & UniqueId, FString & ErrorMessage) override;
+
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 
 	virtual void RestartPlayer(class AController* NewPlayer) override;

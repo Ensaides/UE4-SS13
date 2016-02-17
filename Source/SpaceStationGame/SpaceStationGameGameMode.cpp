@@ -134,6 +134,16 @@ void ASpaceStationGameGameMode::HandleMatchHasStarted()
 	UE_LOG(SpaceStationGameLog, Log, TEXT("Round type is: %s"), *RoundType->RoundTypeName);
 }
 
+void ASpaceStationGameGameMode::PreLogin(const FString & Options, const FString & Address, const TSharedPtr< const FUniqueNetId > & UniqueId, FString & ErrorMessage)
+{
+	FString UniqueIdString = UniqueId->ToString();
+
+	UE_LOG(SpaceStationGameLog, Warning, TEXT("Address: %s"), *Address);
+	UE_LOG(SpaceStationGameLog, Warning, TEXT("Unique ID: %s"), *UniqueIdString);
+
+	Super::PreLogin(Options, Address, UniqueId, ErrorMessage);
+}
+
 void ASpaceStationGameGameMode::PostLogin(APlayerController* NewPlayer)
 {
 #if UE_SERVER || UE_EDITOR
