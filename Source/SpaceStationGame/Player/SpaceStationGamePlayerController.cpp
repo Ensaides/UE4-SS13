@@ -17,6 +17,8 @@ ASpaceStationGamePlayerController::ASpaceStationGamePlayerController(const FObje
 {
 	bHighlightUsableItems = true;
 	bMySQLPlayerDataLoaded = false;
+
+	bBanned = false;
 }
 
 void ASpaceStationGamePlayerController::BeginPlay()

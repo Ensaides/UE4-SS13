@@ -9,6 +9,9 @@
 #include <unordered_map>
 #include "SpaceStationGameServerState.generated.h"
 
+class UMySQLObject;
+class UOpenCLObject;
+
 UCLASS()
 class SPACESTATIONGAME_API ASpaceStationGameServerState : public AActor
 {
@@ -19,24 +22,30 @@ public:
 
 	virtual void BeginPlay() override;
 
-	////Server stuff
-
 	// MySQL stuff
 	UPROPERTY()
-	class UMySQLObject* MySQLObject;
+	UMySQLObject* MySQLObject;
 
-	UPROPERTY()
-	class UOpenCLObject* OpenCLObject;
+	//UPROPERTY()
+	//UOpenCLObject* OpenCLObject;
 
 public:
 	void SetUpMySQLPlayerData(APlayerController* NewPlayer);
 
-	// Recipe stuff
+	bool GetPlayerBanStatus(FString Address, FString UniqueId);
 
+	// Player Data
+	TArray<uint32> BannedAddresses;
+
+	TArray<FString> BannedUniqueIds;
+
+	bool bBansLoaded;
+
+	// Recipe stuff
 	UDataTable* RecipeLookupTable;
 
 	UPROPERTY()
-		URecipeContainer* RecipeContainer;
+	URecipeContainer* RecipeContainer;
 
 	std::pair<EReagents, uint32> GetReagentPair(FString Reagent, FString StringToInt);
 

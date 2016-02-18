@@ -71,7 +71,6 @@ void ASpaceStationGameGameMode::StartRound()
 void ASpaceStationGameGameMode::HandleMatchHasStarted()
 {
 	// most of this crap was copied from an engine function
-
 	UE_LOG(SpaceStationGameLog, Log, TEXT("Starting round"));
 
 	GameSession->HandleMatchHasStarted();
@@ -126,8 +125,8 @@ void ASpaceStationGameGameMode::HandleMatchHasStarted()
 	if (IsHandlingReplays() && GetGameInstance() != nullptr)
 	{
 		GetGameInstance()->StartRecordingReplay(GetWorld()->GetMapName(), GetWorld()->GetMapName());
-	}
 
+	}
 	//Initialize the round
 	RoundType->InitializeRound();
 
@@ -138,8 +137,7 @@ void ASpaceStationGameGameMode::PreLogin(const FString & Options, const FString 
 {
 	FString UniqueIdString = UniqueId->ToString();
 
-	UE_LOG(SpaceStationGameLog, Warning, TEXT("Address: %s"), *Address);
-	UE_LOG(SpaceStationGameLog, Warning, TEXT("Unique ID: %s"), *UniqueIdString);
+	
 
 	Super::PreLogin(Options, Address, UniqueId, ErrorMessage);
 }

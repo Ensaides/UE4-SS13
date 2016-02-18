@@ -15,6 +15,8 @@
 #include "StringConv.h"
 #include "StringHelpers.h"
 
+#include "SpaceStationGameGameState.h"
+#include "SpaceStationGameServerState.h"
 #include "SpaceStationGamePlayerController.h"
 
 #include "Online.h"
@@ -48,10 +50,11 @@ otl_connect database;
 	}
 #endif
 
-void UMySQLObject::AddPlayerData(FString SteamID, ASpaceStationGamePlayerController* Player)
+void UMySQLObject::GetPlayerData(FString SteamID, ASpaceStationGamePlayerController* Player)
 {
-	ThreadInputStruct NewStruct;
+	MySQL::ThreadInputStruct NewStruct;
 
+	NewStruct.InputType = MySQL::ThreadInputType::PlayerData;
 	NewStruct.SteamID = SteamID;
 	NewStruct.Player = Player;
 
@@ -64,6 +67,8 @@ void UMySQLObject::Initialize()
 	bThreadRunning = true;
 
 	MySQLThread = std::thread(&UMySQLObject::GetMySQLData, this);
+
+	//UE_LOG(SpaceStationGameLog, "")
 }
 
 void UMySQLObject::GetMySQLData()
@@ -72,6 +77,21 @@ void UMySQLObject::GetMySQLData()
 	if (!bConnectionActive)
 	{
 		OpenConnection();
+
+		if (bConnectionActive)
+		{
+			UWorld* const World = GetWorld();
+
+			if (World)
+			{
+				auto ServerState = Cast<ASpaceStationGameGameState>(World->GetGameState())->GetServerState();
+
+				if (ServerState && !ServerState->bBansLoaded)
+				{
+					LoadBans();
+				}
+			}
+		}
 	}
 
 	// Load the player data
@@ -82,15 +102,28 @@ void UMySQLObject::GetMySQLData()
 
 			if (ThreadInput.size() > 0 && bConnectionActive)
 			{
-				ThreadInputStruct NewStruct = ThreadInput.back();
+				MySQL::ThreadInputStruct NewStruct = ThreadInput.back();
 				ThreadInput.pop_back();
 				guard.unlock();
 
-				// Set the player preferences
-				NewStruct.Player->SetStartingJob(GetMySQLPreferredJob(NewStruct.SteamID));
-				NewStruct.Player->SetPreferredAntagonistRole(GetMySQLPrefferedAntagonistRole(NewStruct.SteamID));
+				switch (NewStruct.InputType)
+				{
+					case MySQL::ThreadInputType::PlayerData:
+					{
+						// Set the player preferences
+						NewStruct.Player->SetStartingJob(GetMySQLPreferredJob(NewStruct.SteamID));
+						NewStruct.Player->SetPreferredAntagonistRole(GetMySQLPrefferedAntagonistRole(NewStruct.SteamID));
 
-				NewStruct.Player->bMySQLPlayerDataLoaded = true;
+						NewStruct.Player->bMySQLPlayerDataLoaded = true;
+						break;
+					}
+					case MySQL::ThreadInputType::BanData:
+					{
+						break;
+					}
+					default:
+						break;
+				}
 			}
 			else if (!bConnectionActive)
 			{
@@ -168,7 +201,23 @@ void UMySQLObject::OpenConnection()
 				(
 					database,
 					StringHelpers::ConvertToString("CREATE TABLE IF NOT EXISTS `" + ServerDatabase + "`.`playerpreferences` ("
-					"`steamid` BIGINT(20) UNSIGNED NOT NULL,"
+						"`username` TEXT NOT NULL,"
+						"`password` TEXT NOT NULL"
+						"`steamid` BIGINT(20) NOT NULL,"
+						"`preferredjob` TINYINT(3) UNSIGNED NOT NULL,"
+						"`preferredantagonistroles` INT(11) UNSIGNED NOT NULL,"
+						"PRIMARY KEY (`steamid`))"
+						"DEFAULT CHARACTER SET = utf8;").c_str(),
+					otl_exception::enabled
+					);
+
+			// Player preferences table
+			otl_cursor::direct_exec
+				(
+					database,
+					StringHelpers::ConvertToString("CREATE TABLE IF NOT EXISTS `" + ServerDatabase + "`.`playerpreferences` ("
+					"`uniqueid` TEXT NOT NULL,"
+					"`steamid` BIGINT(20) NOT NULL,"
 					"`preferredjob` TINYINT(3) UNSIGNED NOT NULL,"
 					"`preferredantagonistroles` INT(11) UNSIGNED NOT NULL,"
 					"PRIMARY KEY (`steamid`))"
@@ -181,7 +230,8 @@ void UMySQLObject::OpenConnection()
 				(
 					database,
 					StringHelpers::ConvertToString("CREATE TABLE IF NOT EXISTS `" + ServerDatabase + "`.`death` ("
-						"`steamid` BIGINT(20) UNSIGNED NOT NULL,"
+						"`uniqueid` TEXT NOT NULL,"
+						"`steamid` BIGINT(20) NOT NULL,"
 						"`coord` TEXT NOT NULL COMMENT 'X, Y, Z POD',"
 						"`job` TEXT NOT NULL,"
 						"`name` TEXT NOT NULL,"
@@ -199,12 +249,13 @@ void UMySQLObject::OpenConnection()
 				(
 					database,
 					StringHelpers::ConvertToString("CREATE TABLE IF NOT EXISTS `" + ServerDatabase + "`.`ban` ("
-						"`steamid` BIGINT(20) UNSIGNED NOT NULL,"
+						"`uniqueid` TEXT NOT NULL,"
+						"`steamid` BIGINT(20) NOT NULL,"
 						"`banningid` BIGINT(20) UNSIGNED NOT NULL COMMENT 'The player that banned this player'"
 						"`banlength` INT(11) SIGNED NOT NULL,"
 						"`bandate` BIGINT(20) NOT NULL COMMENT 'Ban date in UTC time',"
 						"`bancomment` TEXT,"
-						"`ipaddress` TEXT NOT NULL,"
+						"`ipaddress` INT(11) NOT NULL,"
 						"PRIMARY KEY (`steamid`))"
 						"DEFAULT CHARACTER SET = utf8;").c_str(),
 					otl_exception::enabled
@@ -310,7 +361,7 @@ uint8 UMySQLObject::GetMySQLPreferredJob(FString SteamID)
 					database
 					);
 
-				int ReturnValue;
+				unsigned int ReturnValue;
 
 				while (!i.eof())
 				{
@@ -327,7 +378,7 @@ uint8 UMySQLObject::GetMySQLPreferredJob(FString SteamID)
 					database
 					);
 
-				int ReturnValue;
+				unsigned int ReturnValue;
 
 				while (!i.eof())
 				{
@@ -422,6 +473,68 @@ uint32 UMySQLObject::GetMySQLPrefferedAntagonistRole(FString SteamID)
 		}
 	}
 	return 0;
+}
+
+void UMySQLObject::LoadBans()
+{
+	if (bConnectionActive)
+	{
+		try
+		{
+			otl_cursor::direct_exec
+				(
+					database,
+					StringHelpers::ConvertToString("USE " + ServerDatabase + ";").c_str(),
+					otl_exception::enabled
+					);
+
+			UWorld* const World = GetWorld();
+
+			auto ServerState = Cast<ASpaceStationGameGameState>(World->GetGameState())->GetServerState();
+
+			{
+				otl_stream i(50000, // buffer size
+					"SELECT DISTINCT ipaddress FROM ban",
+					database
+					);
+
+				unsigned int BannedIpAddress;
+
+				while (!i.eof())
+				{
+					BannedIpAddress = 0;
+
+					i >> BannedIpAddress;
+
+					ServerState->BannedAddresses.Add(BannedIpAddress);
+				}
+			}
+
+			{
+				otl_stream i(50000, // buffer size
+					"SELECT steamid FROM ban",
+					database
+					);
+
+				unsigned long BannedSteamId;
+
+				while (!i.eof())
+				{
+					BannedSteamId = 0;
+
+					i >> BannedSteamId;
+
+					ServerState->BannedUniqueIds.Add(BannedSteamId);
+				}
+			}
+		}
+		catch (otl_exception& p)
+		{
+			PRINT_ERRORS();
+
+			bConnectionActive = false;
+		}
+	}
 }
 
 void UMySQLObject::BeginDestroy()

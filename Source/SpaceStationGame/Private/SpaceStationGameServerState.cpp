@@ -33,7 +33,7 @@ void ASpaceStationGameServerState::BeginPlay()
 
 		MySQLObject->Initialize();
 
-		OpenCLObject = NewObject<UOpenCLObject>(this);
+		//OpenCLObject = NewObject<UOpenCLObject>(this);
 	}
 
 	Super::BeginPlay();
@@ -43,7 +43,15 @@ void ASpaceStationGameServerState::SetUpMySQLPlayerData(APlayerController* NewPl
 {
 	FString SteamID = NewPlayer->PlayerState->UniqueId->ToString();
 
-	MySQLObject->AddPlayerData(SteamID, Cast<ASpaceStationGamePlayerController>(NewPlayer));
+	MySQLObject->GetPlayerData(SteamID, Cast<ASpaceStationGamePlayerController>(NewPlayer));
+}
+
+bool ASpaceStationGameServerState::GetPlayerBanStatus(FString Address, FString UniqueId)
+{
+	if (bBansLoaded)
+	{
+
+	}
 }
 
 void ASpaceStationGameServerState::SetupRecipes()
@@ -106,7 +114,6 @@ void ASpaceStationGameServerState::SetupRecipes()
 				}
 
 				RecipeContainer->ConstructRecipe(ReagentsMap, ProductsMap);
-
 			}
 			else
 			{

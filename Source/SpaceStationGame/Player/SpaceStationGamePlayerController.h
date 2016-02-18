@@ -128,6 +128,8 @@ public:
 	UPROPERTY(Replicated, BlueprintReadWrite, Category = "Player Data")
 		bool RoundStartReady;
 
+	bool bBanned;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = "Player Data")
 		uint8 StartingJob;
 
