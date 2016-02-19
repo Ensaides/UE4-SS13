@@ -6,6 +6,52 @@
 
 #include "MySQLObject.h"
 
+// OTL
+#define OTL_ODBC // Compile OTL 4.0/ODBC
+// The following #define is required with MyODBC 5.1 and higher
+#define OTL_ODBC_SELECT_STM_EXECUTE_BEFORE_DESCRIBE
+#define OTL_STREAM_NO_PRIVATE_UNSIGNED_LONG_OPERATORS
+
+#define OTL_UNICODE // Compile OTL with Unicode 
+#define OTL_CPP_11_ON
+
+// OTL Long types
+#if defined(__BORLANDC__)
+#define OTL_BIGINT __int64 // Enabling G++ 64-bit integers
+#define OTL_UBIGINT unsigned __int64 // Enabling G++ 64-bit integers
+#elif !defined(_MSC_VER)
+#define OTL_BIGINT long long // Enabling G++ 64-bit integers
+#define OTL_UBIGINT unsigned long long // Enabling G++ 64-bit integers
+#else
+#define OTL_BIGINT __int64 // Enabling VC++ 64-bit integers
+#define OTL_UBIGINT unsigned __int64 // Enabling VC++ 64-bit integers
+#endif
+
+// OTL Unicode Strings
+#if defined(__GNUC__)
+
+namespace std {
+	typedef unsigned short unicode_char;
+	typedef basic_string<unicode_char> unicode_string;
+}
+
+#define OTL_UNICODE_CHAR_TYPE unicode_char
+#define OTL_UNICODE_STRING_TYPE unicode_string
+
+#else
+
+#define OTL_UNICODE_CHAR_TYPE wchar_t
+#define OTL_UNICODE_STRING_TYPE std::wstring
+#endif
+
+
+#pragma warning(push)
+#pragma warning(disable: 4946) // Disable this warning so that OTL doesn't clog up the compiler output. disabling warnings is probably a really bad idea
+#include "AllowWindowsPlatformTypes.h"
+#include <otlv4.h> // include the OTL 4.0 header file
+#include "HideWindowsPlatformTypes.h"
+#pragma warning(pop)
+
 #include <stdlib.h>
 #include <iostream>
 #include <sstream>
@@ -68,7 +114,7 @@ void UMySQLObject::Initialize()
 
 	MySQLThread = std::thread(&UMySQLObject::GetMySQLData, this);
 
-	//UE_LOG(SpaceStationGameLog, "")
+	LoadBans();
 }
 
 void UMySQLObject::GetMySQLData()
@@ -196,28 +242,12 @@ void UMySQLObject::OpenConnection()
 					otl_exception::enabled
 					);
 
-			// Player table
-			otl_cursor::direct_exec
-				(
-					database,
-					StringHelpers::ConvertToString("CREATE TABLE IF NOT EXISTS `" + ServerDatabase + "`.`playerpreferences` ("
-						"`username` TEXT NOT NULL,"
-						"`password` TEXT NOT NULL"
-						"`steamid` BIGINT(20) NOT NULL,"
-						"`preferredjob` TINYINT(3) UNSIGNED NOT NULL,"
-						"`preferredantagonistroles` INT(11) UNSIGNED NOT NULL,"
-						"PRIMARY KEY (`steamid`))"
-						"DEFAULT CHARACTER SET = utf8;").c_str(),
-					otl_exception::enabled
-					);
-
 			// Player preferences table
 			otl_cursor::direct_exec
 				(
 					database,
 					StringHelpers::ConvertToString("CREATE TABLE IF NOT EXISTS `" + ServerDatabase + "`.`playerpreferences` ("
-					"`uniqueid` TEXT NOT NULL,"
-					"`steamid` BIGINT(20) NOT NULL,"
+					"`steamid` TEXT NOT NULL,"
 					"`preferredjob` TINYINT(3) UNSIGNED NOT NULL,"
 					"`preferredantagonistroles` INT(11) UNSIGNED NOT NULL,"
 					"PRIMARY KEY (`steamid`))"
@@ -230,8 +260,7 @@ void UMySQLObject::OpenConnection()
 				(
 					database,
 					StringHelpers::ConvertToString("CREATE TABLE IF NOT EXISTS `" + ServerDatabase + "`.`death` ("
-						"`uniqueid` TEXT NOT NULL,"
-						"`steamid` BIGINT(20) NOT NULL,"
+						"`steamid` TEXT NOT NULL,"
 						"`coord` TEXT NOT NULL COMMENT 'X, Y, Z POD',"
 						"`job` TEXT NOT NULL,"
 						"`name` TEXT NOT NULL,"
@@ -249,13 +278,12 @@ void UMySQLObject::OpenConnection()
 				(
 					database,
 					StringHelpers::ConvertToString("CREATE TABLE IF NOT EXISTS `" + ServerDatabase + "`.`ban` ("
-						"`uniqueid` TEXT NOT NULL,"
-						"`steamid` BIGINT(20) NOT NULL,"
+						"`steamid` TEXT NOT NULL,"
 						"`banningid` BIGINT(20) UNSIGNED NOT NULL COMMENT 'The player that banned this player'"
 						"`banlength` INT(11) SIGNED NOT NULL,"
 						"`bandate` BIGINT(20) NOT NULL COMMENT 'Ban date in UTC time',"
 						"`bancomment` TEXT,"
-						"`ipaddress` INT(11) NOT NULL,"
+						"`ipaddress` TEXT NOT NULL,"
 						"PRIMARY KEY (`steamid`))"
 						"DEFAULT CHARACTER SET = utf8;").c_str(),
 					otl_exception::enabled
@@ -479,6 +507,12 @@ void UMySQLObject::LoadBans()
 {
 	if (bConnectionActive)
 	{
+		UWorld* const World = GetWorld();
+
+		auto ServerState = Cast<ASpaceStationGameGameState>(World->GetGameState())->GetServerState();
+
+		UE_LOG(SpaceStationGameLog, Log, TEXT("Loading bans from MySQL"))
+
 		try
 		{
 			otl_cursor::direct_exec
@@ -488,25 +522,19 @@ void UMySQLObject::LoadBans()
 					otl_exception::enabled
 					);
 
-			UWorld* const World = GetWorld();
-
-			auto ServerState = Cast<ASpaceStationGameGameState>(World->GetGameState())->GetServerState();
-
 			{
 				otl_stream i(50000, // buffer size
 					"SELECT DISTINCT ipaddress FROM ban",
 					database
 					);
 
-				unsigned int BannedIpAddress;
+				OTL_UNICODE_STRING_TYPE BannedIpAddress;
 
 				while (!i.eof())
 				{
-					BannedIpAddress = 0;
-
 					i >> BannedIpAddress;
 
-					ServerState->BannedAddresses.Add(BannedIpAddress);
+					ServerState->BannedAddresses.Add(StringHelpers::ConvertToFString(BannedIpAddress));
 				}
 			}
 
@@ -516,15 +544,13 @@ void UMySQLObject::LoadBans()
 					database
 					);
 
-				unsigned long BannedSteamId;
+				OTL_UNICODE_STRING_TYPE BannedSteamId;
 
 				while (!i.eof())
 				{
-					BannedSteamId = 0;
-
 					i >> BannedSteamId;
 
-					ServerState->BannedUniqueIds.Add(BannedSteamId);
+					ServerState->BannedUniqueIds.Add(StringHelpers::ConvertToFString(BannedSteamId));
 				}
 			}
 		}
@@ -532,8 +558,14 @@ void UMySQLObject::LoadBans()
 		{
 			PRINT_ERRORS();
 
+			UE_LOG(SpaceStationGameLog, Warning, TEXT("Failed to load bans from MySQL!"))
+
 			bConnectionActive = false;
+
+			return;
 		}
+
+		ServerState->bBansLoaded = true;
 	}
 }
 

@@ -35,7 +35,7 @@ public:
 	bool GetPlayerBanStatus(FString Address, FString UniqueId);
 
 	// Player Data
-	TArray<uint32> BannedAddresses;
+	TArray<FString> BannedAddresses;
 
 	TArray<FString> BannedUniqueIds;
 

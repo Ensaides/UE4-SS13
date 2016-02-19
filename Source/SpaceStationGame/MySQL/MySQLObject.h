@@ -9,36 +9,6 @@
 #include <atomic>
 #include <vector>
 
-// OTL
-#define OTL_ODBC // Compile OTL 4.0/ODBC
-// The following #define is required with MyODBC 5.1 and higher
-#define OTL_ODBC_SELECT_STM_EXECUTE_BEFORE_DESCRIBE
-#define OTL_UNICODE // Compile OTL with Unicode 
-#define OTL_CPP_11_ON
-
-#if defined(__GNUC__)
-
-namespace std {
-	typedef unsigned short unicode_char;
-	typedef basic_string<unicode_char> unicode_string;
-}
-
-#define OTL_UNICODE_CHAR_TYPE unicode_char
-#define OTL_UNICODE_STRING_TYPE unicode_string
-
-#else
-
-#define OTL_UNICODE_CHAR_TYPE wchar_t
-#define OTL_UNICODE_STRING_TYPE wstring
-#endif
-
-#pragma warning(push)
-#pragma warning(disable: 4946) // Disable this warning so that OTL doesn't clog up the compiler output. disabling warnings is probably a really bad idea
-#include "AllowWindowsPlatformTypes.h"
-#include <otlv4.h> // include the OTL 4.0 header file
-#include "HideWindowsPlatformTypes.h"
-#pragma warning(pop)
-
 #include "SpaceStationGamePlayerController.h"
 
 #include "MySQLObject.generated.h"

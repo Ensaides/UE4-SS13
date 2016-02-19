@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "SpaceStationGame.h"
+
 #include <iostream>
 #include <sstream>
 #include <string.h>
@@ -31,34 +33,45 @@ public:
 		return stm.str();
 	};
 
-
-
-	FORCEINLINE static std::wstring ConvertToWString(FString str) {
+	FORCEINLINE static std::wstring ConvertToWString(FString str) 
+	{
 		return StringHelpers::widen((TCHAR_TO_UTF8(*str)));
 	};
-	FORCEINLINE static std::string ConvertToString(FString str) {
+
+	FORCEINLINE static std::string ConvertToString(FString str) 
+	{
 		return (TCHAR_TO_UTF8(*str));
 	};
-	FORCEINLINE static FString ConvertToFString(std::string str) {
+
+	FORCEINLINE static FString ConvertToFString(std::string str) 
+	{
 		return (FString(str.c_str()));
 	};
-	FORCEINLINE static FString ConvertToFString(std::wstring str) {
+
+	FORCEINLINE static FString ConvertToFString(std::wstring str) 
+	{
 		std::string o = narrow(str);
 		return (FString(o.c_str()));
 	};
 
-	FORCEINLINE static const char* ConvertToCCP(FString str) {
+
+	FORCEINLINE static const char* ConvertToCCP(FString str) 
+	{
 		std::string t = TCHAR_TO_UTF8(*str);
 		char * returnvalue = (char *)malloc(sizeof(char)* (t.length() + 1));
 		strncpy_s(returnvalue, t.length(), t.c_str(), t.length());
 		return returnvalue;
 	};
-	FORCEINLINE static const char* ConvertToCCP(std::string str) {
+
+	FORCEINLINE static const char* ConvertToCCP(std::string str) 
+	{
 		char * returnvalue = (char *)malloc(sizeof(char)* (str.length() + 1));
 		strncpy_s(returnvalue, str.length(), str.c_str(), str.length());
 		return returnvalue;
 	};
-	FORCEINLINE  const char* ConvertToCCP(std::wstring str) {
+
+	FORCEINLINE  const char* ConvertToCCP(std::wstring str) 
+	{
 		std::string t = narrow(str);
 		char * returnvalue = (char *)malloc(sizeof(char)* (t.length() + 1));
 		strncpy_s(returnvalue, t.length(), t.c_str(), t.length());
@@ -66,14 +79,17 @@ public:
 	};
 
 
-	FORCEINLINE static std::string int64ToString(int64 number) {
+	FORCEINLINE static std::string int64ToString(int64 number) 
+	{
 		std::stringstream stream;
 		__int64 value(number);
 		stream << value;
 		std::string strValue(stream.str());
 		return strValue;
 	};
-	FORCEINLINE static std::wstring int64ToWString(int64 number) {
+
+	FORCEINLINE static std::wstring int64ToWString(int64 number) 
+	{
 		std::stringstream stream;
 		__int64 value(number);
 		stream << value;

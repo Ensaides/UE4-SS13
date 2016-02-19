@@ -50,8 +50,10 @@ bool ASpaceStationGameServerState::GetPlayerBanStatus(FString Address, FString U
 {
 	if (bBansLoaded)
 	{
-
+		if (BannedAddresses.Find(Address) || BannedUniqueIds.Find(UniqueId)) return true;
 	}
+	
+	return false;
 }
 
 void ASpaceStationGameServerState::SetupRecipes()
