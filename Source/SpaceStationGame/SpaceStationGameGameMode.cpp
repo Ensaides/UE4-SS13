@@ -137,7 +137,27 @@ void ASpaceStationGameGameMode::PreLogin(const FString & Options, const FString 
 {
 	FString UniqueIdString = UniqueId->ToString();
 
-	
+	UWorld* const World = GetWorld();
+	if (World)
+	{
+		auto GameState = Cast<ASpaceStationGameGameState>(World->GetGameState());
+
+		if (GameState)
+		{
+			if (GameState->GetServerState()->GetPlayerBanStatus(Address, UniqueIdString))
+			{
+				ErrorMessage = "Failed to connect: you are banned from this server";
+			}
+		}
+		else
+		{
+			UE_LOG(SpaceStationGameLog, Warning, TEXT("ERROR: GAME STATE DOESNT EXIST IN PRELOGIN!!!"));
+		}
+	}
+	else
+	{
+		UE_LOG(SpaceStationGameLog, Warning, TEXT("ERROR: WORLD DOESNT EXIST IN PRELOGIN!!!"));
+	}
 
 	Super::PreLogin(Options, Address, UniqueId, ErrorMessage);
 }

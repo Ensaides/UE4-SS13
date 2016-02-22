@@ -57,6 +57,7 @@ namespace std {
 #include <sstream>
 #include <stdexcept>
 #include <thread>
+#include <time.h>
 
 #include "StringConv.h"
 #include "StringHelpers.h"
@@ -247,7 +248,7 @@ void UMySQLObject::OpenConnection()
 				(
 					database,
 					StringHelpers::ConvertToString("CREATE TABLE IF NOT EXISTS `" + ServerDatabase + "`.`playerpreferences` ("
-					"`steamid` TEXT NOT NULL,"
+					"`steamid` TEXT NOT NULL UNIQUE,"
 					"`preferredjob` TINYINT(3) UNSIGNED NOT NULL,"
 					"`preferredantagonistroles` INT(11) UNSIGNED NOT NULL,"
 					"PRIMARY KEY (`steamid`))"
@@ -260,7 +261,7 @@ void UMySQLObject::OpenConnection()
 				(
 					database,
 					StringHelpers::ConvertToString("CREATE TABLE IF NOT EXISTS `" + ServerDatabase + "`.`death` ("
-						"`steamid` TEXT NOT NULL,"
+						"`steamid` TEXT NOT NULL UNIQUE,"
 						"`coord` TEXT NOT NULL COMMENT 'X, Y, Z POD',"
 						"`job` TEXT NOT NULL,"
 						"`name` TEXT NOT NULL,"
@@ -280,8 +281,8 @@ void UMySQLObject::OpenConnection()
 					StringHelpers::ConvertToString("CREATE TABLE IF NOT EXISTS `" + ServerDatabase + "`.`ban` ("
 						"`steamid` TEXT NOT NULL,"
 						"`banningid` BIGINT(20) UNSIGNED NOT NULL COMMENT 'The player that banned this player'"
-						"`banlength` INT(11) SIGNED NOT NULL,"
 						"`bandate` BIGINT(20) NOT NULL COMMENT 'Ban date in UTC time',"
+						"`banenddate` BIGINT(20) NOT NULL,"
 						"`bancomment` TEXT,"
 						"`ipaddress` TEXT NOT NULL,"
 						"PRIMARY KEY (`steamid`))"
@@ -523,34 +524,31 @@ void UMySQLObject::LoadBans()
 					);
 
 			{
+				__int64 CurrentTime;
+
+				_gmtime64(&CurrentTime);
+
 				otl_stream i(50000, // buffer size
-					"SELECT DISTINCT ipaddress FROM ban",
+					"SELECT steamid, banenddate, ipaddress FROM ban WHERE banenddate > " + CurrentTime, // Get all bans that havent expired
 					database
 					);
 
 				OTL_UNICODE_STRING_TYPE BannedIpAddress;
+				OTL_UNICODE_STRING_TYPE BannedUniqueID;
+
+				OTL_UBIGINT BanEndDate;
 
 				while (!i.eof())
 				{
-					i >> BannedIpAddress;
+					i >> BannedUniqueID >> BanEndDate >> BannedIpAddress;
 
-					ServerState->BannedAddresses.Add(StringHelpers::ConvertToFString(BannedIpAddress));
-				}
-			}
+					FBanStruct Ban;
 
-			{
-				otl_stream i(50000, // buffer size
-					"SELECT steamid FROM ban",
-					database
-					);
+					Ban.BanEndDate = BanEndDate;
+					Ban.BannedAddress = StringHelpers::ConvertToFString(BannedIpAddress);
+					Ban.BannedUniqueId = StringHelpers::ConvertToFString(BannedUniqueID);
 
-				OTL_UNICODE_STRING_TYPE BannedSteamId;
-
-				while (!i.eof())
-				{
-					i >> BannedSteamId;
-
-					ServerState->BannedUniqueIds.Add(StringHelpers::ConvertToFString(BannedSteamId));
+					ServerState->Bans.Add(Ban);
 				}
 			}
 		}

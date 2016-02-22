@@ -1313,6 +1313,7 @@ Global
 		{2903EBD9-491B-441D-9576-1DA103EAA470}.Debug Editor|Mac.ActiveCfg = Development_Program|x64
 		{2903EBD9-491B-441D-9576-1DA103EAA470}.Debug Editor|Win32.ActiveCfg = Development_Program|x64
 		{2903EBD9-491B-441D-9576-1DA103EAA470}.Debug Editor|Win64.ActiveCfg = Development_Program|x64
+		{2903EBD9-491B-441D-9576-1DA103EAA470}.Debug Editor|Win64.Build.0 = Development_Program|x64
 		{2903EBD9-491B-441D-9576-1DA103EAA470}.Debug Editor|WinRT.ActiveCfg = Development_Program|x64
 		{2903EBD9-491B-441D-9576-1DA103EAA470}.Debug Server|HTML5.ActiveCfg = Development_Program|x64
 		{2903EBD9-491B-441D-9576-1DA103EAA470}.Debug Server|Mac.ActiveCfg = Development_Program|x64
@@ -1349,6 +1350,7 @@ Global
 		{2903EBD9-491B-441D-9576-1DA103EAA470}.DebugGame|Mac.ActiveCfg = Development_Program|x64
 		{2903EBD9-491B-441D-9576-1DA103EAA470}.DebugGame|Win32.ActiveCfg = Development_Program|x64
 		{2903EBD9-491B-441D-9576-1DA103EAA470}.DebugGame|Win64.ActiveCfg = Development_Program|x64
+		{2903EBD9-491B-441D-9576-1DA103EAA470}.DebugGame|Win64.Build.0 = Development_Program|x64
 		{2903EBD9-491B-441D-9576-1DA103EAA470}.DebugGame|WinRT.ActiveCfg = Development_Program|x64
 		{2903EBD9-491B-441D-9576-1DA103EAA470}.Development Client|HTML5.ActiveCfg = Development_Program|x64
 		{2903EBD9-491B-441D-9576-1DA103EAA470}.Development Client|Mac.ActiveCfg = Development_Program|x64

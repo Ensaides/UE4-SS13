@@ -4,6 +4,7 @@
 #include "MySQLObject.h"
 #include "OpenCLObject.h"
 #include <map>
+#include <time.h>
 #include <unordered_map>
 #include "RecipeContainer.h"
 #include "SpaceStationGameServerState.h"
@@ -50,9 +51,33 @@ bool ASpaceStationGameServerState::GetPlayerBanStatus(FString Address, FString U
 {
 	if (bBansLoaded)
 	{
-		if (BannedAddresses.Find(Address) || BannedUniqueIds.Find(UniqueId)) return true;
+		__int64 CurrentTime;
+
+		_gmtime64(&CurrentTime);
+
+		UE_LOG(SpaceStationGameLog, Warning, TEXT("CURRENT TIME: %d"), CurrentTime);
+
+		for (auto it = Bans.CreateIterator(); it; ++it)
+		{
+			FBanStruct Ban = *it;
+
+			if ((Ban.BannedAddress == Address || Ban.BannedUniqueId == UniqueId) && CurrentTime < Ban.BanEndDate) // If either the banned address or banned id matches AND the ban hasn't expired
+			{
+				return true;
+			}
+			else if (FDateTime::UtcNow() >= Ban.BanEndDate) // If the ban has expired
+			{
+				Bans.Remove(Ban); // Remove it from the array
+			}
+		}
+
+		return false;
 	}
-	
+	else
+	{
+		UE_LOG(SpaceStationGameLog, Warning, TEXT("Failed to load bans from MySQL!"));
+	}
+
 	return false;
 }
 

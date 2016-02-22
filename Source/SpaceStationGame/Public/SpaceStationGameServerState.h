@@ -12,6 +12,29 @@
 class UMySQLObject;
 class UOpenCLObject;
 
+USTRUCT()
+struct FBanStruct
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FString BannedAddress;
+
+	UPROPERTY()
+	FString BannedUniqueId;
+
+	UPROPERTY()
+	int64 BanEndDate;
+
+	bool operator==(const FBanStruct& rhs) const
+	{
+		if (rhs.BanEndDate != BanEndDate) return false;
+		if (rhs.BannedAddress != BannedAddress) return false;
+		if (rhs.BannedUniqueId != BannedUniqueId) return false;
+		return true;
+	}
+};
+
 UCLASS()
 class SPACESTATIONGAME_API ASpaceStationGameServerState : public AActor
 {
@@ -35,9 +58,7 @@ public:
 	bool GetPlayerBanStatus(FString Address, FString UniqueId);
 
 	// Player Data
-	TArray<FString> BannedAddresses;
-
-	TArray<FString> BannedUniqueIds;
+	TArray<FBanStruct> Bans;
 
 	bool bBansLoaded;
 
