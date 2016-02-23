@@ -56,10 +56,6 @@ public class SpaceStationGame : ModuleRules
 
         DynamicallyLoadedModuleNames.Add("OnlineSubsystemSteam");
 
-        //LoadMySQL(Target);
-
-        //LoadBoost(Target);
-
         LoadOTL(Target);
     }
 
@@ -80,67 +76,4 @@ public class SpaceStationGame : ModuleRules
 
         return isLibrarySupported;
     }
-
-
-    // no more mysql + boost crap
-    /*public bool LoadMySQL(TargetInfo Target)
-    {
-        bool isLibrarySupported = false;
-
-        if (((Target.Platform == UnrealTargetPlatform.Win64) || (Target.Platform == UnrealTargetPlatform.Win32)) && ((Target.Type == TargetRules.TargetType.Server) || (Target.Type == TargetRules.TargetType.Editor)))
-        {
-            isLibrarySupported = true;
-
-            //string PlatformString = (Target.Platform == UnrealTargetPlatform.Win64) ? "x64" : "x86";
-            string IncludesPath = Path.Combine(ThirdPartyPath, "MySQL", "Includes");
-            string LibrariesPath = Path.Combine(ThirdPartyPath, "MySQL", "Libraries");
-
-            if (Target.Platform == UnrealTargetPlatform.Win64)
-            {
-                LibrariesPath = Path.Combine(LibrariesPath, "x64");
-            }
-            else if (Target.Platform == UnrealTargetPlatform.Win32)
-            {
-                LibrariesPath = Path.Combine(LibrariesPath, "Win32");
-            }
-
-            PublicIncludePaths.Add(IncludesPath);
-            PublicAdditionalLibraries.Add(Path.Combine(LibrariesPath, "mysqlcppconn.lib"));
-        }
-
-        //if (isLibrarySupported)
-        //{
-        //    // Include path
-        //    PublicIncludePaths.Add(Path.Combine(ThirdPartyPath, "MySQL", "Includes"));
-        //}
-
-        Definitions.Add(string.Format("WITH_MYSQL_BINDING={0}", isLibrarySupported ? 1 : 0));
-
-        return isLibrarySupported;
-    }
-
-    public bool LoadBoost(TargetInfo Target)
-    {
-        bool isLibrarySupported = false;
-
-        if (((Target.Platform == UnrealTargetPlatform.Win64) || (Target.Platform == UnrealTargetPlatform.Win32)) && ((Target.Type == TargetRules.TargetType.Server) || (Target.Type == TargetRules.TargetType.Editor)))
-        {
-            isLibrarySupported = true;
-
-            //string PlatformString = (Target.Platform == UnrealTargetPlatform.Win64) ? "x64" : "x86";
-            //string LibrariesPath = Path.Combine(ThirdPartyPath, "MySQL", "Libraries");
-
-            //PublicAdditionalLibraries.Add(Path.Combine(LibrariesPath, "mysqlcppconn-static.lib"));
-        }
-
-        if (isLibrarySupported)
-        {
-            // Include path
-            PublicIncludePaths.Add(Path.Combine(ThirdPartyPath, "Boost", "Includes"));
-        }
-
-        Definitions.Add(string.Format("WITH_BOOST_BINDING={0}", isLibrarySupported ? 1 : 0));
-
-        return isLibrarySupported;
-    } */
 }

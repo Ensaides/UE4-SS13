@@ -1,13 +1,19 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "SpaceStationGame.h"
+
+#if UE_SERVER || UE_EDITOR
 #include "MySQLObject.h"
 #include "OpenCLObject.h"
 #include <map>
 #include <time.h>
 #include <unordered_map>
 #include "RecipeContainer.h"
+#endif
+
 #include "SpaceStationGameServerState.h"
+
+#if UE_SERVER || UE_EDITOR
 
 #define RECIPES_MAX 2048
 
@@ -32,6 +38,13 @@ void ASpaceStationGameServerState::BeginPlay()
 	{
 		MySQLObject = NewObject<UMySQLObject>(this);
 
+		UWorld* const World = GetWorld();
+
+		if (World)
+		{
+			MySQLObject->World = World;
+		}
+
 		MySQLObject->Initialize();
 
 		//OpenCLObject = NewObject<UOpenCLObject>(this);
@@ -42,9 +55,16 @@ void ASpaceStationGameServerState::BeginPlay()
 
 void ASpaceStationGameServerState::SetUpMySQLPlayerData(APlayerController* NewPlayer)
 {
-	FString SteamID = NewPlayer->PlayerState->UniqueId->ToString();
+	if (NewPlayer->PlayerState->UniqueId->IsValid())
+	{
+		FString SteamID = NewPlayer->PlayerState->UniqueId->ToString();
 
-	MySQLObject->GetPlayerData(SteamID, Cast<ASpaceStationGamePlayerController>(NewPlayer));
+		MySQLObject->GetPlayerData(SteamID, Cast<ASpaceStationGamePlayerController>(NewPlayer));
+	}
+	else
+	{
+		UE_LOG(SpaceStationGameLog, Warning, TEXT("ERROR: SetUpMySQLPlayerData: UniqueID is invalid!!!"));
+	}
 }
 
 bool ASpaceStationGameServerState::GetPlayerBanStatus(FString Address, FString UniqueId)
@@ -337,3 +357,4 @@ FRecipe ASpaceStationGameServerState::GetProductReagentFromRecipe(FRecipe InReci
 	return InRecipe;
 }
 
+#endif // UE_SERVER || UE_EDITOR

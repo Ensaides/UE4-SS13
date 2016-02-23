@@ -80,6 +80,8 @@ public:
 
 	void GetBanData(FString Address, FString UniqueId);
 
+	const UWorld* World;
+
 protected:
 
 	std::thread MySQLThread;

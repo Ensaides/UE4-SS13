@@ -1,9 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 // This is a server only class
-
 #include "SpaceStationGame.h"
-
 #include "MySQLObject.h"
 
 // OTL
@@ -11,6 +9,7 @@
 // The following #define is required with MyODBC 5.1 and higher
 #define OTL_ODBC_SELECT_STM_EXECUTE_BEFORE_DESCRIBE
 #define OTL_STREAM_NO_PRIVATE_UNSIGNED_LONG_OPERATORS
+#define OTL_STREAM_THROWS_NOT_CONNECTED_TO_DATABASE_EXCEPTION
 
 #define OTL_UNICODE // Compile OTL with Unicode 
 #define OTL_CPP_11_ON
@@ -43,7 +42,6 @@ namespace std {
 #define OTL_UNICODE_CHAR_TYPE wchar_t
 #define OTL_UNICODE_STRING_TYPE std::wstring
 #endif
-
 
 #pragma warning(push)
 #pragma warning(disable: 4946) // Disable this warning so that OTL doesn't clog up the compiler output. disabling warnings is probably a really bad idea
@@ -78,11 +76,17 @@ otl_connect database;
 		std::string var_info(p.var_info); \
 		UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL error code:\t\t		%d"), p.code); \
 		UE_LOG(SpaceStationGameLog, Warning, TEXT("OTL MySQL variable error:\t\t	%s"), *StringHelpers::ConvertToFString(var_info)); \
-		if (p.code == 32000) \
+		switch (p.code) \
 		{ \
-			UE_LOG(SpaceStationGameLog, Warning, TEXT("Incompatible MySQL data types!")); \
+			case 32000: UE_LOG(SpaceStationGameLog, Warning, TEXT("Incompatible MySQL data types!")); \
+			\
+			case 32036: UE_LOG(SpaceStationGameLog, Warning, TEXT("MySQL failed to connect, please check your mysql server info")); \
+			bConnectionActive = false; \
+			break; \
+			\
+			default: \
+				break; \
 		} \
-		else UE_LOG(SpaceStationGameLog, Warning, TEXT("MySQL failed to connect, please check your mysql server info")); \
 		CLEAR_WARN_COLOR(); \
 		UE_LOG(SpaceStationGameLog, Warning, TEXT("Line Number:		%d"), __LINE__); \
 		UE_LOG(SpaceStationGameLog, Warning, TEXT("Function:		%s"), *FString(__FUNCTION__)); \
@@ -114,8 +118,6 @@ void UMySQLObject::Initialize()
 	bThreadRunning = true;
 
 	MySQLThread = std::thread(&UMySQLObject::GetMySQLData, this);
-
-	LoadBans();
 }
 
 void UMySQLObject::GetMySQLData()
@@ -127,8 +129,6 @@ void UMySQLObject::GetMySQLData()
 
 		if (bConnectionActive)
 		{
-			UWorld* const World = GetWorld();
-
 			if (World)
 			{
 				auto ServerState = Cast<ASpaceStationGameGameState>(World->GetGameState())->GetServerState();
@@ -247,8 +247,8 @@ void UMySQLObject::OpenConnection()
 			otl_cursor::direct_exec
 				(
 					database,
-					StringHelpers::ConvertToString("CREATE TABLE IF NOT EXISTS `" + ServerDatabase + "`.`playerpreferences` ("
-					"`steamid` TEXT NOT NULL UNIQUE,"
+					StringHelpers::ConvertToString("CREATE TABLE IF NOT EXISTS `playerpreferences` ("
+					"`steamid` BIGINT(20) UNSIGNED NOT NULL UNIQUE,"
 					"`preferredjob` TINYINT(3) UNSIGNED NOT NULL,"
 					"`preferredantagonistroles` INT(11) UNSIGNED NOT NULL,"
 					"PRIMARY KEY (`steamid`))"
@@ -260,8 +260,8 @@ void UMySQLObject::OpenConnection()
 			otl_cursor::direct_exec
 				(
 					database,
-					StringHelpers::ConvertToString("CREATE TABLE IF NOT EXISTS `" + ServerDatabase + "`.`death` ("
-						"`steamid` TEXT NOT NULL UNIQUE,"
+					StringHelpers::ConvertToString("CREATE TABLE IF NOT EXISTS `death` ("
+						"`steamid` BIGINT(20) UNSIGNED NOT NULL UNIQUE,"
 						"`coord` TEXT NOT NULL COMMENT 'X, Y, Z POD',"
 						"`job` TEXT NOT NULL,"
 						"`name` TEXT NOT NULL,"
@@ -278,9 +278,9 @@ void UMySQLObject::OpenConnection()
 			otl_cursor::direct_exec
 				(
 					database,
-					StringHelpers::ConvertToString("CREATE TABLE IF NOT EXISTS `" + ServerDatabase + "`.`ban` ("
-						"`steamid` TEXT NOT NULL,"
-						"`banningid` BIGINT(20) UNSIGNED NOT NULL COMMENT 'The player that banned this player'"
+					StringHelpers::ConvertToString("CREATE TABLE IF NOT EXISTS `ban` ("
+						"`steamid` BIGINT(20) UNSIGNED NOT NULL,"
+						"`banningid` BIGINT(20) UNSIGNED NOT NULL COMMENT 'The player that banned this player',"
 						"`bandate` BIGINT(20) NOT NULL COMMENT 'Ban date in UTC time',"
 						"`banenddate` BIGINT(20) NOT NULL,"
 						"`bancomment` TEXT,"
@@ -294,8 +294,6 @@ void UMySQLObject::OpenConnection()
 		catch (otl_exception& p)
 		{
 			PRINT_ERRORS();
-
-			bConnectionActive = false;
 
 			return;
 		}
@@ -360,8 +358,6 @@ void UMySQLObject::SetUpMySQLPlayerData(FString SteamID)
 		catch (otl_exception& p)
 		{
 			PRINT_ERRORS();
-
-			bConnectionActive = false;
 
 			return;
 		}
@@ -428,8 +424,6 @@ uint8 UMySQLObject::GetMySQLPreferredJob(FString SteamID)
 		catch (otl_exception& p)
 		{
 			PRINT_ERRORS();
-
-			bConnectionActive = false;
 		}
 	}
 	return 19;
@@ -497,8 +491,6 @@ uint32 UMySQLObject::GetMySQLPrefferedAntagonistRole(FString SteamID)
 		catch (otl_exception& p)
 		{
 			PRINT_ERRORS();
-
-			bConnectionActive = false;
 		}
 	}
 	return 0;
@@ -508,8 +500,6 @@ void UMySQLObject::LoadBans()
 {
 	if (bConnectionActive)
 	{
-		UWorld* const World = GetWorld();
-
 		auto ServerState = Cast<ASpaceStationGameGameState>(World->GetGameState())->GetServerState();
 
 		UE_LOG(SpaceStationGameLog, Log, TEXT("Loading bans from MySQL"))
@@ -529,12 +519,12 @@ void UMySQLObject::LoadBans()
 				_gmtime64(&CurrentTime);
 
 				otl_stream i(50000, // buffer size
-					"SELECT steamid, banenddate, ipaddress FROM ban WHERE banenddate > " + CurrentTime, // Get all bans that havent expired
+					("SELECT steamid, banenddate, ipaddress FROM ban WHERE banenddate > " + std::to_string(CurrentTime)).c_str(), // Get all bans that havent expired
 					database
 					);
 
+				OTL_UBIGINT BannedUniqueID;
 				OTL_UNICODE_STRING_TYPE BannedIpAddress;
-				OTL_UNICODE_STRING_TYPE BannedUniqueID;
 
 				OTL_UBIGINT BanEndDate;
 
@@ -546,7 +536,7 @@ void UMySQLObject::LoadBans()
 
 					Ban.BanEndDate = BanEndDate;
 					Ban.BannedAddress = StringHelpers::ConvertToFString(BannedIpAddress);
-					Ban.BannedUniqueId = StringHelpers::ConvertToFString(BannedUniqueID);
+					Ban.BannedUniqueId = StringHelpers::ConvertToFString(std::to_string(BannedUniqueID));
 
 					ServerState->Bans.Add(Ban);
 				}
@@ -557,8 +547,6 @@ void UMySQLObject::LoadBans()
 			PRINT_ERRORS();
 
 			UE_LOG(SpaceStationGameLog, Warning, TEXT("Failed to load bans from MySQL!"))
-
-			bConnectionActive = false;
 
 			return;
 		}

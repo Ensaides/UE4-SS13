@@ -135,29 +135,41 @@ void ASpaceStationGameGameMode::HandleMatchHasStarted()
 
 void ASpaceStationGameGameMode::PreLogin(const FString & Options, const FString & Address, const TSharedPtr< const FUniqueNetId > & UniqueId, FString & ErrorMessage)
 {
-	FString UniqueIdString = UniqueId->ToString();
-
-	UWorld* const World = GetWorld();
-	if (World)
+#if UE_SERVER || UE_EDITOR
+	if (GEngine->GetNetMode(GetWorld()) == NM_DedicatedServer)
 	{
-		auto GameState = Cast<ASpaceStationGameGameState>(World->GetGameState());
-
-		if (GameState)
+		if (UniqueId.IsValid())
 		{
-			if (GameState->GetServerState()->GetPlayerBanStatus(Address, UniqueIdString))
+			FString UniqueIdString = UniqueId->ToString();
+
+			UWorld* const World = GetWorld();
+			if (World)
 			{
-				ErrorMessage = "Failed to connect: you are banned from this server";
+				ASpaceStationGameGameState* GameState = Cast<ASpaceStationGameGameState>(World->GetGameState());
+
+				if (GameState)
+				{
+					if (GameState->GetServerState()->GetPlayerBanStatus(Address, UniqueIdString))
+					{
+						ErrorMessage = "Failed to connect: you are banned from this server";
+					}
+				}
+				else
+				{
+					UE_LOG(SpaceStationGameLog, Warning, TEXT("ERROR: GAME STATE DOESNT EXIST IN PRELOGIN!!!"));
+				}
+			}
+			else
+			{
+				UE_LOG(SpaceStationGameLog, Warning, TEXT("ERROR: WORLD DOESNT EXIST IN PRELOGIN!!!"));
 			}
 		}
 		else
 		{
-			UE_LOG(SpaceStationGameLog, Warning, TEXT("ERROR: GAME STATE DOESNT EXIST IN PRELOGIN!!!"));
+			UE_LOG(SpaceStationGameLog, Warning, TEXT("ERROR: Unique ID DOESNT EXIST IN PRELOGIN!!!"));
 		}
 	}
-	else
-	{
-		UE_LOG(SpaceStationGameLog, Warning, TEXT("ERROR: WORLD DOESNT EXIST IN PRELOGIN!!!"));
-	}
+#endif // UE_SERVER || UE_EDITOR
 
 	Super::PreLogin(Options, Address, UniqueId, ErrorMessage);
 }

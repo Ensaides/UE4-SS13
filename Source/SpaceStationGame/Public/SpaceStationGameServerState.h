@@ -7,6 +7,7 @@
 #include "Reagents.h"
 #include <map>
 #include <unordered_map>
+
 #include "SpaceStationGameServerState.generated.h"
 
 class UMySQLObject;
