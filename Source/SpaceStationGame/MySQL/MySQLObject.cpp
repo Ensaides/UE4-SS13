@@ -84,8 +84,10 @@ otl_connect database;
 			bConnectionActive = false; \
 			break; \
 			\
+			case 32045: UE_LOG(SpaceStationGameLog, Warning, TEXT("Check your login details")); \
+			\
 			default: \
-				break; \
+			break; \
 		} \
 		CLEAR_WARN_COLOR(); \
 		UE_LOG(SpaceStationGameLog, Warning, TEXT("Line Number:		%d"), __LINE__); \

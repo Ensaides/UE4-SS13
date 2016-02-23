@@ -95,7 +95,7 @@ bool ASpaceStationGameServerState::GetPlayerBanStatus(FString Address, FString U
 	}
 	else
 	{
-		UE_LOG(SpaceStationGameLog, Warning, TEXT("Failed to load bans from MySQL!"));
+		UE_LOG(SpaceStationGameLog, Warning, TEXT("Failed to load ban for player %s!"), *UniqueId);
 	}
 
 	return false;
