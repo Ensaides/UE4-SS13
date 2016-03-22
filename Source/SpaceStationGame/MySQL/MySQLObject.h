@@ -83,7 +83,6 @@ public:
 	const UWorld* World;
 
 protected:
-
 	std::thread MySQLThread;
 
 	bool bThreadRunning;
