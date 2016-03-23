@@ -22,6 +22,7 @@ public class SpaceStationGame : ModuleRules
                 new string[] { 
 		        "SpaceStationGame",
 				"SpaceStationGame/Atmospherics",
+				"SpaceStationGame/Atmospherics/OpenCL",
 		        "SpaceStationGame/Mobs",
 				"SpaceStationGame/Player",
                 "SpaceStationGame/Jobs",
@@ -31,8 +32,6 @@ public class SpaceStationGame : ModuleRules
                 "SpaceStationGame/Items/InstancedItems/TiledItems",
 		        "SpaceStationGame/Items/ReagentContainers",
 				"SpaceStationGame/RoundTypes",
-                "SpaceStationGame/Voxel",
-                "SpaceStationGame/OpenCL",
                 "SpaceStationGame/MySQL",
 		        "SpaceStationGame/Items/Machines"
                 }

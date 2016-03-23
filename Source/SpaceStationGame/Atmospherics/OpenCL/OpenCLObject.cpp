@@ -3,6 +3,24 @@
 #include "SpaceStationGame.h"
 #include "OpenCLObject.h"
 
+UOpenCLObject::UOpenCLObject(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+{
+	//bWantsBeginPlay = true;
+}
+
+void UOpenCLObject::Initialize()
+{
+	bThreadRunning = true;
+
+	OpenCLThread = std::thread(&UOpenCLObject::GetOpenCLData, this);
+}
+
+void UOpenCLObject::GetOpenCLData()
+{
+	SetUpOpenCL();
+}
+
 void UOpenCLObject::SetUpOpenCL()
 {
 	try 
@@ -26,6 +44,10 @@ void UOpenCLObject::SetUpOpenCL()
 		};
 
 		Context = clCreateContext(contextProperties, deviceIdCount, deviceIds.data(), nullptr, nullptr, &error);
+
+		char program_buffer;
+
+		Program = clCreateProgramWithSource(Context, 1, (const char**)&program_buffer, &program_size, &err);
 	}
 }
 

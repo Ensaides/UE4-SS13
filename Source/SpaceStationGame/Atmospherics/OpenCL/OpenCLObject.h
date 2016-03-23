@@ -24,11 +24,22 @@ class SPACESTATIONGAME_API UOpenCLObject : public UObject
 
 	void SetUpOpenCL();
 	
+public:
+	UOpenCLObject(const FObjectInitializer& ObjectInitializer);
+
+	virtual void Initialize();
+
 protected:
+	bool bThreadRunning;
+
 	std::thread OpenCLThread;
 
 	std::vector<cl_platform_id> Platforms;
 	std::vector<cl_device_id> Devices;
 	
 	cl_context Context;
+
+	cl_program Program;
+
+	void GetOpenCLData();
 };
