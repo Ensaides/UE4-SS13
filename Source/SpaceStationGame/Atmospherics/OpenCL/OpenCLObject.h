@@ -21,7 +21,7 @@ class UAtmosVoxelManager;
  */
 
 UCLASS()
-class SPACESTATIONGAME_API UOpenCLObject : public UObject, public FTickableGameObject
+class SPACESTATIONGAME_API UOpenCLObject : public UObject
 {
 	GENERATED_BODY()
 
@@ -34,7 +34,7 @@ public:
 
 	virtual void Initialize();
 
-	virtual void Tick(float DeltaTime) override;
+	virtual void Tick(float DeltaTime);
 
 protected:
 	bool bThreadRunning;

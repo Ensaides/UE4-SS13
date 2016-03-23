@@ -3,16 +3,11 @@
 #include "Object.h"
 #include <vector>
 
-#include "AtmosVoxelManager.generated.h"
+#include "AtmosVoxel.h"
 
-class AtmosVoxel;
-
-UCLASS()
-class SPACESTATIONGAME_API UAtmosVoxelManager : public UObject
+class UAtmosVoxelManager
 {
-	GENERATED_BODY()
-
-private:
+protected:
 	static std::vector<AtmosVoxel> AtmosVoxels;
 
 public:
