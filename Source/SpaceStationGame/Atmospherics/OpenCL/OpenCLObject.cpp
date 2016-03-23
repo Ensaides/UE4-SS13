@@ -51,4 +51,10 @@ void UOpenCLObject::SetUpOpenCL()
 	}
 }
 
+void UOpenCLObject::Tick(float DeltaTime)
+{
+	if (!bComputingAtmospherics)
+	{
 
+	}
+}

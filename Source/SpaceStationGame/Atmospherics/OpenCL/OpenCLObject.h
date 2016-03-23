@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Object.h"
+#include "Tickable.h"
 #include "CL/cl.h"
 
 #include <memory>
@@ -13,24 +14,32 @@
 
 #include "OpenCLObject.generated.h"
 
+class UAtmosVoxelManager;
+
 /**
  * 
  */
 
 UCLASS()
-class SPACESTATIONGAME_API UOpenCLObject : public UObject
+class SPACESTATIONGAME_API UOpenCLObject : public UObject, public FTickableGameObject
 {
 	GENERATED_BODY()
 
 	void SetUpOpenCL();
 	
+	UAtmosVoxelManager* VoxelManager;
+
 public:
 	UOpenCLObject(const FObjectInitializer& ObjectInitializer);
 
 	virtual void Initialize();
 
+	virtual void Tick(float DeltaTime) override;
+
 protected:
 	bool bThreadRunning;
+
+	bool bComputingAtmospherics;
 
 	std::thread OpenCLThread;
 

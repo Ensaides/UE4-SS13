@@ -13,10 +13,12 @@ class SPACESTATIONGAME_API UAtmosVoxelManager : public UObject
 	GENERATED_BODY()
 
 private:
-	std::vector<AtmosVoxel> AtmosVoxels;
+	static std::vector<AtmosVoxel> AtmosVoxels;
 
 public:
-	void AddVoxel(AtmosVoxel) { AtmosVoxels.Push(AtmosVoxel); };
+	static void AddVoxel(AtmosVoxel) { AtmosVoxels.Push(AtmosVoxel); };
 
-	void RemoveVoxel(int Index) { AtmosVoxels.Remove(Index); };
+	static void RemoveVoxel(int Index) { AtmosVoxels.Remove(Index); };
+
+	static std::vector<AtmosVoxel>& GetVoxels() { return AtmosVoxels; };
 };
