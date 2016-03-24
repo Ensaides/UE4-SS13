@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CL/cl.h"
+#include "OpenCL.h"
 
 // Put these members in larger to smaller order for memory alignment
 typedef struct 

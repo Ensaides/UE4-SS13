@@ -60,6 +60,8 @@ void UOpenCLObject::SetUpOpenCL()
 
 	Program = clCreateProgramWithSource(Context, 1, (const char**)&prog, &progLength, &Error);
 	Error = clBuildProgram(Program, 0, NULL, NULL, NULL, NULL);
+
+	Kernel = clCreateKernel(Program, "calculate_atmospherics", &Error);
 }
 
 void UOpenCLObject::Tick(float DeltaTime)

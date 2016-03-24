@@ -4,7 +4,7 @@
 
 #include "Object.h"
 #include "Tickable.h"
-#include "CL/cl.h"
+#include "OpenCL.h"
 
 #include <memory>
 #include <thread>
@@ -47,8 +47,8 @@ protected:
 	std::vector<cl_device_id> Devices;
 	
 	cl_context Context;
-
 	cl_program Program;
+	cl_kernel Kernel;
 
 	void GetOpenCLData();
 };
