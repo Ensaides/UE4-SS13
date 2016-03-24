@@ -36,7 +36,9 @@ public:
 
 	virtual void Tick(float DeltaTime);
 
-protected:
+	virtual void BeginDestroy() override;
+
+public:
 	bool bThreadRunning;
 
 	bool bComputingAtmospherics;

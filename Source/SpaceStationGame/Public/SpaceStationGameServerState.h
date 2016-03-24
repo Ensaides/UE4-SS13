@@ -50,8 +50,8 @@ public:
 	UPROPERTY()
 	UMySQLObject* MySQLObject;
 
-	//UPROPERTY()
-	//UOpenCLObject* OpenCLObject;
+	UPROPERTY()
+	UOpenCLObject* OpenCLObject;
 
 public:
 	void SetUpMySQLPlayerData(APlayerController* NewPlayer);

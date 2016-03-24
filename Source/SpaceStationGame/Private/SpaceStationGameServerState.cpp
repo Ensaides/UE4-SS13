@@ -47,7 +47,9 @@ void ASpaceStationGameServerState::BeginPlay()
 
 		MySQLObject->Initialize();
 
-		//OpenCLObject = NewObject<UOpenCLObject>(this);
+		OpenCLObject = NewObject<UOpenCLObject>(this);
+
+		OpenCLObject->Initialize();
 	}
 
 	Super::BeginPlay();
