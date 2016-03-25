@@ -6,7 +6,6 @@
 #include <iostream>
 #include "StringHelpers.h"
 
-
 #include "OpenCLObject.h"
 
 #define MAX_SOURCE_SIZE (0x100000)
@@ -140,7 +139,7 @@ void UOpenCLObject::SetUpOpenCL()
 {
 	// Please kill me
 	// I fucking hate opencl
-	cl_int Error;
+	cl_int Error = 0;
 
 	// Get platforms
 	cl_uint PlatformIDCount = 0;
@@ -151,16 +150,24 @@ void UOpenCLObject::SetUpOpenCL()
 
 	// Get devices
 	cl_uint DeviceIDCount = 0;
-	clGetDeviceIDs(Platforms[0], CL_DEVICE_TYPE_ALL, 0, nullptr, &DeviceIDCount);
+	clGetDeviceIDs(Platforms[0], CL_DEVICE_TYPE_GPU, 1, &Device, &DeviceIDCount);
 
 	const cl_context_properties contextProperties[] =
 	{
-		CL_CONTEXT_PLATFORM,
-		reinterpret_cast<cl_context_properties> (Platforms[0]),
+		CL_CONTEXT_PLATFORM, reinterpret_cast<cl_context_properties> (Platforms[0]),
 		0, 0
 	};
 
-	Context = clCreateContext(contextProperties, DeviceIDCount, Devices.data(), nullptr, nullptr, &Error);
+	//const cl_context_properties ContextProperties = static_cast<cl_context_properties>(Platforms[0]());
+
+	Context = clCreateContext(contextProperties, DeviceIDCount, &Device, NULL, NULL, &Error);
+
+	//Context = clCreateContextFromType(NULL, CL_DEVICE_TYPE_GPU, NULL, NULL, &Error);
+
+	if (Error != CL_SUCCESS)
+	{
+		UE_LOG(SpaceStationGameLog, Warning, TEXT("OpenCL Error!:\t\t	%s"), *get_error_string(Error))
+	}
 
 	std::FILE* programHandle;
 	size_t programSize;
@@ -189,9 +196,9 @@ void UOpenCLObject::SetUpOpenCL()
 		UE_LOG(SpaceStationGameLog, Warning, TEXT("OpenCL Error!:\t\t	%s"), *get_error_string(Error))
 	}
 
-	Kernel = clCreateKernel(Program, "hello", &Error);
+	Kernel = clCreateKernel(Program, "hello_world", &Error);
 
-	cl_command_queue CommandQueue = clCreateCommandQueue(Context, Devices[0], 0, &Error);
+	cl_command_queue CommandQueue = clCreateCommandQueue(Context, Device, 0, &Error);
 
 	Error = clEnqueueTask(CommandQueue, Kernel, 0, NULL, NULL);
 }

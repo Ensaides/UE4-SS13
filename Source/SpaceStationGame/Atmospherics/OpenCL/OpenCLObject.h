@@ -46,7 +46,7 @@ public:
 	std::thread OpenCLThread;
 
 	std::vector<cl_platform_id> Platforms;
-	std::vector<cl_device_id> Devices;
+	cl_device_id Device;
 	
 	cl_context Context;
 	cl_program Program;
