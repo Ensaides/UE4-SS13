@@ -8,6 +8,8 @@
 
 #include "OpenCLObject.h"
 
+#define DATA_SIZE 32
+
 #define MAX_SOURCE_SIZE (0x100000)
 
 /* Error Codes */
@@ -149,6 +151,8 @@ void UOpenCLObject::Initialize()
 {
 	bThreadRunning = true;
 
+	//GetOpenCLData();
+
 	OpenCLThread = std::thread(&UOpenCLObject::GetOpenCLData, this);
 }
 
@@ -157,16 +161,12 @@ void UOpenCLObject::GetOpenCLData()
 	SetUpOpenCL();
 }
 
-#define DATA_SIZE 1024
-
 void UOpenCLObject::SetUpOpenCL()
 {
-	// Please kill me
-	// I fucking hate opencl
 	cl_int Error = 0;
 
-	cl_float data[DATA_SIZE];
-	cl_float results[DATA_SIZE];
+	cl_float* data = (cl_float*) malloc(sizeof(cl_float) * DATA_SIZE);		//[DATA_SIZE];
+	cl_float* result = (cl_float*) malloc(sizeof(cl_float) * DATA_SIZE);		//[DATA_SIZE];
 
 	size_t global;
 	size_t local;
@@ -174,7 +174,9 @@ void UOpenCLObject::SetUpOpenCL()
 	unsigned int i = 0;
 	unsigned int count = DATA_SIZE;
 	for (i = 0; i < count; i++)
+	{
 		data[i] = rand() / (float)RAND_MAX;
+	}
 
 	// Get platforms
 	cl_uint PlatformIDCount = 0;
@@ -193,13 +195,20 @@ void UOpenCLObject::SetUpOpenCL()
 		0, 0
 	};
 
-	//const cl_context_properties ContextProperties = static_cast<cl_context_properties>(Platforms[0]());
-
 	Context = clCreateContext(contextProperties, DeviceIDCount, &Device, NULL, NULL, &Error);
-
-	//Context = clCreateContextFromType(NULL, CL_DEVICE_TYPE_GPU, NULL, NULL, &Error);
-
 	CheckError(Error);
+
+	/**			Buffers			**/
+	cl_mem Input = clCreateBuffer(Context, CL_MEM_READ_WRITE, sizeof(cl_float) * count, NULL, &Error);
+	CheckError(Error);
+
+	cl_mem Output = clCreateBuffer(Context, CL_MEM_READ_WRITE, sizeof(cl_float) * count, NULL, &Error);
+	CheckError(Error);
+
+	cl_command_queue CommandQueue = clCreateCommandQueue(Context, Device, 0, &Error);
+	CheckError(Error);
+
+	CheckError(clEnqueueWriteBuffer(CommandQueue, Input, CL_TRUE, 0, sizeof(cl_float) * count, data, 0, NULL, NULL));
 
 	/**			Program			**/
 	std::FILE* programHandle;
@@ -227,38 +236,33 @@ void UOpenCLObject::SetUpOpenCL()
 	Error = clBuildProgram(Program, 1, &Device, NULL, NULL, NULL);
 	CheckError(Error);
 
-	/**			Buffers			**/
-	cl_mem Input = clCreateBuffer(Context, CL_MEM_READ_ONLY, sizeof(cl_float) * count, NULL, &Error);
-	CheckError(Error);
-
-	cl_mem Output = clCreateBuffer(Context, CL_MEM_READ_WRITE, sizeof(cl_float) * count, NULL, &Error);
-	CheckError(Error);
-
-	cl_command_queue CommandQueue = clCreateCommandQueue(Context, Device, 0, &Error);
-	CheckError(Error);
-
-	CheckError(clEnqueueWriteBuffer(CommandQueue, Input, CL_TRUE, 0, sizeof(cl_float) * count, &data, 0, NULL, NULL));
-
 	/**		Create Kernel			**/
 	Kernel = clCreateKernel(Program, "square", &Error);
 	CheckError(Error);
 
 	/**		Kernel Arguments		**/
-	CheckError(clSetKernelArg(Kernel, 0, sizeof(cl_mem), &Input));
-	CheckError(clSetKernelArg(Kernel, 1, sizeof(cl_mem), &Output));
+	CheckError(clSetKernelArg(Kernel, 0, sizeof(cl_mem), (void *)&Input));
+	CheckError(clSetKernelArg(Kernel, 1, sizeof(cl_mem), (void *)&Output));
 	CheckError(clSetKernelArg(Kernel, 2, sizeof(unsigned int), &count));
 
 	//CheckError(clEnqueueTask(CommandQueue, Kernel, 0, NULL, NULL));
 
-	local = 1;
+	CheckError(clGetKernelWorkGroupInfo(Kernel, Device, CL_KERNEL_WORK_GROUP_SIZE, sizeof(local), &local, NULL));
+
 	global = count;
 	CheckError(clEnqueueNDRangeKernel(CommandQueue, Kernel, 1, NULL, &global, &local, 0, NULL, NULL));
 
 	clFinish(CommandQueue);
 
-	CheckError(clEnqueueReadBuffer(CommandQueue, Output, CL_TRUE, 0, sizeof(cl_float) * count, &results, 0, NULL, NULL));
+	CheckError(clEnqueueReadBuffer(CommandQueue, Output, CL_TRUE, 0, sizeof(cl_float) * count, result, 0, NULL, NULL));
 
-	UE_LOG(SpaceStationGameLog, Warning, TEXT("OpenCL DONE!:\t\t	%d"), results[4]);
+	for (unsigned int i = 0; i < count; i++)
+	{
+		UE_LOG(SpaceStationGameLog, Warning, TEXT("OpenCL DONE!:\t\t %f"), result[i]);
+	}
+
+	free(data);
+	free(result);
 }
 
 void UOpenCLObject::Tick(float DeltaTime)
