@@ -1,5 +1,9 @@
-__kernel void hello_world (__global char* message, int messageSize) {
-	for (int i =0; i < messageSize; i++) {
-		printf("%s", message[i]);
+__kernel void square( __global float* Input, __global float* Output, int count)
+{
+	int i = get_global_id(0);
+	if(i < count)
+	{
+		Output[i] = Input[i] * Input[i];
 	}
 }
+

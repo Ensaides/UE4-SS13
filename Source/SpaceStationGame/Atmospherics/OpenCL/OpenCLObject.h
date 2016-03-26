@@ -29,6 +29,9 @@ class SPACESTATIONGAME_API UOpenCLObject : public UObject
 	
 	UAtmosVoxelManager* VoxelManager;
 
+private:
+	void CheckError(int Error);
+
 public:
 	UOpenCLObject(const FObjectInitializer& ObjectInitializer);
 

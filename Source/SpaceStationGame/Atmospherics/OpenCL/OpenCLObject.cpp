@@ -115,6 +115,30 @@ const FString get_error_string(cl_int err) {
 	}
 }
 
+void UOpenCLObject::CheckError(int Error)
+{
+	if (Error != CL_SUCCESS)
+	{
+		UE_LOG(SpaceStationGameLog, Warning, TEXT("OpenCL Error!:\t\t	%s"), *get_error_string(Error));
+
+		if (Error == CL_BUILD_PROGRAM_FAILURE)
+		{
+			size_t log_size;
+			clGetProgramBuildInfo(Program, Device, CL_PROGRAM_BUILD_LOG, 0, NULL, &log_size);
+
+			// Allocate memory for the log
+			char* log = (char *)malloc(log_size);
+
+			// Get the log
+			clGetProgramBuildInfo(Program, Device, CL_PROGRAM_BUILD_LOG, log_size, log, NULL);
+
+			std::string logstring(log);
+
+			UE_LOG(SpaceStationGameLog, Warning, TEXT("OpenCL Build Error!:\t\t	%s"), *StringHelpers::ConvertToFString(logstring));
+		}
+	}
+}
+
 UOpenCLObject::UOpenCLObject(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -125,9 +149,7 @@ void UOpenCLObject::Initialize()
 {
 	bThreadRunning = true;
 
-	OpenCLThread = std::thread(&UOpenCLObject::SetUpOpenCL, this);
-
-	//SetUpOpenCL();
+	OpenCLThread = std::thread(&UOpenCLObject::GetOpenCLData, this);
 }
 
 void UOpenCLObject::GetOpenCLData()
@@ -135,11 +157,24 @@ void UOpenCLObject::GetOpenCLData()
 	SetUpOpenCL();
 }
 
+#define DATA_SIZE 1024
+
 void UOpenCLObject::SetUpOpenCL()
 {
 	// Please kill me
 	// I fucking hate opencl
 	cl_int Error = 0;
+
+	cl_float data[DATA_SIZE];
+	cl_float results[DATA_SIZE];
+
+	size_t global;
+	size_t local;
+
+	unsigned int i = 0;
+	unsigned int count = DATA_SIZE;
+	for (i = 0; i < count; i++)
+		data[i] = rand() / (float)RAND_MAX;
 
 	// Get platforms
 	cl_uint PlatformIDCount = 0;
@@ -164,43 +199,66 @@ void UOpenCLObject::SetUpOpenCL()
 
 	//Context = clCreateContextFromType(NULL, CL_DEVICE_TYPE_GPU, NULL, NULL, &Error);
 
-	if (Error != CL_SUCCESS)
-	{
-		UE_LOG(SpaceStationGameLog, Warning, TEXT("OpenCL Error!:\t\t	%s"), *get_error_string(Error))
-	}
+	CheckError(Error);
 
+	/**			Program			**/
 	std::FILE* programHandle;
 	size_t programSize;
 	char* programBuffer;
 
 	// get size of kernel source
-	fopen_s(&programHandle, "C:/Unreal Projects/SpaceStationGame/Source/SpaceStationGame/Atmospherics/OpenCL/Kernel/AtmosKernels.cl", "r");
+	fopen_s(&programHandle, "C:/Unreal Projects/SpaceStationGame/Source/SpaceStationGame/Atmospherics/OpenCL/Kernel/AtmosKernels.cl", "rb"); // Make sure it's a binary stream
 	fseek(programHandle, 0, SEEK_END);
 	programSize = ftell(programHandle);
 	rewind(programHandle);
 
 	// read kernel source into buffer
-	programBuffer = (char*)malloc(programSize + 1);
+	programBuffer = (char*)malloc(programSize);
 	programBuffer[programSize] = '\0';
 	fread(programBuffer, sizeof(char), programSize, programHandle);
 	fclose(programHandle);
 
 	Program = clCreateProgramWithSource(Context, 1, (const char**)&programBuffer, &programSize, &Error);
-	
+	CheckError(Error);
+
 	free(programBuffer);
 
-	Error = clBuildProgram(Program, 0, NULL, NULL, NULL, NULL);
+	/**		Build program		**/
+	Error = clBuildProgram(Program, 1, &Device, NULL, NULL, NULL);
+	CheckError(Error);
 
-	if (Error != CL_SUCCESS)
-	{
-		UE_LOG(SpaceStationGameLog, Warning, TEXT("OpenCL Error!:\t\t	%s"), *get_error_string(Error))
-	}
+	/**			Buffers			**/
+	cl_mem Input = clCreateBuffer(Context, CL_MEM_READ_ONLY, sizeof(cl_float) * count, NULL, &Error);
+	CheckError(Error);
 
-	Kernel = clCreateKernel(Program, "hello_world", &Error);
+	cl_mem Output = clCreateBuffer(Context, CL_MEM_READ_WRITE, sizeof(cl_float) * count, NULL, &Error);
+	CheckError(Error);
 
 	cl_command_queue CommandQueue = clCreateCommandQueue(Context, Device, 0, &Error);
+	CheckError(Error);
 
-	Error = clEnqueueTask(CommandQueue, Kernel, 0, NULL, NULL);
+	CheckError(clEnqueueWriteBuffer(CommandQueue, Input, CL_TRUE, 0, sizeof(cl_float) * count, &data, 0, NULL, NULL));
+
+	/**		Create Kernel			**/
+	Kernel = clCreateKernel(Program, "square", &Error);
+	CheckError(Error);
+
+	/**		Kernel Arguments		**/
+	CheckError(clSetKernelArg(Kernel, 0, sizeof(cl_mem), &Input));
+	CheckError(clSetKernelArg(Kernel, 1, sizeof(cl_mem), &Output));
+	CheckError(clSetKernelArg(Kernel, 2, sizeof(unsigned int), &count));
+
+	//CheckError(clEnqueueTask(CommandQueue, Kernel, 0, NULL, NULL));
+
+	local = 1;
+	global = count;
+	CheckError(clEnqueueNDRangeKernel(CommandQueue, Kernel, 1, NULL, &global, &local, 0, NULL, NULL));
+
+	clFinish(CommandQueue);
+
+	CheckError(clEnqueueReadBuffer(CommandQueue, Output, CL_TRUE, 0, sizeof(cl_float) * count, &results, 0, NULL, NULL));
+
+	UE_LOG(SpaceStationGameLog, Warning, TEXT("OpenCL DONE!:\t\t	%d"), results[4]);
 }
 
 void UOpenCLObject::Tick(float DeltaTime)
