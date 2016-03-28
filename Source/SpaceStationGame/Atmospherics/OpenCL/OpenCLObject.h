@@ -50,6 +50,8 @@ public:
 
 	std::vector<cl_platform_id> Platforms;
 	cl_device_id Device;
+
+	cl_mem AtmosVoxels;
 	
 	cl_context Context;
 	cl_program Program;

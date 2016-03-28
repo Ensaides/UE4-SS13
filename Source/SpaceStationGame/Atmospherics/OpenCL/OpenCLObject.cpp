@@ -5,6 +5,7 @@
 #include <fstream>
 #include <iostream>
 #include "StringHelpers.h"
+#include "AtmosVoxel.h"
 
 #include "OpenCLObject.h"
 
@@ -260,6 +261,8 @@ void UOpenCLObject::SetUpOpenCL()
 	{
 		UE_LOG(SpaceStationGameLog, Warning, TEXT("OpenCL DONE!:\t\t %f"), result[i]);
 	}
+
+	UE_LOG(SpaceStationGameLog, Warning, TEXT("Atmos voxel size:\t\t %d"), sizeof(Atmospherics::AtmosVoxel));
 
 	free(data);
 	free(result);

@@ -368,9 +368,6 @@
     <ClInclude Include="..\..\Source\SpaceStationGame\Atmospherics\OpenCL\OpenCLObject.h">
       <Filter>Source\SpaceStationGame\Atmospherics\OpenCL</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\SpaceStationGame\Atmospherics\OpenCL\Voxels\AtmosVoxelManager.h">
-      <Filter>Source\SpaceStationGame\Atmospherics\OpenCL\Voxel</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Source\SpaceStationGame\Atmospherics\OpenCL\AtmosVoxel.h">
       <Filter>Source\SpaceStationGame\Atmospherics\OpenCL\Voxel</Filter>
     </ClInclude>

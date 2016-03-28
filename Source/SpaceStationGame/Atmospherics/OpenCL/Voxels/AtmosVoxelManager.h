@@ -1,19 +1,45 @@
 #pragma once
 
 #include "Object.h"
-#include <vector>
 
 #include "AtmosVoxel.h"
+
+#define ATMOS_VOXEL_ARRAY_SIZE 32000;
 
 class UAtmosVoxelManager
 {
 protected:
-	static std::vector<AtmosVoxel> AtmosVoxels;
+	static AtmosVoxel AtmosVoxels[ATMOS_VOXEL_ARRAY_SIZE];
+	static bool ValidAtmosVoxels[ATMOS_VOXEL_ARRAY_SIZE];
 
 public:
-	static void AddVoxel(AtmosVoxel) { AtmosVoxels.Push(AtmosVoxel); };
+	static int GetFirstInvalidVoxel() {
+		for (int i = 0; i < ATMOS_VOXEL_ARRAY_SIZE; i++)
+		{
+			if (ValidAtmosVoxels[i] == false)
+			{
+				return i;
+			}
+		}
+		return -1; // If there is no more space for new voxels
+	};
+		
+	static void AddVoxel(AtmosVoxel NewVoxel) {
+		int FirstVoxel = GetFirstInvalidVoxel();
 
-	static void RemoveVoxel(int Index) { AtmosVoxels.Remove(Index); };
+		if (FirstVoxel > -1)
+		{
+			AtmosVoxels[FirstVoxel] = NewVoxel;
+			ValidAtmosVoxels[FirstVoxel] = true;
+		}
+	};
 
-	static std::vector<AtmosVoxel>& GetVoxels() { return AtmosVoxels; };
+	static void RemoveVoxel(int Index) {
+		if (Index <= ATMOS_VOXEL_ARRAY_SIZE)
+		{
+			ValidAtmosVoxels[Index] = false;
+		}
+	};
+
+	static AtmosVoxel[ATMOS_VOXEL_ARRAY_SIZE]& GetVoxels() { return AtmosVoxels; };
 };
