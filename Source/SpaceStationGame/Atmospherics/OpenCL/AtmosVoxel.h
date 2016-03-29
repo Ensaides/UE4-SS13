@@ -29,7 +29,7 @@ namespace Atmospherics
 		unsigned char bValidVoxel : 1;
 	} AtmosVoxel;
 
-	AtmosVoxel AtmosVoxels[ATMOS_VOXEL_ARRAY_SIZE];
+	static AtmosVoxel AtmosVoxels[ATMOS_VOXEL_ARRAY_SIZE];
 
 	static int GetFirstInvalidVoxel() {
 		for (int i = 0; i < ATMOS_VOXEL_ARRAY_SIZE; i++)

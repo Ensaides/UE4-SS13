@@ -173,11 +173,7 @@ void UOpenCLObject::SetUpOpenCL()
 	size_t local;
 
 	unsigned int i = 0;
-	unsigned int count = DATA_SIZE;
-	for (i = 0; i < count; i++)
-	{
-		data[i] = rand() / (float)RAND_MAX;
-	}
+	unsigned int count = Atmospherics::AtmosVoxels.size();
 
 	// Get platforms
 	cl_uint PlatformIDCount = 0;
@@ -190,6 +186,11 @@ void UOpenCLObject::SetUpOpenCL()
 	cl_uint DeviceIDCount = 0;
 	clGetDeviceIDs(Platforms[0], CL_DEVICE_TYPE_GPU, 1, &Device, &DeviceIDCount);
 
+	// Get device info
+	size_t MaxWorkItemSize[3];
+
+	CheckError(clGetDeviceInfo(Device, CL_DEVICE_MAX_WORK_ITEM_SIZES, sizeof(size_t), &MaxWorkItemSize, NULL));
+
 	const cl_context_properties contextProperties[] =
 	{
 		CL_CONTEXT_PLATFORM, reinterpret_cast<cl_context_properties> (Platforms[0]),
@@ -200,6 +201,8 @@ void UOpenCLObject::SetUpOpenCL()
 	CheckError(Error);
 
 	/**			Buffers			**/
+	AtmosVoxelsBuffer = clCreateBuffer(Context, CL_MEM_READ_WRITE, sizeof(Atmospherics::AtmosVoxels), NULL, &Error);
+
 	cl_mem Input = clCreateBuffer(Context, CL_MEM_READ_WRITE, sizeof(cl_float) * count, NULL, &Error);
 	CheckError(Error);
 
@@ -210,6 +213,7 @@ void UOpenCLObject::SetUpOpenCL()
 	CheckError(Error);
 
 	CheckError(clEnqueueWriteBuffer(CommandQueue, Input, CL_TRUE, 0, sizeof(cl_float) * count, data, 0, NULL, NULL));
+	CheckError(clEnqueueWriteBuffer(CommandQueue, AtmosVoxelsBuffer, CL_TRUE, 0, sizeof(Atmospherics::AtmosVoxels), &Atmospherics::AtmosVoxels, 0, NULL, NULL));
 
 	/**			Program			**/
 	std::FILE* programHandle;
@@ -250,10 +254,17 @@ void UOpenCLObject::SetUpOpenCL()
 
 	CheckError(clGetKernelWorkGroupInfo(Kernel, Device, CL_KERNEL_WORK_GROUP_SIZE, sizeof(local), &local, NULL));
 
-	global = count;
-	CheckError(clEnqueueNDRangeKernel(CommandQueue, Kernel, 1, NULL, &global, &local, 0, NULL, NULL));
+	if (count <= MaxWorkItemSize[1])
+	{
+		global = count;
+		CheckError(clEnqueueNDRangeKernel(CommandQueue, Kernel, 1, NULL, &global, &local, 0, NULL, NULL));
 
-	clFinish(CommandQueue);
+		clFinish(CommandQueue);
+	}
+	else
+	{
+
+	}
 
 	CheckError(clEnqueueReadBuffer(CommandQueue, Output, CL_TRUE, 0, sizeof(cl_float) * count, result, 0, NULL, NULL));
 
