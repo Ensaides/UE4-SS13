@@ -23,13 +23,15 @@ namespace Atmospherics
 		cl_int AdjacentVoxels[8];
 
 		// State
-		unsigned char bNeedsUpdate : 1;
-		unsigned char bValueChanged : 1;
-		unsigned char bBlocked : 1;
-		unsigned char bValidVoxel : 1;
+		bool bNeedsUpdate;
+		bool bValueChanged;
+		bool bBlocked;
+		bool bValidVoxel;
 	} AtmosVoxel;
 
 	static AtmosVoxel AtmosVoxels[ATMOS_VOXEL_ARRAY_SIZE];
+
+	static int AtmosVoxelsSize(ATMOS_VOXEL_ARRAY_SIZE);
 
 	static int GetFirstInvalidVoxel() {
 		for (int i = 0; i < ATMOS_VOXEL_ARRAY_SIZE; i++)

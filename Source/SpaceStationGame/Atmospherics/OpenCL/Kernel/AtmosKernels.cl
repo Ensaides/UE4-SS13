@@ -13,18 +13,19 @@ typedef struct
 	int AdjacentVoxels[8];
 	
 	// State
-	unsigned char bNeedsUpdate : 1;
-	unsigned char bValueChanged : 1;
-	unsigned char bBlocked : 1;
-	unsigned char bValidVoxel : 1;
+	bool bNeedsUpdate;
+	bool bValueChanged;
+	bool bBlocked;
+	bool bValidVoxel;
 } AtmosVoxel;
 
-__kernel void square( __global float *Input, __global float *Output, __global AtmosVoxel* AtmosVoxels, int count)
+__kernel void ComputeAtmospherics(__global AtmosVoxel* AtmosVoxels, unsigned int count)
 {
 	int i = get_global_id(0);
+
 	if(i < count)
 	{
-		Output[i] = Input[i] * Input[i];
+		AtmosVoxel WorkerVoxel = AtmosVoxels[i];
 	}
 }
 

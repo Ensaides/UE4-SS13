@@ -173,7 +173,7 @@ void UOpenCLObject::SetUpOpenCL()
 	size_t local;
 
 	unsigned int i = 0;
-	unsigned int count = Atmospherics::AtmosVoxels.size();
+	unsigned int count = Atmospherics::AtmosVoxelsSize;
 
 	// Get platforms
 	cl_uint PlatformIDCount = 0;
@@ -203,16 +203,16 @@ void UOpenCLObject::SetUpOpenCL()
 	/**			Buffers			**/
 	AtmosVoxelsBuffer = clCreateBuffer(Context, CL_MEM_READ_WRITE, sizeof(Atmospherics::AtmosVoxels), NULL, &Error);
 
-	cl_mem Input = clCreateBuffer(Context, CL_MEM_READ_WRITE, sizeof(cl_float) * count, NULL, &Error);
-	CheckError(Error);
+	//cl_mem Input = clCreateBuffer(Context, CL_MEM_READ_WRITE, sizeof(cl_float) * count, NULL, &Error);
+	//CheckError(Error);
 
-	cl_mem Output = clCreateBuffer(Context, CL_MEM_READ_WRITE, sizeof(cl_float) * count, NULL, &Error);
-	CheckError(Error);
+	//cl_mem Output = clCreateBuffer(Context, CL_MEM_READ_WRITE, sizeof(cl_float) * count, NULL, &Error);
+	//CheckError(Error);
 
 	cl_command_queue CommandQueue = clCreateCommandQueue(Context, Device, 0, &Error);
 	CheckError(Error);
 
-	CheckError(clEnqueueWriteBuffer(CommandQueue, Input, CL_TRUE, 0, sizeof(cl_float) * count, data, 0, NULL, NULL));
+	//CheckError(clEnqueueWriteBuffer(CommandQueue, Input, CL_TRUE, 0, sizeof(cl_float) * count, data, 0, NULL, NULL));
 	CheckError(clEnqueueWriteBuffer(CommandQueue, AtmosVoxelsBuffer, CL_TRUE, 0, sizeof(Atmospherics::AtmosVoxels), &Atmospherics::AtmosVoxels, 0, NULL, NULL));
 
 	/**			Program			**/
@@ -242,31 +242,33 @@ void UOpenCLObject::SetUpOpenCL()
 	CheckError(Error);
 
 	/**		Create Kernel			**/
-	Kernel = clCreateKernel(Program, "square", &Error);
+	Kernel = clCreateKernel(Program, "ComputeAtmospherics", &Error);
 	CheckError(Error);
 
 	/**		Kernel Arguments		**/
-	CheckError(clSetKernelArg(Kernel, 0, sizeof(cl_mem), (void *)&Input));
-	CheckError(clSetKernelArg(Kernel, 1, sizeof(cl_mem), (void *)&Output));
-	CheckError(clSetKernelArg(Kernel, 2, sizeof(unsigned int), &count));
+	CheckError(clSetKernelArg(Kernel, 0, sizeof(cl_mem), (void *)&AtmosVoxelsBuffer));
+	//CheckError(clSetKernelArg(Kernel, 1, sizeof(cl_mem), (void *)&Output));
+	CheckError(clSetKernelArg(Kernel, 1, sizeof(unsigned int), &count));
 
 	//CheckError(clEnqueueTask(CommandQueue, Kernel, 0, NULL, NULL));
 
 	CheckError(clGetKernelWorkGroupInfo(Kernel, Device, CL_KERNEL_WORK_GROUP_SIZE, sizeof(local), &local, NULL));
 
+	local = 1;
 	global = count;
 	CheckError(clEnqueueNDRangeKernel(CommandQueue, Kernel, 1, NULL, &global, &local, 0, NULL, NULL));
 
 	clFinish(CommandQueue);
 
-	CheckError(clEnqueueReadBuffer(CommandQueue, Output, CL_TRUE, 0, sizeof(cl_float) * count, result, 0, NULL, NULL));
+	//CheckError(clEnqueueReadBuffer(CommandQueue, Output, CL_TRUE, 0, sizeof(cl_float) * count, result, 0, NULL, NULL));
 
-	for (unsigned int i = 0; i < count; i++)
-	{
-		UE_LOG(SpaceStationGameLog, Warning, TEXT("OpenCL DONE!:\t\t %f"), result[i]);
-	}
+	//for (unsigned int i = 0; i < count; i++)
+	//{
+		//UE_LOG(SpaceStationGameLog, Warning, TEXT("OpenCL DONE!:\t\t %f"), result[i]);
+	//}
 
 	UE_LOG(SpaceStationGameLog, Warning, TEXT("Atmos voxel size:\t\t %d"), sizeof(Atmospherics::AtmosVoxel));
+	UE_LOG(SpaceStationGameLog, Warning, TEXT("Atmos voxel array size:\t\t %d"), sizeof(Atmospherics::AtmosVoxels ));
 
 	free(data);
 	free(result);
