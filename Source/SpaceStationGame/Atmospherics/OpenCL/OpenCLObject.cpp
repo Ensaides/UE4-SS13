@@ -254,17 +254,10 @@ void UOpenCLObject::SetUpOpenCL()
 
 	CheckError(clGetKernelWorkGroupInfo(Kernel, Device, CL_KERNEL_WORK_GROUP_SIZE, sizeof(local), &local, NULL));
 
-	if (count <= MaxWorkItemSize[1])
-	{
-		global = count;
-		CheckError(clEnqueueNDRangeKernel(CommandQueue, Kernel, 1, NULL, &global, &local, 0, NULL, NULL));
+	global = count;
+	CheckError(clEnqueueNDRangeKernel(CommandQueue, Kernel, 1, NULL, &global, &local, 0, NULL, NULL));
 
-		clFinish(CommandQueue);
-	}
-	else
-	{
-
-	}
+	clFinish(CommandQueue);
 
 	CheckError(clEnqueueReadBuffer(CommandQueue, Output, CL_TRUE, 0, sizeof(cl_float) * count, result, 0, NULL, NULL));
 
