@@ -21,6 +21,7 @@ namespace Atmospherics
 
 		// ID
 		cl_int AdjacentVoxels[8];
+		cl_int ValidVoxelIndex;
 
 		// State
 		bool bNeedsUpdate;
@@ -33,7 +34,12 @@ namespace Atmospherics
 
 	static int AtmosVoxelsSize(ATMOS_VOXEL_ARRAY_SIZE);
 
-	static int GetFirstInvalidVoxel() {
+	static int ValidAtmosVoxels[ATMOS_VOXEL_ARRAY_SIZE];
+
+	static int ValidAtmosVoxelsSize;
+
+	static int GetFirstInvalidVoxel() 
+	{
 		for (int i = 0; i < ATMOS_VOXEL_ARRAY_SIZE; i++)
 		{
 			if (AtmosVoxels[i].bValidVoxel == false)
@@ -44,20 +50,29 @@ namespace Atmospherics
 		return -1; // If there is no more space for new voxels
 	};
 
-	static void AddVoxel(AtmosVoxel NewVoxel) {
+	static void AddVoxel(AtmosVoxel NewVoxel) 
+	{
 		int FirstVoxel = GetFirstInvalidVoxel();
 
 		if (FirstVoxel > -1)
 		{
 			AtmosVoxels[FirstVoxel] = NewVoxel;
 			AtmosVoxels[FirstVoxel].bValidVoxel = true;
+
+			AtmosVoxels[FirstVoxel].ValidVoxelIndex = ValidAtmosVoxelsSize;
+			ValidAtmosVoxels[ValidAtmosVoxelsSize] = FirstVoxel;
+
+			ValidAtmosVoxelsSize++;
 		}
 	};
 
-	static void RemoveVoxel(int Index) {
+	static void RemoveVoxel(int Index) 
+	{
 		if (Index <= ATMOS_VOXEL_ARRAY_SIZE && Index >= 0)
 		{
 			AtmosVoxels[Index].bValidVoxel = false;
+
+
 		}
 	};
 }

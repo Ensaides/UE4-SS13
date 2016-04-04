@@ -187,9 +187,9 @@ void UOpenCLObject::SetUpOpenCL()
 	clGetDeviceIDs(Platforms[0], CL_DEVICE_TYPE_GPU, 1, &Device, &DeviceIDCount);
 
 	// Get device info
-	size_t MaxWorkItemSize[3];
+	//size_t MaxWorkItemSize[3];
 
-	CheckError(clGetDeviceInfo(Device, CL_DEVICE_MAX_WORK_ITEM_SIZES, sizeof(size_t), &MaxWorkItemSize, NULL));
+	//CheckError(clGetDeviceInfo(Device, CL_DEVICE_MAX_WORK_ITEM_SIZES, sizeof(size_t), &MaxWorkItemSize, NULL));
 
 	const cl_context_properties contextProperties[] =
 	{
@@ -245,10 +245,13 @@ void UOpenCLObject::SetUpOpenCL()
 	Kernel = clCreateKernel(Program, "ComputeAtmospherics", &Error);
 	CheckError(Error);
 
+	float DeltaSeconds = 1.f;
+
 	/**		Kernel Arguments		**/
 	CheckError(clSetKernelArg(Kernel, 0, sizeof(cl_mem), (void *)&AtmosVoxelsBuffer));
 	//CheckError(clSetKernelArg(Kernel, 1, sizeof(cl_mem), (void *)&Output));
 	CheckError(clSetKernelArg(Kernel, 1, sizeof(unsigned int), &count));
+	CheckError(clSetKernelArg(Kernel, 2, sizeof(float), &DeltaSeconds));
 
 	//CheckError(clEnqueueTask(CommandQueue, Kernel, 0, NULL, NULL));
 
