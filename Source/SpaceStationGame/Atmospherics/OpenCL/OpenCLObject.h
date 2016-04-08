@@ -51,8 +51,14 @@ public:
 	std::vector<cl_platform_id> Platforms;
 	cl_device_id Device;
 
-	cl_mem AtmosVoxelsBuffer;
+	cl_mem InputAtmosVoxelsBuffer;
+	cl_mem OutputAtmosVoxelsBuffer;
+	cl_mem UpdateAtmosVoxelsBuffer;
+
+	cl_event event;
 	
+	cl_command_queue CommandQueue;
+
 	cl_context Context;
 	cl_program Program;
 	cl_kernel Kernel;

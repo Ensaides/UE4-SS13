@@ -1,8 +1,7 @@
 typedef struct
 {
 	// Gasses
-	float16 Gasses;
-	float16 DeltaGasses;
+	float16 Gases;
 
 	// Pos
 	float XPos;
@@ -11,54 +10,83 @@ typedef struct
 	
 	// ID
 	int AdjacentVoxels[8];
+	int ValidVoxelIndex;
 	
 	// State
-	bool bNeedsUpdate;
-	bool bValueChanged;
-	bool bBlocked;
 	bool bValidVoxel;
 } AtmosVoxel;
 
-__kernel void ComputeAtmospherics(__global AtmosVoxel* AtmosVoxels, unsigned int count, float DeltaSeconds)
+#define GAS_UPDATE_DIFFERENCE 5.f
+#define GAS_UPDATE_INTERP_TIME 4.f
+
+__kernel void ComputeAtmospherics(__global AtmosVoxel* InputAtmosVoxels, __global AtmosVoxel* OutputAtmosVoxels, __global int* UpdateAtmosVoxels, int UpdateAtmosVoxelsCount, float DeltaSeconds)
 {
 	int i = get_global_id(0);
 
-	if(i < count)
+	if(i < UpdateAtmosVoxelsCount)
 	{
-		AtmosVoxel WorkerVoxel = AtmosVoxels[i];
+		AtmosVoxel WorkerVoxel = InputAtmosVoxels[UpdateAtmosVoxels[i]];
 
-		if (WorkerVoxel.bNeedsUpdate && WorkerVoxel.bValidVoxel) // Get rid of this fucking branching
+		AtmosVoxel AdjacentVoxels[8];
+
+		int intValidAdjacentVoxels;
+		bool ValidAdjacentVoxels[8];
+
+		float InterpMul = (DeltaSeconds / GAS_UPDATE_INTERP_TIME);
+
+		InterpMul *= InterpMul; 
+
+		if (InterpMul > 1.f) InterpMul = 1.f;
+
+		for (int i = 0; i < 8; i++)
 		{
-			AtmosVoxel AdjacentVoxels[8];
-
-			int intValidVoxels;
-			bool ValidVoxels[8];
-
-			for (int i = 0; i < 8; i++)
+			if (WorkerVoxel.AdjacentVoxels[i] > -1)
 			{
-				AdjacentVoxels[i] = AtmosVoxels[WorkerVoxel.AdjacentVoxels[i]];
+				AdjacentVoxels[i] = InputAtmosVoxels[WorkerVoxel.AdjacentVoxels[i]];
 
-				if (AdjacentVoxel->bValidVoxel)
-				{
-					intValidVoxels++;
+				intValidAdjacentVoxels++;
 
-					ValidVoxels[i] = true;
-				}
+				ValidAdjacentVoxels[i] = true;
 			}
+		}
 
-			for (int i = 0; i < 8; i++)
+		for (int i = 0; i < 8; i++)
+		{
+			if (ValidAdjacentVoxels[i])
 			{
-				if (ValidVoxels[i])
+				bool bUpdateVoxel = false;
+
+				float16 DeltaGases = WorkerVoxel.Gases - AdjacentVoxels[i].Gases;
+
+				float* DeltaGasesArray = (float*) &DeltaGases;
+
+				for (int i = 0; i < 16; i++)
 				{
-					float16 DeltaGasses = WorkerVoxel.Gasses - AdjacentVoxels[i].Gasses;
-
-					for (int i = 0; i < 16; i++)
+					if (DeltaGasesArray[i] > GAS_UPDATE_DIFFERENCE || DeltaGasesArray[i] < -GAS_UPDATE_DIFFERENCE)
 					{
+						bUpdateVoxel = true;
 
+						break;
 					}
+				}
+
+				if (bUpdateVoxel)
+				{
+					float16 GasAverage = DeltaGases / 2.f;
+
+					GasAverage *= InterpMul;
+
+					GasAverage /= intValidAdjacentVoxels;
+
+					WorkerVoxel.Gases += GasAverage;
+
+					//AdjacentVoxels[i].Gases -= GasAverage;
 				}
 			}
 		}
+
+		OutputAtmosVoxels[UpdateAtmosVoxels[i]] = WorkerVoxel;
 	}
 }
+
 

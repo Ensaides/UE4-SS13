@@ -363,6 +363,9 @@
     <ClCompile Include="..\..\Source\SpaceStationGame\Atmospherics\OpenCL\OpenCLObject.cpp">
       <Filter>Source\SpaceStationGame\Atmospherics\OpenCL</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceStationGame\Atmospherics\OpenCL\AtmosVoxel.cpp">
+      <Filter>Source\SpaceStationGame\Atmospherics\OpenCL\Voxel</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\SpaceStationGame\Atmospherics\OpenCL\OpenCLObject.h">

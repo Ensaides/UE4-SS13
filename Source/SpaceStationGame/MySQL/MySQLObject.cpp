@@ -166,10 +166,12 @@ void UMySQLObject::GetMySQLData()
 						NewStruct.Player->bMySQLPlayerDataLoaded = true;
 						break;
 					}
+
 					case MySQL::ThreadInputType::BanData:
 					{
 						break;
 					}
+
 					default:
 						break;
 				}

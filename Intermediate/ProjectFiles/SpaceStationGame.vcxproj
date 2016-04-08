@@ -1967,6 +1967,7 @@
     <None Include="..\..\Plugins\OpenCL\OpenCL.uplugin" />
     <None Include="..\..\Plugins\OpenCL\Resources\Icon128.png" />
     <None Include="..\..\Source\SpaceStationGame\SpaceStationGame.Build.cs" />
+    <ClCompile Include="..\..\Source\SpaceStationGame\Atmospherics\OpenCL\AtmosVoxel.cpp" />
     <ClCompile Include="..\..\Source\SpaceStationGame\Atmospherics\OpenCL\OpenCLObject.cpp" />
     <ClCompile Include="..\..\Source\SpaceStationGame\SpaceStationGameGameMode.cpp" />
     <ClInclude Include="..\..\Plugins\OpenCL\ThirdParty\OpenCL\Include\CL\cl.h" />
