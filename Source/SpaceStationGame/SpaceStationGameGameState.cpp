@@ -34,11 +34,7 @@ void ASpaceStationGameGameState::GetLifetimeReplicatedProps(TArray< FLifetimePro
 
 void ASpaceStationGameGameState::BeginPlay()
 {
-	// Please fix this, the object shouldn't be staying around after the game ends
-	JobManagerObject->JobArrayNames = {};
-	JobManagerObject->JobArray = {};
-
-	SetUpJobs();
+	JobManagerObject->Initialize();
 
 	if (!HasAuthority())
 	{
@@ -68,33 +64,6 @@ void ASpaceStationGameGameState::BeginPlay()
 #endif
 
 	Super::BeginPlay();
-}
-
-TSubclassOf<UJobObject> ASpaceStationGameGameState::GetJob(uint8 Job)
-{
-	if (JobManagerObject->GetJobExists(Job))
-	{
-		return JobManagerObject->GetJob(Job);
-	}
-	else
-	{
-		return UJobObject::StaticClass();
-	}
-}
-
-uint8 ASpaceStationGameGameState::GetJobIndex(TSubclassOf<UJobObject> Job)
-{
-	return JobManagerObject->JobArray.Find(Job);
-}
-
-TArray<TSubclassOf<UJobObject>> ASpaceStationGameGameState::GetJobArray()
-{
-	return JobManagerObject->GetJobArray();
-}
-
-TArray<FString> ASpaceStationGameGameState::GetJobNames()
-{
-	return JobManagerObject->GetJobNames();
 }
 
 void ASpaceStationGameGameState::StartMatchTimer(float TimerLength)

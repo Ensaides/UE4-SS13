@@ -1983,6 +1983,7 @@
     <ClInclude Include="..\..\Plugins\OpenCL\ThirdParty\OpenCL\Include\CL\opencl.h" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Atmospherics\OpenCL\OpenCLObject.h" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Atmospherics\OpenCL\AtmosVoxel.h" />
+    <ClInclude Include="..\..\Source\SpaceStationGame\Managers\ManagerObject.h" />
     <ClInclude Include="..\..\Source\SpaceStationGame\SpaceStationGameGameMode.h" />
     <ClCompile Include="..\..\Source\SpaceStationGame\SpaceStationGameGameResources.cpp" />
     <ClInclude Include="..\..\Source\SpaceStationGame\SpaceStationGameGameResources.h" />

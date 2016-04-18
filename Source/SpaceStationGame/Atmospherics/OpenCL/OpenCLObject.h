@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Object.h"
+#include "ManagerObject.h"
 #include "Tickable.h"
 #include "OpenCL.h"
 
@@ -51,7 +51,7 @@ class UAtmosVoxelManager;
  */
 
 UCLASS()
-class SPACESTATIONGAME_API UOpenCLObject : public UObject
+class SPACESTATIONGAME_API UOpenCLObject : public UManagerObject
 {
 	GENERATED_BODY()
 
@@ -73,7 +73,7 @@ private:
 public:
 	UOpenCLObject(const FObjectInitializer& ObjectInitializer);
 
-	virtual void Initialize();
+	virtual void Initialize() override;
 
 	virtual void Tick(float DeltaTime);
 

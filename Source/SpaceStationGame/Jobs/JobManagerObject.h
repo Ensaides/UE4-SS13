@@ -2,17 +2,23 @@
 
 #pragma once
 
-#include "Object.h"
+#include "ManagerObject.h"
+
+#include "JobObject.h"
+
 #include "JobManagerObject.generated.h"
 
-class UJobObject;
-
 UCLASS()
-class SPACESTATIONGAME_API UJobManagerObject : public UObject
+class SPACESTATIONGAME_API UJobManagerObject : public UManagerObject
 {
 	GENERATED_BODY()
 
 public:
+	virtual void Initialize() override;
+
+	UFUNCTION(BlueprintImplementableEvent, Category = Jobs)
+		void SetUpJobs();
+
 	UPROPERTY()
 		TArray<TSubclassOf<UJobObject>> JobArray;
 
@@ -24,6 +30,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = Jobs)
 	bool GetJobExists(uint8 Job) { return JobArray.IsValidIndex(Job); };
+
+
+	UFUNCTION(BlueprintCallable, Category = Jobs)
+	uint8 GetJobIndex(TSubclassOf<UJobObject> Job);
 
 	TArray<TSubclassOf<UJobObject>> GetJobArray() { return JobArray; };
 

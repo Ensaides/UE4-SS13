@@ -358,6 +358,9 @@
     <Filter Include="Plugins\OpenCL\ThirdParty\OpenCL\Include\CL">
       <UniqueIdentifier>{c25e4fa8-e1d9-4173-88a4-e5c89315d6ba}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\SpaceStationGame\Managers">
+      <UniqueIdentifier>{80421159-74eb-4767-b486-c4998b69dee8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\SpaceStationGame\Atmospherics\OpenCL\OpenCLObject.cpp">
@@ -406,6 +409,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Plugins\OpenCL\ThirdParty\OpenCL\Include\CL\cl_gl.h">
       <Filter>Plugins\OpenCL\ThirdParty\OpenCL\Include\CL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceStationGame\Managers\ManagerObject.h">
+      <Filter>Source\SpaceStationGame\Managers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

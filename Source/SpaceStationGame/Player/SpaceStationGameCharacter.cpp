@@ -4,6 +4,7 @@
 #include "SpaceStationGameCharacter.h"
 #include "SpaceStationGameGameState.h"
 #include "JobObject.h"
+#include "JobManagerObject.h"
 #include "SpaceStationGamePlayerController.h"
 #include "SpaceStationGameProjectile.h"
 #include "Animation/AnimInstance.h"
@@ -101,7 +102,7 @@ void ASpaceStationGameCharacter::BeginPlay()
 
 		if (World && GameState && PlayerController)
 		{
-			TSubclassOf<UJobObject> JobClass = GameState->GetJob(PlayerController->StartingJob);
+			TSubclassOf<UJobObject> JobClass = GameState->GetJobManager()->GetJob(PlayerController->StartingJob);
 
 			UJobObject* NewJobObject = NewObject<UJobObject>(this, JobClass);
 

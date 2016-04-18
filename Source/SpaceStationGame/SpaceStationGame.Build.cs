@@ -23,6 +23,7 @@ public class SpaceStationGame : ModuleRules
 		        "SpaceStationGame",
 				"SpaceStationGame/Atmospherics",
 				"SpaceStationGame/Atmospherics/OpenCL",
+                "SpaceStationGame/Managers",
 		        "SpaceStationGame/Mobs",
 				"SpaceStationGame/Player",
                 "SpaceStationGame/Jobs",

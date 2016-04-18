@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Object.h"
+#include "ManagerObject.h"
 #include <memory>
 #include <thread>
 #include <mutex>
@@ -41,7 +41,7 @@ namespace MySQL
  * 
  */
 UCLASS(config = Game)
-class SPACESTATIONGAME_API UMySQLObject : public UObject
+class SPACESTATIONGAME_API UMySQLObject : public UManagerObject
 {
 	GENERATED_BODY()
 
@@ -54,7 +54,7 @@ class SPACESTATIONGAME_API UMySQLObject : public UObject
 	std::vector<MySQL::ThreadInputStruct> ThreadInput;
 
 public:
-	void Initialize();
+	virtual void Initialize() override;
 
 	virtual void BeginDestroy() override;
 

@@ -34,21 +34,7 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = Jobs)
 	UJobManagerObject* JobManagerObject;
 
-public:
-	UFUNCTION(BlueprintImplementableEvent, Category = Jobs)
-		void SetUpJobs();
-
-	UFUNCTION(BlueprintCallable, Category = Jobs)
-	TSubclassOf<UJobObject> GetJob(uint8 Job);
-
-	UFUNCTION(BlueprintCallable, Category = Jobs)
-	uint8 GetJobIndex(TSubclassOf<UJobObject> Job);
-
-	UFUNCTION(BlueprintCallable, Category = Jobs)
-	TArray<TSubclassOf<UJobObject>> GetJobArray();
-
-	UFUNCTION(BlueprintCallable, Category = Jobs)
-	TArray<FString> GetJobNames();
+	UJobManagerObject* GetJobManager() { return JobManagerObject; };
 
 #if UE_SERVER || UE_EDITOR
 private:
