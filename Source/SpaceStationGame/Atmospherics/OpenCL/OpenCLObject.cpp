@@ -4,6 +4,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <vector>
 #include <time.h>
 #include "StringHelpers.h"
 #include "AtmosVoxel.h"
@@ -119,6 +120,8 @@ const FString get_error_string(cl_int err) {
 	}
 }
 
+using namespace UOpenCL;
+
 void UOpenCLObject::CheckError(int Error)
 {
 	if (Error != CL_SUCCESS)
@@ -160,41 +163,91 @@ void UOpenCLObject::GetOpenCLData()
 {
 	SetUpOpenCL();
 
+
 	Atmospherics::UpdateAtmosVoxelsSize = 32000;
 
-	//while (bThreadRunning)
-	//{
-	//	size_t local = 1;
-	//	size_t global = Atmospherics::UpdateAtmosVoxelsSize;
+	while (bThreadRunning)
+	{
+		if (bCycleAtmos) // ORDER: CPU READ/WRITE, GPU READ/WRITE
+		{
+			{
+				std::unique_lock<std::mutex> guard(ReadStructsLock);
 
-	//	CheckError(clSetKernelArg(Kernel, 3, sizeof(int), &Atmospherics::UpdateAtmosVoxelsSize));
+				while (!ReadStructs.empty())
+				{
+					auto ReadStruct = ReadStructs.back();
 
-	//	CheckError(clEnqueueNDRangeKernel(CommandQueue, Kernel, 1, NULL, &global, NULL, 0, NULL, &event));
+					{
+						std::unique_lock<std::mutex> lock(*ReadStruct.Mutex);
+						*ReadStruct.GasesToWrite = Atmospherics::AtmosVoxels[ReadStruct.VoxelID];
 
-	//	CheckError(clWaitForEvents(1, &event));
+						*ReadStruct.GasWriteCompleted = true;
+					}
 
-	//	// Profiling
-	//	cl_ulong time_start, time_end;
-	//	double total_time;
+					ReadStructs.pop_back();
+				}
+			}
 
-	//	clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_START, sizeof(time_start), &time_start, NULL);
-	//	clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_END, sizeof(time_end), &time_end, NULL);
-	//	total_time = time_end - time_start;
+			{
+				std::unique_lock<std::mutex> guard(WriteStructsLock);
 
-	//	UE_LOG(SpaceStationGameLog, Warning, TEXT("Kernel time in milliseconds:\t\t %f"), (total_time / 1000000.0));
+				while (!WriteStructs.empty())
+				{
+					auto WriteStruct = WriteStructs.back();
 
-	//	CheckError(clEnqueueReadBuffer(CommandQueue, OutputAtmosVoxelsBuffer, CL_TRUE, 0, sizeof(Atmospherics::AtmosVoxels), &Atmospherics::AtmosVoxels, 0, NULL, NULL));
+					switch (WriteStruct.WriteOperation)
+					{
+					case AtmosWriteOperation::Add:
 
-	//	//for (unsigned int i = 0; i < count; i++)
-	//	//{
-	//	//UE_LOG(SpaceStationGameLog, Warning, TEXT("OpenCL DONE!:\t\t %f"), result[i]);
-	//	//}
+						break;
+					case AtmosWriteOperation::Subtract:
 
-	//	UE_LOG(SpaceStationGameLog, Warning, TEXT("Atmos voxel size:\t\t %d"), sizeof(Atmospherics::AtmosVoxel));
-	//	UE_LOG(SpaceStationGameLog, Warning, TEXT("Atmos voxel array size:\t\t %d"), sizeof(Atmospherics::AtmosVoxels));
+						break;
+					case AtmosWriteOperation::Set:
 
-	//	UE_LOG(SpaceStationGameLog, Warning, TEXT("Result:\t\t %f"), Atmospherics::AtmosVoxels[global - 1].Gasses.s7);
-	//}
+						break;
+					case AtmosWriteOperation::SetAdditive:
+
+						break;
+					case AtmosWriteOperation::SetSubtractive:
+
+						break;
+					}
+				}
+			}
+
+			size_t local = 1;
+			size_t global = Atmospherics::UpdateAtmosVoxelsSize;
+
+			CheckError(clSetKernelArg(Kernel, 3, sizeof(int), &Atmospherics::UpdateAtmosVoxelsSize));
+
+			CheckError(clEnqueueNDRangeKernel(CommandQueue, Kernel, 1, NULL, &global, NULL, 0, NULL, &event));
+
+			CheckError(clWaitForEvents(1, &event));
+
+			// Profiling
+			cl_ulong time_start, time_end;
+			double total_time;
+
+			clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_START, sizeof(time_start), &time_start, NULL);
+			clGetEventProfilingInfo(event, CL_PROFILING_COMMAND_END, sizeof(time_end), &time_end, NULL);
+			total_time = time_end - time_start;
+
+			UE_LOG(SpaceStationGameLog, Warning, TEXT("Kernel time in milliseconds:\t\t %f"), (total_time / 1000000.0));
+
+			CheckError(clEnqueueReadBuffer(CommandQueue, OutputAtmosVoxelsBuffer, CL_TRUE, 0, sizeof(Atmospherics::AtmosVoxels), &Atmospherics::AtmosVoxels, 0, NULL, NULL));
+
+			//for (unsigned int i = 0; i < count; i++)
+			//{
+			//UE_LOG(SpaceStationGameLog, Warning, TEXT("OpenCL DONE!:\t\t %f"), result[i]);
+			//}
+
+			UE_LOG(SpaceStationGameLog, Warning, TEXT("Atmos voxel size:\t\t %d"), sizeof(Atmospherics::AtmosVoxel));
+			UE_LOG(SpaceStationGameLog, Warning, TEXT("Atmos voxel array size:\t\t %d"), sizeof(Atmospherics::AtmosVoxels));
+
+			UE_LOG(SpaceStationGameLog, Warning, TEXT("Result:\t\t %f"), Atmospherics::AtmosVoxels[global - 1].Gasses.s7);
+		}
+	}
 }
 
 void UOpenCLObject::SetUpOpenCL()
@@ -323,10 +376,7 @@ void UOpenCLObject::SetUpOpenCL()
 
 void UOpenCLObject::Tick(float DeltaTime)
 {
-	if (bThreadRunning && !bComputingAtmospherics)
-	{
-
-	}
+	bCycleAtmos = true;
 }
 
 void UOpenCLObject::BeginDestroy()

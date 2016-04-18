@@ -14,6 +14,36 @@
 
 #include "OpenCLObject.generated.h"
 
+namespace UOpenCL
+{
+	enum AtmosWriteOperation
+	{
+		Add,
+		Subtract,
+		Set,
+		SetAdditive, // If you want to voxel to gain gas pressure every frame
+		SetSubtractive // If you want to voxel to remove gas pressure every frame
+	};
+
+	struct AtmosReadStruct
+	{
+		// Reads from the specified ID and writes to the pointed data
+		int VoxelID;
+
+		std::mutex* Mutex;
+		bool* GasWriteCompleted;
+		cl_float16* GasesToWrite;
+	};
+
+	struct AtmosWriteStruct
+	{
+		int VoxelID;
+
+		AtmosWriteOperation WriteOperation;
+		cl_float16 WriteOperand;
+	};
+}
+
 class UAtmosVoxelManager;
 
 /**
@@ -28,6 +58,14 @@ class SPACESTATIONGAME_API UOpenCLObject : public UObject
 	void SetUpOpenCL();
 	
 	UAtmosVoxelManager* VoxelManager;
+	
+	std::mutex ReadStructsLock;
+
+	static std::vector<UOpenCL::AtmosReadStruct> ReadStructs;
+
+	std::mutex WriteStructsLock;
+
+	static std::vector<UOpenCL::AtmosWriteStruct> WriteStructs;
 
 private:
 	void CheckError(int Error);
@@ -45,6 +83,8 @@ public:
 	bool bThreadRunning;
 
 	bool bComputingAtmospherics;
+
+	std::atomic<bool> bCycleAtmos;
 
 	std::thread OpenCLThread;
 

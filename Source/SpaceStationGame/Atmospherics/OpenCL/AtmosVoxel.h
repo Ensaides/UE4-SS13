@@ -12,8 +12,8 @@ namespace Atmospherics
 	{
 		// Put these members in larger to smaller order for memory alignment
 
-		// Gasses
-		cl_float16 Gasses;
+		// Gases
+		cl_float16 Gases;
 
 		// Pos
 		cl_float XPos;
