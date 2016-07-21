@@ -1,35 +1,72 @@
-// Copyright 1998-2015 Epic Games, Inc. All Rights Reserved.
+// Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
 
 #include "SpaceStationGame.h"
 #include "SpaceStationGameHUD.h"
-#include "SpaceStationGameGameResources.h"
+#include "Engine/Canvas.h"
+#include "TextureResource.h"
+#include "UMG.h"
+#include "CanvasItem.h"
 
-
-ASpaceStationGameHUD::ASpaceStationGameHUD(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+ASpaceStationGameHUD::ASpaceStationGameHUD(const class FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
-	//// Set the crosshair texture
+	// Set the crosshair texture
 	//static ConstructorHelpers::FObjectFinder<UTexture2D> CrosshiarTexObj(TEXT("/Game/FirstPerson/Textures/FirstPersonCrosshair"));
 	//CrosshairTex = CrosshiarTexObj.Object;
 }
 
+
 void ASpaceStationGameHUD::DrawHUD()
 {
 	Super::DrawHUD();
+}
 
+void ASpaceStationGameHUD::BeginPlay()
+{
+	FText WindowTitle = FText::FromString("Chat Window");
 
+	const TSharedPtr<SWindow> Window = SNew(SWindow)
+		.Title(WindowTitle)
+		.ClientSize(FVector2D(800, 600))
+		.UseOSWindowBorder(true);
 
-	// Draw very simple crosshair
+	/*
+	.ClientSize(FVector2D(ResX, ResY))
+	.Title(WindowTitle)
+	.AutoCenter(AutoCenterType)
+	.ScreenPosition(FVector2D(WinX, WinY))
+	.MaxWidth(MaxWindowWidth)
+	.MaxHeight(MaxWindowHeight)
+	.FocusWhenFirstShown(true)
+	.SaneWindowPlacement(AutoCenterType == EAutoCenter::None)
+	.UseOSWindowBorder(true);*/
 
-	//// find center of the Canvas
-	//const FVector2D Center(Canvas->ClipX * 0.5f, Canvas->ClipY * 0.5f);
+	ChatWindow = FSlateApplication::Get().AddWindow(Window.ToSharedRef());
 
-	//// offset by half the texture's dimensions so that the center of the texture aligns with the center of the Canvas
-	//const FVector2D CrosshairDrawPosition( (Center.X - (CrosshairTex->GetSurfaceWidth() * 0.5)),
-	//									   (Center.Y - (CrosshairTex->GetSurfaceHeight() * 0.5f)) );
+	BP_SetupChatWindow();
 
-	//// draw the crosshair
-	//FCanvasTileItem TileItem( CrosshairDrawPosition, CrosshairTex->Resource, FLinearColor::White);
-	//TileItem.BlendMode = SE_BLEND_Translucent;
-	//Canvas->DrawItem( TileItem );
+	OpenRoundStartMenu();
+}
+
+void ASpaceStationGameHUD::BP_SetChatWindowContent(UWidget* InContent)
+{
+	ChatWindow->SetContent(InContent->TakeWidget());
+}
+
+void ASpaceStationGameHUD::OpenRoundStartMenu()
+{
+	//GetOwningPlayerController()->bShowMouseCursor = true;
+
+	BP_OpenRoundStartMenu();
+}
+
+void ASpaceStationGameHUD::BeginDestroy()
+{
+	if (ChatWindow.IsValid())
+	{
+		ChatWindow->RequestDestroyWindow();
+	}
+
+	Super::BeginDestroy();
 }
 

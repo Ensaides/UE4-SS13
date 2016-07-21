@@ -3,43 +3,28 @@
 #pragma once
 
 #include "GameFramework/GameState.h"
-#include "ChatMessageStruct.h"
-#include "InstancedItemContainer.h"
-#include "Reagents.h"
 #include "SpaceStationGameGameState.generated.h"
 
-class UJobManagerObject;
-class UJobObject;
+class ASpaceStationGameServerState;
+class AManager;
 
 /**
-*
-*/
+ *
+ */
 UCLASS()
-class ASpaceStationGameGameState : public AGameState
+class SPACESTATIONGAME_API ASpaceStationGameGameState : public AGameState
 {
-	GENERATED_BODY()
+	GENERATED_UCLASS_BODY()
 
-	TArray<FChatMessageStruct*> ChatMessages;
-
-	// Send the messages to the client
-	UFUNCTION(Client, Reliable, WithValidation)
-		void SendNewChatMessage(const FString& Msg, const FString& PlayerName, FVector Location);
-
-	bool SendNewChatMessage_Validate(const FString& Msg, const FString& PlayerName, FVector Location) { return true; };
-
-	void SendNewChatMessage_Implementation(const FString& Msg, const FString& PlayerName, FVector Location);
-
-	//Job Stuff
 public:
-	UPROPERTY(BlueprintReadOnly, Category = Jobs)
-	UJobManagerObject* JobManagerObject;
-
-	UJobManagerObject* GetJobManager() { return JobManagerObject; };
-
+	// Spawns the server state and manager objects
+	virtual void BeginPlay() override;
+	
+	// Server state
 #if UE_SERVER || UE_EDITOR
-private:
+public:
 	UPROPERTY()
-		class ASpaceStationGameServerState* ServerState;
+		ASpaceStationGameServerState* ServerState;
 
 public:
 	ASpaceStationGameServerState* GetServerState() { return ServerState; };
@@ -47,37 +32,19 @@ public:
 #endif
 
 public:
-	ASpaceStationGameGameState(const FObjectInitializer& ObjectInitializer);
 
-	UPROPERTY(Replicated)
-		TArray<AInstancedItemContainer*> InstancedItemContainers;
+	// Manager Objects
 
-	// Round stuff
+	// This should be overridden in BP to call initializers on new managers
+	UFUNCTION(BlueprintImplementableEvent, meta = (ToolTip = "Called during manager initialization, implement this to call initializers on custom manager objects", DisplayName = "Initialize Managers"), Category = Managers)
+		void BP_InitializeManagers();
 
-	UPROPERTY(Replicated)
-		bool bDelayedStart;
+	// Instance Manager
+	UPROPERTY(EditDefaultsOnly, Category = Managers)
+		TSubclassOf<class AInstanceManager> InstanceManagerClass;
 
-	UFUNCTION(BlueprintCallable, Category = Round)
-	bool GetDelayedStart() { return bDelayedStart; };
+	UPROPERTY(BlueprintReadOnly, Category = Managers)
+		AManager* InstanceManager;
 
-	void StartMatchTimer(float TimerLength);
-
-	void StartRound();
-
-private:
-	FTimerHandle RoundStartTimerHandle;
-
-
-public:
-	UPROPERTY(EditAnywhere, Category = Item)
-		TArray<TSubclassOf<class AInstancedItemContainer>> InstancedItemContainerClasses;
-
-	virtual void BeginPlay() override;
-
-	AInstancedItemContainer* GetContainerFromClass(UClass* InputClass);
-
-	void AddChatMessage(const FString& Msg, FVector PlayerLocation, const FString& PlayerName);
-
-	UFUNCTION(BlueprintCallable, Category = State, meta = (DisplayName = "Get Match State"))
-		FName BP_GetMatchState() { return GetMatchState(); };
+	AManager* GetInstanceManager() const { return InstanceManager; };
 };

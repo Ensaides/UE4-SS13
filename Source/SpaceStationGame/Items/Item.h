@@ -3,14 +3,7 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
-#include "SmoothPhysicsState.h"
-#include "SlateGameResources.h"
-#include "SlateBasics.h"
-#include "SlateExtras.h"
-#include "SWidget.h"
 #include "Item.generated.h"
-
-#define PROXY_STATE_ARRAY_SIZE 20
 
 UENUM(BlueprintType)
 enum class EItemState : uint8
@@ -23,38 +16,10 @@ enum class EItemState : uint8
 UCLASS()
 class SPACESTATIONGAME_API AItem : public AActor
 {
-	GENERATED_BODY()
-
-	UPROPERTY(ReplicatedUsing = OnRep_ServerPhysicsState)
-	FSmoothPhysicsState ServerPhysicsState;
-
-	UFUNCTION()
-	void OnRep_ServerPhysicsState();
-	
-
-private:
-	/** Clients store twenty states with "playback" information from the server. This
-	array contains the official state of this object at different times according to
-	the server. */
-	FSmoothPhysicsState proxyStates[PROXY_STATE_ARRAY_SIZE];
-
-	/** Keep track of what slots are used */
-	int proxyStateCount;
-
-	/** Simulates movement **/
-	void ClientSimulate();
-
-public:	
-
-	// Enables lag compensation. Only works when physics are being simulated, too
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = Replication)
-		bool bEnableLagCompensation;
-
-	// Sets default values for this actor's properties
-	AItem(const FObjectInitializer& ObjectInitializer);
+	GENERATED_UCLASS_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Item)
-	FString ItemName;
+		FString ItemName;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Item)
 		USceneComponent* Scene;
@@ -68,9 +33,10 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, ReplicatedUsing = OnRep_SetItemState, Category = Item)
 		EItemState State;
 
-	UFUNCTION(BlueprintNativeEvent, Category=State)
+	UFUNCTION(BlueprintNativeEvent, Category = State)
 		void OnRep_SetItemState();
 
+	/*
 	UFUNCTION(NetMulticast, Reliable, WithValidation, BlueprintCallable, Category = Default, meta = (DisplayName = "Item: Used"))
 		virtual void Use(APawn* Pawn);
 
@@ -86,8 +52,8 @@ public:
 	virtual bool Drop_Validate(APawn* Pawn) { return true; };
 
 	virtual void BeginPlay() override;
-	
-	virtual void Tick( float DeltaSeconds ) override;
+
+	virtual void Tick(float DeltaSeconds) override;
 
 	UFUNCTION(BlueprintCallable, Category = GUI)
 		class USlateBrushAsset* GetInventoryIcon();
@@ -124,4 +90,5 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = Icon)
 		class USlateBrushAsset* InventoryIcon;
+	*/
 };

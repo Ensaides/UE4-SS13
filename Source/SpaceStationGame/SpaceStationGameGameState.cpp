@@ -1,120 +1,49 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "SpaceStationGame.h"
-#include "ChatMessageStruct.h"
-#include "Reagents.h"
-#include "UnrealNetwork.h"
-#include "JobManagerObject.h"
-#include "JobObject.h"
-#include "InstancedItemContainer.h"
-#include "SpaceStationGameGameMode.h"
-#include "SpaceStationGamePlayerController.h"
+#include "SpaceStationGameGameState.h"
 
 #if UE_SERVER || UE_EDITOR
 #include "SpaceStationGameServerState.h"
 #endif
 
-#include "SpaceStationGameGameState.h"
+#include "SpaceStationGameGameMode.h"
+#include "InstanceManager.h"
 
 ASpaceStationGameGameState::ASpaceStationGameGameState(const FObjectInitializer& ObjectInitializer)
-: Super(ObjectInitializer)
-{	
-	InstancedItemContainerClasses.Add(AInstancedItemContainer::StaticClass());
-
-	JobManagerObject = ObjectInitializer.CreateDefaultSubobject<UJobManagerObject>(this, TEXT("Job Manager Object"), true);
-}
-
-void ASpaceStationGameGameState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
+	: Super(ObjectInitializer)
 {
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(ASpaceStationGameGameState, InstancedItemContainers);
-	DOREPLIFETIME(ASpaceStationGameGameState, bDelayedStart);
+	InstanceManagerClass = AInstanceManager::StaticClass();
 }
 
 void ASpaceStationGameGameState::BeginPlay()
 {
-	JobManagerObject->Initialize();
-
-	if (!HasAuthority())
-	{
-		UWorld* const World = GetWorld();
-		for (auto Iter = InstancedItemContainerClasses.CreateIterator(); Iter; Iter++)
-		{
-			FActorSpawnParameters SpawnParams;
-			SpawnParams.Owner = this;
-			SpawnParams.Instigator = Instigator;
-			AInstancedItemContainer* const NewContainer = World->SpawnActor<AInstancedItemContainer>(*Iter, FVector(0, 0, 0), FRotator(0, 0, 0), SpawnParams);
-
-			InstancedItemContainers.Add(NewContainer);
-
-			NewContainer->SetupInstances();
-		}
-	}
-	else
-	{
-		UWorld* const World = GetWorld();
-		bDelayedStart = World->GetAuthGameMode()->bDelayedStart;
-	}
-
-#if UE_SERVER || UE_EDITOR
 	UWorld* const World = GetWorld();
 
-	ServerState = World->SpawnActor<ASpaceStationGameServerState>(ASpaceStationGameServerState::StaticClass());
+#if UE_SERVER || UE_EDITOR
+	if (GetNetMode() != ENetMode::NM_Client)
+	{
+		auto GameMode = Cast<ASpaceStationGameGameMode>(World->GetAuthGameMode());
+
+		// Spawn the server state
+		ServerState = World->SpawnActor<ASpaceStationGameServerState>(GameMode->ServerStateClass);
+	}
 #endif
 
+	// Managers
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+	SpawnParams.bNoFail = true;
+
+	const FTransform LocRot;
+
+	if (GetNetMode() != ENetMode::NM_DedicatedServer) InstanceManager = World->SpawnActor<AInstanceManager>(InstanceManagerClass, LocRot, SpawnParams);
+	
+	// The order we initialize these doesn't really matter
+	if (GetNetMode() != ENetMode::NM_DedicatedServer) InstanceManager->Initialize();
+
+	// Call the BP initializers
+	BP_InitializeManagers();
+
 	Super::BeginPlay();
-}
-
-void ASpaceStationGameGameState::StartMatchTimer(float TimerLength)
-{
-	GetWorldTimerManager().SetTimer(RoundStartTimerHandle, this, &ASpaceStationGameGameState::StartRound, TimerLength, false);
-}
-
-void ASpaceStationGameGameState::StartRound()
-{
-	Cast<ASpaceStationGameGameMode>(GetWorld()->GetAuthGameMode())->bDelayedStart = false;
-}
-
-AInstancedItemContainer* ASpaceStationGameGameState::GetContainerFromClass(UClass* InputClass)
-{
-	for (auto Iter = InstancedItemContainers.CreateIterator(); Iter; Iter++)
-	{
-		AInstancedItemContainer* IterPtr = *Iter;
-
-		if (IterPtr->GetClass() == InputClass)
-		{
-			return IterPtr;
-		}
-	}
-
-	return InstancedItemContainers[0];
-}
-
-void ASpaceStationGameGameState::AddChatMessage(const FString& Msg, FVector PlayerLocation, const FString& PlayerName)
-{
-	FChatMessageStruct NewMessage;
-
-	NewMessage.ChatMsg = Msg;
-	NewMessage.Location = PlayerLocation;
-	NewMessage.PlayerName = PlayerName;
-
-	int32 NewMessageIndex = ChatMessages.Add(&NewMessage);
-
-	SendNewChatMessage(ChatMessages[NewMessageIndex]->ChatMsg, ChatMessages[NewMessageIndex]->PlayerName, ChatMessages[NewMessageIndex]->Location);
-}
-
-void ASpaceStationGameGameState::SendNewChatMessage_Implementation(const FString& Msg, const FString& PlayerName, FVector Location)
-{
-	for (TActorIterator<ASpaceStationGamePlayerController> ActorItr(GetWorld()); ActorItr; ++ActorItr)
-	{
-		if (ActorItr->GetPawn() && (ActorItr->GetPawn()->GetActorLocation() - Location).Size() < 500.f)
-		{
-			ActorItr->AddChatMessage(PlayerName + FString(" says, \"") + Msg + FString("\""), false);
-		}
-		else if (ActorItr->GetSpectatorPawn())
-		{
-			ActorItr->AddChatMessage(PlayerName + FString(" says, \"") + Msg + FString("\""), false);
-		}
-	}
 }
