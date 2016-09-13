@@ -18,7 +18,7 @@ class SPACESTATIONGAME_API AChatManager : public AManager
 	// Array of chat messages on the server
 	TArray<FChatMessageStruct> ChatMessages;
 	
-	// Send the messages to the client player controller
+	// Send the messages to the client player controllers from a player
 	void SendNewChatMessage(const FString Msg, const FString PlayerName, FVector Location);
 
 public:

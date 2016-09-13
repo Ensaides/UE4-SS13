@@ -1,10 +1,8 @@
 #pragma once
+#include "Kernels/Includes/AtmosVoxel.h"
+#include "Atmos.generated.h"
 
-#include "OpenCL.h"
-#include "AtmosVoxel.generated.h"
-
-// float16 type that works with UE4
-USTRUCT(Blueprintable)
+USTRUCT(BlueprintType)
 struct FGases
 {
 	GENERATED_BODY()
@@ -44,7 +42,7 @@ struct FGases
 
 	UPROPERTY()
 		float sB;
-	
+
 	UPROPERTY()
 		float sC;
 
@@ -63,39 +61,25 @@ struct FGases
 	}
 };
 
-USTRUCT()
+// Wrapper for the OpenCL type AtmosVoxel
+USTRUCT(BlueprintType)
 struct FAtmosVoxel
 {
 	GENERATED_BODY()
 
-	// Put these members in larger to smaller order for memory alignment
-
-	// Gases
-	cl_float16 Gases;
-
-	// ID
-	cl_int AdjacentVoxels[26];
-
-	// State
-	bool bValidVoxel;
-
-
-	// THIS IS ONLY FOR MEMORY ALIGNMENT
-	// To do: replace this with some proper alignment somehow
-	cl_int MemShit[5];
-
+	Atmospherics::AtmosVoxel Voxel;
 
 	// Functions
 	FAtmosVoxel()
 	{
-		bValidVoxel = true;
+		Voxel.bValidVoxel = true;
 	}
 
 	static FAtmosVoxel EmptyVoxel()
 	{
 		FAtmosVoxel ReturnVoxel;
 
-		ReturnVoxel.bValidVoxel = false;
+		ReturnVoxel.Voxel.bValidVoxel = false;
 
 		return ReturnVoxel;
 	}
@@ -103,6 +87,6 @@ struct FAtmosVoxel
 	FGases GetFGases()
 	{
 		// These types should be convertible
-		return *(FGases*)&Gases;
+		return *(FGases*)&Voxel.Gases;
 	}
 };

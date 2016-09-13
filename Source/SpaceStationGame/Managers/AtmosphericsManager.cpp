@@ -2,8 +2,9 @@
 #include "SpaceStationGame.h"
 
 #include "OpenCLHelpers.h"
-#include "StringHelpers.h"
 #include "AtmosphericComponent.h"
+
+#include "Kernels/Includes/DebugInfo.h"
 
 #ifdef UE_BUILD_DEBUG
 #include "SpaceStationGamePlayerController.h"
@@ -16,11 +17,12 @@
 AAtmosphericsManager::AAtmosphericsManager(const class FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	State = AtmosphericsManagerState::OpenCLInitialization;
+	//State = AtmosphericsManagerState::OpenCLInitialization;
 
-	PrimaryActorTick.bCanEverTick = true;
+	//PrimaryActorTick.bCanEverTick = true;
 }
 
+/*
 void AAtmosphericsManager::Tick(float DeltaSeconds)
 {
 #ifdef UE_BUILD_DEBUG
@@ -28,6 +30,7 @@ void AAtmosphericsManager::Tick(float DeltaSeconds)
 	{
 		if (Cast<ASpaceStationGamePlayerController>(*it))
 		{
+			// Update the frame rate
 			std::unique_lock<std::mutex> FrameRateLock(FrameRateMutex);
 				Cast<ASpaceStationGamePlayerController>(*it)->SetAtmosphericsFPS(FrameRate);
 			FrameRateLock.unlock();
@@ -55,6 +58,7 @@ void AAtmosphericsManager::GetOpenCLData()
 
 	while (bThreadRunning)
 	{
+		// bComputeAtmospherics is the frame limiter, bBenchmarkMode disables it
 		if (bComputeAtmospherics || bBenchmarkMode)
 		{
 			bComputeAtmospherics = false;
@@ -96,7 +100,7 @@ void AAtmosphericsManager::OnOpenCLInitialization()
 	{
 		for (int j = 0; j < 16; j++)
 		{
-			float* Gas = (float*) &Voxels[i].Gases;
+			float* Gas = (float*) &Voxels[i].Voxel.Gases;
 
 			Gas[j] = (float) (rand() % 10) + 101.4;
 		}
@@ -107,11 +111,11 @@ void AAtmosphericsManager::OnOpenCLInitialization()
 
 			if (NewIndex != i)
 			{
-				Voxels[i].AdjacentVoxels[j] = NewIndex;
+				Voxels[i].Voxel .AdjacentVoxels[j] = NewIndex;
 			}
 			else
 			{
-				Voxels[i].AdjacentVoxels[j] = -1;
+				Voxels[i].Voxel.AdjacentVoxels[j] = -1;
 			}
 		}
 	}
@@ -132,6 +136,7 @@ void AAtmosphericsManager::OnOpenCLInitialization()
 	cl_uint DeviceIDCount = 0;
 	clGetDeviceIDs(Platforms[0], CL_DEVICE_TYPE_GPU, 1, &Device, &DeviceIDCount);
 
+	// Set up the context
 	const cl_context_properties contextProperties[] =
 	{
 		CL_CONTEXT_PLATFORM, reinterpret_cast<cl_context_properties> (Platforms[0]),
@@ -140,31 +145,47 @@ void AAtmosphericsManager::OnOpenCLInitialization()
 
 	Context = clCreateContext(contextProperties, DeviceIDCount, &Device, NULL, NULL, &Error);
 	CheckError(Error);
-
-	// Buffers	
+	
 	// Create input and output buffers
 	Buffer1 = clCreateBuffer(Context, CL_MEM_READ_WRITE, sizeof(FAtmosVoxel) * MaxVoxelCount, NULL, &Error);
 	Buffer2 = clCreateBuffer(Context, CL_MEM_READ_WRITE, sizeof(FAtmosVoxel) * MaxVoxelCount, NULL, &Error);
 	CheckError(Error);
 
+	// Assign the input/output pointers
 	InputBuffer = &Buffer1;
 	OutputBuffer = &Buffer2;
+
+#ifdef UE_BUILD_DEBUG
+	// Create the buffer for reading debug info
+	DebugInfoBuffer = clCreateBuffer(Context, CL_MEM_READ_WRITE, sizeof(OpenCLDebugInfo), NULL, &Error);
+	CheckError(Error);
+#endif
 
 	// Create a command queue
 	CommandQueue = clCreateCommandQueue(Context, Device, CL_QUEUE_PROFILING_ENABLE, &Error);
 	CheckError(Error);
 
+	// Write the voxels to the buffers
 	CheckError(clEnqueueWriteBuffer(CommandQueue, Buffer1, CL_TRUE, 0, sizeof(FAtmosVoxel) * MaxVoxelCount, Voxels, 0, NULL, NULL));
 	CheckError(clEnqueueWriteBuffer(CommandQueue, Buffer2, CL_TRUE, 0, sizeof(FAtmosVoxel) * MaxVoxelCount, Voxels, 0, NULL, NULL));
 
-	// Programs
-	FString FilePath = FPaths::ConvertRelativePathToFull(FPaths::GameSourceDir()) + "SpaceStationGame/Kernels/ComputeAtmospherics.cl";
+	// Concatenate the program paths
+	FString ComputeAtmosphericsFilePath = FPaths::ConvertRelativePathToFull(FPaths::GameSourceDir()) + "SpaceStationGame/Kernels/ComputeAtmospherics.cl";
+	FString CommitAtmosphericWritesFilePath = FPaths::ConvertRelativePathToFull(FPaths::GameSourceDir()) + "SpaceStationGame/Kernels/CommitAtmosphericWrites.cl";
+	FString GetDebugInfoFilePath = FPaths::ConvertRelativePathToFull(FPaths::GameSourceDir()) + "SpaceStationGame/Kernels/GetDebugInfo.cl";
+
 	FString IncludeDirectory = "\"" + FPaths::ConvertRelativePathToFull(FPaths::GameSourceDir()) + "SpaceStationGame/Kernels/Includes\"";
 
-	ComputeAtmospherics = OpenCLProgram(FilePath, Context, &Device, "ComputeAtmospherics", "-I " + IncludeDirectory);
+	// Compile the programs
+	ComputeAtmospherics = OpenCLProgram(ComputeAtmosphericsFilePath, Context, &Device, "ComputeAtmospherics", "-I " + IncludeDirectory);
+	CommitAtmosphericWrites = OpenCLProgram(CommitAtmosphericWritesFilePath, Context, &Device, "CommitAtmosphericWrites", "-I " + IncludeDirectory);
+#ifdef UE_BUILD_DEBUG
+	GetDebugInfo = OpenCLProgram(GetDebugInfoFilePath, Context, &Device, "GetDebugInfo", "-I " + IncludeDirectory);
+#endif
 
 	CheckError(clFinish(CommandQueue));
 
+	// Time stamp for calculating FPS
 	LastTimeStamp = FPlatformTime::Seconds();
 }
 
@@ -204,13 +225,20 @@ void AAtmosphericsManager::OnComputingAtmospherics()
 
 	
 #ifdef UE_BUILD_DEBUG
+	CheckError(clSetKernelArg(GetDebugInfo.Kernel, 0, sizeof(cl_mem), (void*)&DebugInfoBuffer));
+
+	size_t uintDebugCount = 1;
+
+	CheckError(clEnqueueNDRangeKernel(CommandQueue, GetDebugInfo.Kernel, 1, NULL, &uintDebugCount, NULL, 0, NULL, NULL));
+	CheckError(clFinish(CommandQueue));
+
 	if (bPrintAtmos)
 	{
 		for (int i = 0; i < 26; i++)
 		{
 			float GAS;
 
-			CheckError(clEnqueueReadBuffer(CommandQueue, *InputBuffer, CL_TRUE, sizeof(FAtmosVoxel) * i + (offsetof(FAtmosVoxel, Gases)), sizeof(float), (void*)&GAS, 0, NULL, NULL));
+			CheckError(clEnqueueReadBuffer(CommandQueue, *InputBuffer, CL_TRUE, sizeof(AtmosVoxel) * i + (offsetof(AtmosVoxel, Gases)), sizeof(float), (void*)&GAS, 0, NULL, NULL));
 
 			UE_LOG(SpaceStationGameLog, Warning, TEXT("Voxel %d"), i);
 			UE_LOG(SpaceStationGameLog, Warning, TEXT("Input Gas!:\t\t	%f"), GAS);
@@ -220,11 +248,20 @@ void AAtmosphericsManager::OnComputingAtmospherics()
 		{
 			float GAS;
 
-			CheckError(clEnqueueReadBuffer(CommandQueue, *OutputBuffer, CL_TRUE, sizeof(FAtmosVoxel) * i + (offsetof(FAtmosVoxel, Gases)), sizeof(float), (void*)&GAS, 0, NULL, NULL));
+			CheckError(clEnqueueReadBuffer(CommandQueue, *OutputBuffer, CL_TRUE, sizeof(AtmosVoxel) * i + (offsetof(AtmosVoxel, Gases)), sizeof(float), (void*)&GAS, 0, NULL, NULL));
 
 			UE_LOG(SpaceStationGameLog, Warning, TEXT("Voxel %d"), i);
 			UE_LOG(SpaceStationGameLog, Warning, TEXT("Output Gas!:\t\t	%f"), GAS);
 		}
+
+		// Print debug info
+		OpenCLDebugInfo DebugInfo;
+
+		CheckError(clEnqueueReadBuffer(CommandQueue, DebugInfoBuffer, CL_TRUE, NULL, sizeof(OpenCLDebugInfo), (void*)&DebugInfo, 0, NULL, NULL));
+
+		UE_LOG(SpaceStationGameLog, Warning, TEXT("DEBUG INFO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"));
+		UE_LOG(SpaceStationGameLog, Warning, TEXT("Size of OpenCL atmos voxel: \t\t %d"), DebugInfo.SizeOfAtmosVoxel);
+		UE_LOG(SpaceStationGameLog, Warning, TEXT("Size of UE4 atmos voxel: \t\t %d"), sizeof(AtmosVoxel));
 	}
 #endif
 	
@@ -255,11 +292,19 @@ void AAtmosphericsManager::OnTransferingData()
 
 	// Commit the write operations
 	std::unique_lock<std::mutex> BufferWriteLock(BufferWritesMutex);
-		while (!BufferWrites.empty())
+		if (!BufferWrites.empty())
 		{
-			auto NewWrite = BufferWrites.back();
+			// Call the commit writes kernel
+			size_t NumOfElements = BufferWrites.size();
 
+			CheckError(clSetKernelArg(CommitAtmosphericWrites.Kernel, 0, BufferWrites.size() * sizeof(AtmosVoxelWrite) * 5, (void*)&BufferWrites));
+			CheckError(clSetKernelArg(CommitAtmosphericWrites.Kernel, 1, sizeof(size_t), (void*)&NumOfElements));
+			
+			CheckError(clEnqueueNDRangeKernel(CommandQueue, CommitAtmosphericWrites.Kernel, 1, NULL, &NumOfElements, NULL, 0, NULL, NULL));
+			CheckError(clFinish(CommandQueue));
 
+			// Empty the voxels once its done
+			BufferWrites.clear();
 		}
 	BufferWriteLock.unlock();
 }
@@ -310,32 +355,61 @@ void AAtmosphericsManager::BeginDestroy()
 	delete[] Voxels;
 }
 
-OpenCLProgram::OpenCLProgram(FString FilePath, cl_context context, cl_device_id* device_list, FString kernel_name, FString options)
+void AAtmosphericsManager::AddBufferRead(FAtmosVoxel* VoxelPtr, int32 VoxelIndex, std::mutex* DataMutex)
 {
-	cl_int Error = 0;
+	BufferReadStruct NewRead;
 
-	std::string KernelName = Helpers::narrow(Helpers::ConvertToWString(kernel_name));
-	std::string Options = Helpers::narrow(Helpers::ConvertToWString(options));
+	NewRead.VoxelPtr = VoxelPtr;
+	NewRead.VoxelIndex = VoxelIndex;
+	NewRead.DataMutex = DataMutex;
 
-	const TCHAR* TCHARFilePath = *FilePath;
+	std::unique_lock<std::mutex> lock(BufferReadsMutex);
+	BufferReads.push_back(NewRead);
+};
 
-	FString File;
+void AAtmosphericsManager::AddBufferWrite(int32 VoxelIndex, AtmosWriteOperation Operation, cl_float16 Value)
+{
+	std::unique_lock<std::mutex> lock(BufferWritesMutex);
+	// Iterate through the array and see if there is already a write operation queued
+	for (int i = 0; i < BufferWrites.size(); i++)
+	{
+		if (BufferWrites[i][0].Index == VoxelIndex)
+		{
+			AtmosVoxelWrite NewWrite;
 
-	if (!FFileHelper::LoadFileToString(File, TCHARFilePath))
-		UE_LOG(SpaceStationGameLog, Fatal, TEXT("FATAL ERROR: Failed to open OpenCL Kernel file: %s"), *FilePath);
+			NewWrite.bValidOperation = true;
+			NewWrite.Index = VoxelIndex;
+			if (Operation != AtmosWriteOperation::Set)
+			{
+				NewWrite.Value = OpenCLHelpers::AddFloat16(Value, BufferWrites[i][(uint8)Operation].Value);
+			}
+			else
+			{
+				NewWrite.Value = Value;
+			}
 
-	std::string FileString = Helpers::narrow(Helpers::ConvertToWString(File));
+			BufferWrites[i][(uint8)Operation] = NewWrite;
 
-	size_t ProgramSize = FileString.size();
+			return;
+		}
+	}
 
-	Program = clCreateProgramWithSource(context, 1, (const char**)&FileString, &ProgramSize, &Error);
-	AAtmosphericsManager::CheckError(Error);
+	// If there isnt a voxel array already, create a new one
+	std::array<AtmosVoxelWrite, 5> NewWrites;
 
-	AAtmosphericsManager::CheckBuildError(clBuildProgram(Program, 1, device_list, Options.c_str(), NULL, NULL), Program, device_list);
+	AtmosVoxelWrite NewWrite;
 
-	Kernel = clCreateKernel(Program, KernelName.c_str(), &Error);
+	NewWrite.bValidOperation = true;
+	NewWrite.Index = VoxelIndex;
+	NewWrite.Value = Value;
 
-	AAtmosphericsManager::CheckError(Error);
+	NewWrites[(uint8)Operation] = NewWrite;
 
-	UE_LOG(SpaceStationGameLog, Warning, TEXT("Finished compiling OpenCL kernel: %s"), *FilePath);
-}
+	BufferWrites.push_back(NewWrites);
+};
+
+int32 AAtmosphericsManager::AddVoxel()
+{
+	return -1;
+};
+*/

@@ -7,58 +7,20 @@
 #include <mutex>
 #include <atomic>
 #include <vector>
+#include <array>
 
 #include "OpenCL.h"
 
 #include "Tickable.h"
 #include "Manager.h"
-#include "AtmosVoxel.h"
+#include "Atmos.h"
 #include "AtmosphericsManager.generated.h"
-
-struct OpenCLProgram
-{
-	cl_program Program;
-	cl_kernel Kernel;
-
-	OpenCLProgram() {};
-
-	OpenCLProgram(FString FilePath, cl_context context, cl_device_id* device_list, FString kernel_name, FString options);
-};
 
 enum AtmosphericsManagerState
 {
 	OpenCLInitialization,
 	ComputingAtmospherics,
 	TransferingData
-};
-
-struct BufferReadStruct
-{
-	int32 VoxelIndex;
-	// Pointer to the data to write to
-	FAtmosVoxel* VoxelPtr;
-	// Data mutex, this is used because these operations are on another thread
-	std::mutex* DataMutex;
-
-	// For atmospherics components
-	TWeakObjectPtr<class UAtmosphericComponent> WriteComponent;
-};
-
-UENUM(BlueprintType)
-enum class AtmosWriteOperation : uint8
-{
-	Add,
-	Subtract,
-	Set,
-	SetAdditive,
-	SetSubtractive
-};
-
-struct BufferWriteStruct
-{
-	int32 VoxelIndex;
-	AtmosWriteOperation Operation;
-	cl_float16 Value;
 };
 
 /**
@@ -69,8 +31,7 @@ class SPACESTATIONGAME_API AAtmosphericsManager : public AManager
 {
 	GENERATED_UCLASS_BODY()
 
-	friend struct OpenCLProgram;
-
+	/*
 public:
 	virtual void Initialize() override;
 	virtual void CompleteInitialization() override {};
@@ -105,12 +66,6 @@ private:
 	std::atomic<bool> bThreadRunning;
 	std::atomic<bool> bComputingAtmospherics;
 
-	//				OpenCL members
-	std::thread OpenCLThread;
-
-	std::vector<cl_platform_id> Platforms;
-	cl_device_id Device;
-
 	// These are the input/output buffers, they are swapped after atmospherics are computed and assigned to the input/output pointers
 	cl_mem Buffer1;
 	cl_mem Buffer2;
@@ -118,13 +73,18 @@ private:
 	cl_mem* InputBuffer;
 	cl_mem* OutputBuffer;
 
+#ifdef UE_BUILD_DEBUG
+	cl_mem DebugInfoBuffer;
+#endif
+
 	cl_event event;
 
-	cl_command_queue CommandQueue;
-
-	cl_context Context;
-
 	OpenCLProgram ComputeAtmospherics;
+	OpenCLProgram CommitAtmosphericWrites;
+
+#ifdef UE_BUILD_DEBUG
+	OpenCLProgram GetDebugInfo;
+#endif
 
 	// OpenCL error checking
 	static void CheckError(int Error);
@@ -163,37 +123,16 @@ private:
 	std::vector<BufferReadStruct> BufferReads;
 	std::mutex BufferReadsMutex;
 
-	std::vector<BufferWriteStruct> BufferWrites;
+	// One write struct for each operation
+	std::vector<std::array<Atmospherics::AtmosVoxelWrite, 5>> BufferWrites;
 	std::mutex BufferWritesMutex;
 
 public:
 	// TO DO: Add a blueprint version of this somehow
-	void AddBufferRead(FAtmosVoxel* VoxelPtr, int32 VoxelIndex, std::mutex* DataMutex)
-	{
-		BufferReadStruct NewRead;
+	void AddBufferRead(FAtmosVoxel* VoxelPtr, int32 VoxelIndex, std::mutex* DataMutex);
 
-		NewRead.VoxelPtr = VoxelPtr;
-		NewRead.VoxelIndex = VoxelIndex;
-		NewRead.DataMutex = DataMutex;
+	void AddBufferWrite(int32 VoxelIndex, Atmospherics::AtmosWriteOperation Operation, cl_float16 Value);
 
-		std::unique_lock<std::mutex> lock(BufferReadsMutex);
-			BufferReads.push_back(NewRead);
-	};
-
-	void AddBufferWrite(int32 VoxelIndex, AtmosWriteOperation Operation, cl_float16 Value)
-	{
-		BufferWriteStruct NewWrite;
-
-		NewWrite.VoxelIndex = VoxelIndex;
-		NewWrite.Operation = Operation;
-		NewWrite.Value = Value;
-
-		std::unique_lock<std::mutex> lock(BufferWritesMutex);
-			BufferWrites.push_back(NewWrite);
-	};
-
-	int32 AddVoxel()
-	{
-		
-	};
+	int32 AddVoxel();
+	*/
 };

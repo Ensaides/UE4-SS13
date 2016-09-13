@@ -7,10 +7,10 @@
 #include "SpaceStationGameHUD.h"
 #include "SpaceStationGameServerState.h"
 #include "SpaceStationGameCharacter.h"
+#include "JobManager.h"
 
 namespace MatchState
 {
-	// The round actor will change the match state, not this game mode
 	const FName WaitingRoundStart = FName(TEXT("WaitingRoundStart"));
 	const FName RoundInProgress = FName(TEXT("RoundInProgress"));
 	const FName ShuttleCalled = FName(TEXT("ShuttleCalled"));
@@ -173,4 +173,21 @@ void ASpaceStationGameGameMode::OnMatchStateSet()
 void ASpaceStationGameGameMode::RestartPlayer(AController* NewPlayer)
 {
 	Super::RestartPlayer(NewPlayer);
+}
+
+void ASpaceStationGameGameMode::SetPlayerDefaults(APawn* PlayerPawn)
+{
+	Super::SetPlayerDefaults(PlayerPawn);
+
+	// Set up the job for the player
+	auto World = GetWorld();
+	if (World)
+	{
+		if (Cast<ASpaceStationGameGameState>(GameState))
+		{
+			auto ServerState = Cast<ASpaceStationGameGameState>(GameState)->GetServerState();
+
+			ServerState->GetJobManager()->SetupJob(PlayerPawn);
+		}
+	}
 }

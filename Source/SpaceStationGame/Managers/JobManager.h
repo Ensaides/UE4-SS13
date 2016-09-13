@@ -6,25 +6,81 @@
 #include "Job.h"
 #include "JobManager.generated.h"
 
+class APawn;
 
 /**
 *
 */
+USTRUCT(BlueprintType)
+struct FJobClass
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Job")
+		FString JobName;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Job")
+		TSubclassOf<UJob> JobClass;
+
+	FJobClass()
+	{
+		JobName = "Job";
+		JobClass = UJob::StaticClass();
+	};
+
+	FJobClass(FString inJobName, TSubclassOf<UJob> inJobClass)
+	{
+		JobName = inJobName;
+		JobClass = inJobClass;
+	};
+};
+
 UCLASS()
 class SPACESTATIONGAME_API AJobManager : public AManager
 {
 	GENERATED_UCLASS_BODY()
 
-	virtual void InitializeJobs();
+	UFUNCTION(BlueprintNativeEvent, meta = (ToolTip = "Called during job initialization, implement this to spawn custom jobs", DisplayName = "Initialize Jobs"), Category = "Jobs")
+		void InitializeJobs();
 
-public:
-	UFUNCTION(BlueprintImplementableEvent, meta = (ToolTip = "Called during job initialization, implement this to spawn custom jobs", DisplayName = "Initialize Jobs"), Category = Jobs)
-		void BP_InitializeJobs();
+	// Job Classes members
+	static TArray<FJobClass> JobClasses;
 
-	// Array of jobs to be spawned
-	UPROPERTY(EditDefaultsOnly, Category = Jobs)
-		TArray<TSubclassOf<UJob>> JobClasses;
+	UFUNCTION(BlueprintCallable, meta = (ToolTip = "Add a job class to the list of jobs", DisplayName = "Add Job Class"), Category = "Jobs")
+		static void AddJobClass(FString JobName, TSubclassOf<UJob> NewJob)
+		{
+			JobClasses.Add(FJobClass(JobName, NewJob));
+		};
 
-	UPROPERTY()
-		TArray<UJob*> Jobs;
+	UFUNCTION(BlueprintCallable, Category = "Jobs")
+		static TArray<FJobClass>& GetJobClasses()
+		{
+			return JobClasses;
+		};
+
+	UFUNCTION(BlueprintCallable, Category = "Jobs")
+		static void RemoveJobClass(FString JobName)
+		{
+			for (int i = 0; i < JobClasses.Num(); i++)
+			{
+				if (JobClasses[i].JobName == JobName)
+				{
+					JobClasses.RemoveAt(i);
+
+					return;
+				}
+			}
+		};
+
+	UFUNCTION(BlueprintCallable, meta = (ToolTip = "Set up a job for a player. Called during player spawn", DisplayName = "Setup Job"), Category = "Jobs")
+		void SetupJob(APawn* PlayerPawn);
+};
+
+// Call this if you are too lazy to put the jobs in the InitializeJobs function
+struct DECLARE_JOB
+{
+	DECLARE_JOB(FString JobName, TSubclassOf<UJob> NewJob)
+	{
+		AJobManager::AddJobClass(JobName, NewJob);
+	};
 };

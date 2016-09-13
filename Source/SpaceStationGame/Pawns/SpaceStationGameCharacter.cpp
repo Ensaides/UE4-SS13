@@ -2,12 +2,14 @@
 
 #include "SpaceStationGame.h"
 #include "SpaceStationGameCharacter.h"
+#include "UnrealNetwork.h"
 #include "Animation/AnimInstance.h"
 #include "GameFramework/InputSettings.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
-ASpaceStationGameCharacter::ASpaceStationGameCharacter()
+ASpaceStationGameCharacter::ASpaceStationGameCharacter(const class FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
@@ -25,6 +27,17 @@ ASpaceStationGameCharacter::ASpaceStationGameCharacter()
 	// Replication
 	bReplicates = true;
 	bReplicateMovement = true;
+
+	// Inventory
+	InventorySize = 0;
+}
+
+void ASpaceStationGameCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	// Inventory
+	DOREPLIFETIME_CONDITION(ASpaceStationGameCharacter, Inventory, COND_OwnerOnly);
 }
 
 void ASpaceStationGameCharacter::BeginPlay()

@@ -21,15 +21,12 @@ public:
 	virtual void BeginPlay() override;
 	
 	// Server state
-#if UE_SERVER || UE_EDITOR
 public:
 	UPROPERTY()
 		ASpaceStationGameServerState* ServerState;
 
 public:
 	ASpaceStationGameServerState* GetServerState() { return ServerState; };
-
-#endif
 
 public:
 

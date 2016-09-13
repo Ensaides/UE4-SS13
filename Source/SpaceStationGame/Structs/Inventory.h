@@ -12,6 +12,13 @@ struct FInventory
 	UPROPERTY()
 		TArray<AItem*> Items;
 
-	UPROPERTY()
-		TArray<uint8> Index;
+	FInventory()
+	{
+
+	};
+	
+	FInventory(int32 Size)
+	{
+		Items.Init(NULL, Size);
+	};
 };

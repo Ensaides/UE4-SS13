@@ -2,8 +2,15 @@
 
 #include "SpaceStationGame.h"
 #include "SpaceStationGamePlayerController.h"
+#include "Assistant.h"
 #include "SpaceStationGameHud.h"
 #include "UnrealNetwork.h"
+
+ASpaceStationGamePlayerController::ASpaceStationGamePlayerController(const class FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+{
+	StartingJob = UAssistant::StaticClass();
+}
 
 void ASpaceStationGamePlayerController::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
 {
@@ -48,6 +55,11 @@ void ASpaceStationGamePlayerController::AddChatMessage(FString Msg, bool Radio)
 	ChatMessages.Add(NewMessage);
 
 	Client_AddChatMessage(Msg, Radio);
+}
+
+bool ASpaceStationGamePlayerController::Client_AddChatMessage_Validate(const FString& Msg, bool Radio)
+{
+	return true;
 }
 
 void ASpaceStationGamePlayerController::Client_AddChatMessage_Implementation(const FString& Msg, bool Radio)

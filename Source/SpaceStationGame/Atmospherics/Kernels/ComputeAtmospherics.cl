@@ -1,4 +1,4 @@
-#include "Atmos.h"
+#include "AtmosVoxel.h"
 
 __kernel void ComputeAtmospherics(__global AtmosVoxel* InputAtmosVoxels, __global AtmosVoxel* OutputAtmosVoxels, signed long VoxelCount, float AvgMul)
 {

@@ -25,30 +25,39 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, meta = (ToolTip = "Called during manager initialization, implement this to call initializers on custom manager objects", DisplayName = "Initialize Managers"), Category = Managers)
 		void BP_InitializeManagers();
 
+	// OpenCL Manager
+	UPROPERTY(EditDefaultsOnly, Category = Managers)
+		TSubclassOf<class AOpenCLManager> OpenCLManagerClass;
+
+	UPROPERTY(BlueprintReadOnly, Category = Managers)
+		AOpenCLManager* OpenCLManager;
+
+	AOpenCLManager* GetOpenCLManager() const { return OpenCLManager; };
+
 	// Atmospherics Manager
 	UPROPERTY(EditDefaultsOnly, Category = Managers)
 		TSubclassOf<class AAtmosphericsManager> AtmosphericsManagerClass;
 
 	UPROPERTY(BlueprintReadOnly, Category = Managers)
-		AManager* AtmosphericsManager;
+		AAtmosphericsManager* AtmosphericsManager;
 
-	AManager* GetAtmosphericsManager() const { return AtmosphericsManager; };
+	AAtmosphericsManager* GetAtmosphericsManager() const { return AtmosphericsManager; };
 
 	// Chat Manager
 	UPROPERTY(EditDefaultsOnly, Category = Managers)
 		TSubclassOf<class AChatManager> ChatManagerClass;
 
 	UPROPERTY(BlueprintReadOnly, Category = Managers)
-		AManager* ChatManager;
+		AChatManager* ChatManager;
 
-	AManager* GetChatManager() const { return ChatManager; };
+	AChatManager* GetChatManager() const { return ChatManager; };
 	
 	// Job Manager
 	UPROPERTY(EditDefaultsOnly, Category = Managers)
 		TSubclassOf<class AJobManager> JobManagerClass;
 
 	UPROPERTY(BlueprintReadOnly, Category = Managers)
-		AManager* JobManager;
+		AJobManager* JobManager;
 
-	AManager* GetJobManager() const { return JobManager; };
+	AJobManager* GetJobManager() const { return JobManager; };
 };

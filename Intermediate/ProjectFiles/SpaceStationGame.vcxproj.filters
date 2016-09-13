@@ -3,7 +3,7 @@
   <ItemGroup>
     <None Include="..\..\SpaceStationGame.uproject" />
     <Filter Include="Source">
-      <UniqueIdentifier>{4FEC5160-B78A-4FA2-A06F-7DC5C7AE3477}</UniqueIdentifier>
+      <UniqueIdentifier>{50FBE01D-942D-44C3-B0A0-34114773CD1B}</UniqueIdentifier>
     </Filter>
     <None Include="..\..\Source\SpaceStationGame.Target.cs">
       <Filter>Source</Filter>
@@ -12,7 +12,7 @@
       <Filter>Source</Filter>
     </None>
     <Filter Include="Config">
-      <UniqueIdentifier>{8EEAB54A-A415-4F80-915F-361CBFD4E4F2}</UniqueIdentifier>
+      <UniqueIdentifier>{01CF7705-DDF6-478C-8457-7E2B684D4DAD}</UniqueIdentifier>
     </Filter>
     <None Include="..\..\Config\DefaultEditor.ini">
       <Filter>Config</Filter>
@@ -30,22 +30,22 @@
       <Filter>Config</Filter>
     </None>
     <Filter Include="Plugins">
-      <UniqueIdentifier>{BBCE3C27-6EDC-4D7C-B07F-75D6B621D670}</UniqueIdentifier>
+      <UniqueIdentifier>{51F29CEC-0F13-40A8-B5BF-9237E6C55912}</UniqueIdentifier>
     </Filter>
     <Filter Include="Plugins\OpenCL">
-      <UniqueIdentifier>{AC0B86E9-8113-4185-8EC1-10201FD56AD9}</UniqueIdentifier>
+      <UniqueIdentifier>{2C34E1FD-1E65-44DD-8E06-FD6C2939634C}</UniqueIdentifier>
     </Filter>
     <Filter Include="Plugins\OpenCL\Source">
-      <UniqueIdentifier>{E64BD144-26B3-4117-BFD0-374CD93F1A47}</UniqueIdentifier>
+      <UniqueIdentifier>{3014BF73-D1BC-49C7-9113-66AA6E37A462}</UniqueIdentifier>
     </Filter>
     <Filter Include="Plugins\OpenCL\Source\OpenCL">
-      <UniqueIdentifier>{B79F3FC3-15D6-41B9-BD2E-6C59A9FADDE8}</UniqueIdentifier>
+      <UniqueIdentifier>{150CF0C0-93E8-4DD8-9F70-8226BBC2E8FE}</UniqueIdentifier>
     </Filter>
     <None Include="..\..\Plugins\OpenCL\Source\OpenCL\OpenCL.Build.cs">
       <Filter>Plugins\OpenCL\Source\OpenCL</Filter>
     </None>
     <Filter Include="Plugins\OpenCL\Source\OpenCL\Private">
-      <UniqueIdentifier>{A9ED2FB0-C534-4134-A8FF-E83D3555F984}</UniqueIdentifier>
+      <UniqueIdentifier>{6604B89A-DF12-43AF-B830-7F0E2C5A8E1A}</UniqueIdentifier>
     </Filter>
     <ClCompile Include="..\..\Plugins\OpenCL\Source\OpenCL\Private\OpenCLPlugin.cpp">
       <Filter>Plugins\OpenCL\Source\OpenCL\Private</Filter>
@@ -54,7 +54,7 @@
       <Filter>Plugins\OpenCL\Source\OpenCL\Private</Filter>
     </ClInclude>
     <Filter Include="Plugins\OpenCL\Source\OpenCL\Public">
-      <UniqueIdentifier>{28F6729B-F86B-48E2-B4B1-DC91850C3023}</UniqueIdentifier>
+      <UniqueIdentifier>{B7B93B07-E5F6-481A-B0D1-19D4AFB3B235}</UniqueIdentifier>
     </Filter>
     <ClInclude Include="..\..\Plugins\OpenCL\Source\OpenCL\Public\IOpenCLPlugin.h">
       <Filter>Plugins\OpenCL\Source\OpenCL\Public</Filter>
@@ -66,61 +66,34 @@
       <Filter>Plugins\OpenCL</Filter>
     </None>
     <Filter Include="Plugins\OpenCL\Resources">
-      <UniqueIdentifier>{D2F19AA4-1406-4CCE-8C02-22EB1AB39F05}</UniqueIdentifier>
+      <UniqueIdentifier>{31ED2A50-2116-4F3F-9F12-FAD22AC52498}</UniqueIdentifier>
     </Filter>
     <None Include="..\..\Plugins\OpenCL\Resources\Icon128.png">
       <Filter>Plugins\OpenCL\Resources</Filter>
     </None>
     <Filter Include="Source\SpaceStationGame">
-      <UniqueIdentifier>{BDA212F4-BF0A-4129-8E54-0BAC55FA9D62}</UniqueIdentifier>
+      <UniqueIdentifier>{29336BC7-1EA7-4A2D-9688-E3BC5A89312F}</UniqueIdentifier>
     </Filter>
     <None Include="..\..\Source\SpaceStationGame\SpaceStationGame.Build.cs">
       <Filter>Source\SpaceStationGame</Filter>
     </None>
-    <ClCompile Include="..\..\Source\SpaceStationGame\SpaceStationGame.cpp">
-      <Filter>Source\SpaceStationGame</Filter>
-    </ClCompile>
-    <ClInclude Include="..\..\Source\SpaceStationGame\SpaceStationGame.h">
-      <Filter>Source\SpaceStationGame</Filter>
-    </ClInclude>
-    <ClCompile Include="..\..\Source\SpaceStationGame\SpaceStationGameCharacter.cpp">
-      <Filter>Source\SpaceStationGame</Filter>
-    </ClCompile>
-    <ClInclude Include="..\..\Source\SpaceStationGame\SpaceStationGameCharacter.h">
-      <Filter>Source\SpaceStationGame</Filter>
-    </ClInclude>
-    <ClCompile Include="..\..\Source\SpaceStationGame\SpaceStationGameGameMode.cpp">
-      <Filter>Source\SpaceStationGame</Filter>
-    </ClCompile>
-    <ClInclude Include="..\..\Source\SpaceStationGame\SpaceStationGameGameMode.h">
-      <Filter>Source\SpaceStationGame</Filter>
-    </ClInclude>
-    <ClCompile Include="..\..\Source\SpaceStationGame\SpaceStationGameGameState.cpp">
-      <Filter>Source\SpaceStationGame</Filter>
-    </ClCompile>
-    <ClInclude Include="..\..\Source\SpaceStationGame\SpaceStationGameGameState.h">
-      <Filter>Source\SpaceStationGame</Filter>
-    </ClInclude>
     <ClCompile Include="..\..\Source\SpaceStationGame\SpaceStationGameHUD.cpp">
       <Filter>Source\SpaceStationGame</Filter>
     </ClCompile>
     <ClInclude Include="..\..\Source\SpaceStationGame\SpaceStationGameHUD.h">
       <Filter>Source\SpaceStationGame</Filter>
     </ClInclude>
-    <ClCompile Include="..\..\Source\SpaceStationGame\SpaceStationGamePlayerController.cpp">
-      <Filter>Source\SpaceStationGame</Filter>
+    <Filter Include="Source\SpaceStationGame\Atmospherics">
+      <UniqueIdentifier>{F7F167D5-0187-4D53-8E40-DB308A76EFE1}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\SpaceStationGame\Atmospherics\AtmosphericComponent.cpp">
+      <Filter>Source\SpaceStationGame\Atmospherics</Filter>
     </ClCompile>
-    <ClInclude Include="..\..\Source\SpaceStationGame\SpaceStationGamePlayerController.h">
-      <Filter>Source\SpaceStationGame</Filter>
-    </ClInclude>
-    <ClCompile Include="..\..\Source\SpaceStationGame\SpaceStationGameServerState.cpp">
-      <Filter>Source\SpaceStationGame</Filter>
-    </ClCompile>
-    <ClInclude Include="..\..\Source\SpaceStationGame\SpaceStationGameServerState.h">
-      <Filter>Source\SpaceStationGame</Filter>
+    <ClInclude Include="..\..\Source\SpaceStationGame\Atmospherics\AtmosphericComponent.h">
+      <Filter>Source\SpaceStationGame\Atmospherics</Filter>
     </ClInclude>
     <Filter Include="Source\SpaceStationGame\Helpers">
-      <UniqueIdentifier>{E3F423A2-72A8-4600-99E8-81D416F8B3A5}</UniqueIdentifier>
+      <UniqueIdentifier>{6285D5A1-FEE0-43C8-83DE-21C273F3E093}</UniqueIdentifier>
     </Filter>
     <ClInclude Include="..\..\Source\SpaceStationGame\Helpers\OpenCLHelpers.h">
       <Filter>Source\SpaceStationGame\Helpers</Filter>
@@ -129,7 +102,7 @@
       <Filter>Source\SpaceStationGame\Helpers</Filter>
     </ClInclude>
     <Filter Include="Source\SpaceStationGame\Items">
-      <UniqueIdentifier>{4028490A-5E4B-418B-B61C-E7FBD1288053}</UniqueIdentifier>
+      <UniqueIdentifier>{477E937C-04E9-4AAA-892E-F7DE748411DE}</UniqueIdentifier>
     </Filter>
     <ClCompile Include="..\..\Source\SpaceStationGame\Items\Item.cpp">
       <Filter>Source\SpaceStationGame\Items</Filter>
@@ -137,8 +110,23 @@
     <ClInclude Include="..\..\Source\SpaceStationGame\Items\Item.h">
       <Filter>Source\SpaceStationGame\Items</Filter>
     </ClInclude>
+    <Filter Include="Source\SpaceStationGame\Items\Instances">
+      <UniqueIdentifier>{8F525350-A5A7-4F7C-9D18-6E74334CDE92}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\SpaceStationGame\Items\Instances\InstancedItem.cpp">
+      <Filter>Source\SpaceStationGame\Items\Instances</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\SpaceStationGame\Items\Instances\InstancedItem.h">
+      <Filter>Source\SpaceStationGame\Items\Instances</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\SpaceStationGame\Items\Instances\InstancedMeshContainer.cpp">
+      <Filter>Source\SpaceStationGame\Items\Instances</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\SpaceStationGame\Items\Instances\InstancedMeshContainer.h">
+      <Filter>Source\SpaceStationGame\Items\Instances</Filter>
+    </ClInclude>
     <Filter Include="Source\SpaceStationGame\Jobs">
-      <UniqueIdentifier>{7DD9F9C4-A79A-479B-A8DC-00A289978A23}</UniqueIdentifier>
+      <UniqueIdentifier>{6F6D6AC8-7F4D-4761-A570-A1F26B9E09E4}</UniqueIdentifier>
     </Filter>
     <ClCompile Include="..\..\Source\SpaceStationGame\Jobs\Job.cpp">
       <Filter>Source\SpaceStationGame\Jobs</Filter>
@@ -147,7 +135,7 @@
       <Filter>Source\SpaceStationGame\Jobs</Filter>
     </ClInclude>
     <Filter Include="Source\SpaceStationGame\Managers">
-      <UniqueIdentifier>{0547D3DB-ADFE-4894-BADC-A610BAA7539D}</UniqueIdentifier>
+      <UniqueIdentifier>{E8CB3FC8-6E39-48CD-A3C4-7271FA3DEDC0}</UniqueIdentifier>
     </Filter>
     <ClCompile Include="..\..\Source\SpaceStationGame\Managers\AtmosphericsManager.cpp">
       <Filter>Source\SpaceStationGame\Managers</Filter>
@@ -159,6 +147,12 @@
       <Filter>Source\SpaceStationGame\Managers</Filter>
     </ClCompile>
     <ClInclude Include="..\..\Source\SpaceStationGame\Managers\ChatManager.h">
+      <Filter>Source\SpaceStationGame\Managers</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\SpaceStationGame\Managers\InstanceManager.cpp">
+      <Filter>Source\SpaceStationGame\Managers</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\SpaceStationGame\Managers\InstanceManager.h">
       <Filter>Source\SpaceStationGame\Managers</Filter>
     </ClInclude>
     <ClCompile Include="..\..\Source\SpaceStationGame\Managers\JobManager.cpp">
@@ -173,13 +167,31 @@
     <ClInclude Include="..\..\Source\SpaceStationGame\Managers\Manager.h">
       <Filter>Source\SpaceStationGame\Managers</Filter>
     </ClInclude>
+    <Filter Include="Source\SpaceStationGame\OpenCL">
+      <UniqueIdentifier>{9B1EE6A9-75E9-4813-A646-E48519948F97}</UniqueIdentifier>
+    </Filter>
+    <ClInclude Include="..\..\Source\SpaceStationGame\OpenCL\OpenCLError.h">
+      <Filter>Source\SpaceStationGame\OpenCL</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\SpaceStationGame\OpenCL\OpenCLManager.cpp">
+      <Filter>Source\SpaceStationGame\OpenCL</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\SpaceStationGame\OpenCL\OpenCLManager.h">
+      <Filter>Source\SpaceStationGame\OpenCL</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\SpaceStationGame\OpenCL\OpenCLProgram.cpp">
+      <Filter>Source\SpaceStationGame\OpenCL</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\SpaceStationGame\OpenCL\OpenCLProgram.h">
+      <Filter>Source\SpaceStationGame\OpenCL</Filter>
+    </ClInclude>
     <Filter Include="Source\SpaceStationGame\Structs">
-      <UniqueIdentifier>{E82E2E8E-13A9-4617-A240-E9D38894EFCE}</UniqueIdentifier>
+      <UniqueIdentifier>{2B255100-1A57-4D61-A503-BF2AD50E2E47}</UniqueIdentifier>
     </Filter>
     <ClInclude Include="..\..\Source\SpaceStationGame\Structs\Access.h">
       <Filter>Source\SpaceStationGame\Structs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\SpaceStationGame\Structs\AtmosVoxel.h">
+    <ClInclude Include="..\..\Source\SpaceStationGame\Structs\Atmos.h">
       <Filter>Source\SpaceStationGame\Structs</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\SpaceStationGame\Structs\ChatStructs.h">
@@ -188,59 +200,95 @@
     <ClInclude Include="..\..\Source\SpaceStationGame\Structs\Inventory.h">
       <Filter>Source\SpaceStationGame\Structs</Filter>
     </ClInclude>
-    <None Include="..\..\Source\SpaceStationGame\Kernels\ComputeAtmospherics.cl">
-      <Filter>Source\SpaceStationGame\Kernels</Filter>
+    <None Include="..\..\Source\SpaceStationGame\Atmospherics\Kernels\CommitAtmosphericWrites.cl">
+      <Filter>Source\SpaceStationGame\Atmospherics\Kernels</Filter>
+    </None>
+    <None Include="..\..\Source\SpaceStationGame\Atmospherics\Kernels\ComputeAtmospherics.cl">
+      <Filter>Source\SpaceStationGame\Atmospherics\Kernels</Filter>
+    </None>
+    <None Include="..\..\Source\SpaceStationGame\Atmospherics\Kernels\GetDebugInfo.cl">
+      <Filter>Source\SpaceStationGame\Atmospherics\Kernels</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Source\SpaceStationGame\Managers\InstanceManager.h">
-      <Filter>Source\SpaceStationGame\Managers</Filter>
+    <Filter Include="Source\SpaceStationGame\Atmospherics\Kernels">
+      <UniqueIdentifier>{fffb116c-8a50-43a0-bb8f-9bcad2df1b82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\SpaceStationGame\Atmospherics\Kernels\Includes">
+      <UniqueIdentifier>{ce9f295a-8c04-467e-97f4-9e6fd5d36241}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\SpaceStationGame\Pawns">
+      <UniqueIdentifier>{0941014a-e076-4bb9-a6c5-5fc7ad1c66e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\SpaceStationGame\Player">
+      <UniqueIdentifier>{1f5a01c4-65bc-4318-b020-a03f35196f17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\SpaceStationGame\Game">
+      <UniqueIdentifier>{4d864b8b-41af-497b-ae32-8ff296148c7e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Source\SpaceStationGame\Atmospherics\Kernels\Includes\AtmosVoxel.h">
+      <Filter>Source\SpaceStationGame\Atmospherics\Kernels\Includes</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\SpaceStationGame\Items\Instances\InstancedItem.h">
-      <Filter>Source\SpaceStationGame\Items\Instances</Filter>
+    <ClInclude Include="..\..\Source\SpaceStationGame\Atmospherics\Kernels\Includes\DebugInfo.h">
+      <Filter>Source\SpaceStationGame\Atmospherics\Kernels\Includes</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\SpaceStationGame\Items\Instances\InstancedMeshContainer.h">
-      <Filter>Source\SpaceStationGame\Items\Instances</Filter>
+    <ClInclude Include="..\..\Source\SpaceStationGame\Jobs\Assistant.h">
+      <Filter>Source\SpaceStationGame\Jobs</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\SpaceStationGame\SpaceStationGamePlayerStart.h">
-      <Filter>Source\SpaceStationGame</Filter>
+    <ClInclude Include="..\..\Source\SpaceStationGame\Pawns\SpaceStationGameCharacter.h">
+      <Filter>Source\SpaceStationGame\Pawns</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\SpaceStationGame\Atmospherics\AtmosphericComponent.h">
-      <Filter>Source\SpaceStationGame\Atmospherics</Filter>
+    <ClInclude Include="..\..\Source\SpaceStationGame\Pawns\Human.h">
+      <Filter>Source\SpaceStationGame\Pawns</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\SpaceStationGame\Kernels\Includes\Atmos.h">
-      <Filter>Source\SpaceStationGame\Kernels\Includes</Filter>
+    <ClInclude Include="..\..\Source\SpaceStationGame\Player\SpaceStationGamePlayerController.h">
+      <Filter>Source\SpaceStationGame\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceStationGame\Player\SpaceStationGamePlayerStart.h">
+      <Filter>Source\SpaceStationGame\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceStationGame\Game\SpaceStationGameGameMode.h">
+      <Filter>Source\SpaceStationGame\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceStationGame\Game\SpaceStationGameGameState.h">
+      <Filter>Source\SpaceStationGame\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceStationGame\Game\SpaceStationGameServerState.h">
+      <Filter>Source\SpaceStationGame\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceStationGame\Game\SpaceStationGame.h">
+      <Filter>Source\SpaceStationGame\Game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Source\SpaceStationGame\Managers\InstanceManager.cpp">
-      <Filter>Source\SpaceStationGame\Managers</Filter>
+    <ClCompile Include="..\..\Source\SpaceStationGame\Jobs\Assistant.cpp">
+      <Filter>Source\SpaceStationGame\Jobs</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\SpaceStationGame\Items\Instances\InstancedItem.cpp">
-      <Filter>Source\SpaceStationGame\Items\Instances</Filter>
+    <ClCompile Include="..\..\Source\SpaceStationGame\Pawns\SpaceStationGameCharacter.cpp">
+      <Filter>Source\SpaceStationGame\Pawns</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\SpaceStationGame\Items\Instances\InstancedMeshContainer.cpp">
-      <Filter>Source\SpaceStationGame\Items\Instances</Filter>
+    <ClCompile Include="..\..\Source\SpaceStationGame\Pawns\Human.cpp">
+      <Filter>Source\SpaceStationGame\Pawns</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\SpaceStationGame\SpaceStationGamePlayerStart.cpp">
-      <Filter>Source\SpaceStationGame</Filter>
+    <ClCompile Include="..\..\Source\SpaceStationGame\Player\SpaceStationGamePlayerController.cpp">
+      <Filter>Source\SpaceStationGame\Player</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\SpaceStationGame\Atmospherics\AtmosphericComponent.cpp">
-      <Filter>Source\SpaceStationGame\Atmospherics</Filter>
+    <ClCompile Include="..\..\Source\SpaceStationGame\Player\SpaceStationGamePlayerStart.cpp">
+      <Filter>Source\SpaceStationGame\Player</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Filter Include="Source\SpaceStationGame\Items\Instances">
-      <UniqueIdentifier>{339c3d6f-0db8-4415-8fe5-cd75c07863c4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\SpaceStationGame\Kernels">
-      <UniqueIdentifier>{08c16eda-b754-4cd8-9d22-c92cd7018b4b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\SpaceStationGame\Atmospherics">
-      <UniqueIdentifier>{05445aa9-ee22-41c7-bda2-4da88ec4f37c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\SpaceStationGame\Kernels\Includes">
-      <UniqueIdentifier>{7023c395-c261-4cba-8d35-7afb34009bb9}</UniqueIdentifier>
-    </Filter>
+    <ClCompile Include="..\..\Source\SpaceStationGame\Game\SpaceStationGameGameMode.cpp">
+      <Filter>Source\SpaceStationGame\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceStationGame\Game\SpaceStationGameGameState.cpp">
+      <Filter>Source\SpaceStationGame\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceStationGame\Game\SpaceStationGameServerState.cpp">
+      <Filter>Source\SpaceStationGame\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceStationGame\Game\SpaceStationGame.cpp">
+      <Filter>Source\SpaceStationGame\Game</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

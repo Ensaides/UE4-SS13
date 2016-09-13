@@ -1,20 +1,23 @@
 // Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
 #pragma once
 #include "GameFramework/Character.h"
+#include "Inventory.h"
 #include "SpaceStationGameCharacter.generated.h"
 
 class UInputComponent;
 
+// This character is the base for all characters. It can move, use, and it has an inventory
 UCLASS(config=Game)
 class ASpaceStationGameCharacter : public ACharacter
 {
-	GENERATED_BODY()
+	GENERATED_UCLASS_BODY()
 
-	/** First person camera */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class UCameraComponent* FirstPersonCameraComponent;
-public:
-	ASpaceStationGameCharacter();
+	// Inventory members
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory")
+		int32 InventorySize;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = "Inventory")
+		FInventory Inventory;
 
 	virtual void BeginPlay();
 
@@ -52,8 +55,11 @@ protected:
 	// End of APawn interface
 
 public:
+	/** First person camera */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+		class UCameraComponent* FirstPersonCameraComponent;
+
 	/** Returns FirstPersonCameraComponent subobject **/
 	FORCEINLINE class UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
-
 };
 

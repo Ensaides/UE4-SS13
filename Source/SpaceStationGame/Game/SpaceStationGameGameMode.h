@@ -21,6 +21,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Classes, meta = (DisplayName = "Server State Class"))
 		TSubclassOf<class ASpaceStationGameServerState> ServerStateClass;
 
+	// Sets up the player's job
+	virtual void SetPlayerDefaults(APawn* PlayerPawn);
+
 public:
 
 	/** Returns true if the round is in progress **/

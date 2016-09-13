@@ -4,7 +4,7 @@
 
 #include "Components/ActorComponent.h"
 
-#include "AtmosVoxel.h"
+#include "Atmos.h"
 #include <atomic>
 #include <mutex>
 
@@ -43,7 +43,7 @@ private:
 	FAtmosVoxel AtmosData;
 
 public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Gases)
+	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Gases)
 		FGases StartingGases;
 
 	// Client side members

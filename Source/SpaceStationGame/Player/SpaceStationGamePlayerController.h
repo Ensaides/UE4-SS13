@@ -12,9 +12,8 @@
 UCLASS()
 class SPACESTATIONGAME_API ASpaceStationGamePlayerController : public APlayerController
 {
-	GENERATED_BODY()
+	GENERATED_UCLASS_BODY()
 
-public:
 	// Chat
 	// Array of the chat for referential purposes, only on the server
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Chat)
@@ -26,10 +25,6 @@ public:
 	// Server calls this after AddChatMessageIsCalled
 	UFUNCTION(Client, Reliable, WithValidation)
 		void Client_AddChatMessage(const FString& Msg, bool Radio);
-
-	bool Client_AddChatMessage_Validate(const FString& Msg, bool Radio) { return true; };
-
-	void Client_AddChatMessage_Implementation(const FString& Msg, bool Radio);
 
 	//UFUNCTION(exec)
 	//	void Say(const FString& InputString);

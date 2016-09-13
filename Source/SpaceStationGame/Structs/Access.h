@@ -34,4 +34,6 @@ struct FAccess
 	uint32 bHonkAccess : 1;
 	uint32 bSilentAccess : 1;
 	uint32 bMaintenanceAccess : 1;
+
+
 };

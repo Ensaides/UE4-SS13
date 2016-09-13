@@ -3,15 +3,15 @@
 #include "Object.h"
 #include "Access.h"
 #include "Inventory.h"
-#include <functional>
 #include "Job.generated.h"
+
+class AHuman;
 
 UCLASS(Abstract)
 class UJob : public UObject
 {
-	GENERATED_BODY()
+	GENERATED_UCLASS_BODY()
 
-public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Job)
 		FAccess DefaultAccess;
 
@@ -22,7 +22,8 @@ public:
 		FString JobMessage;
 
 	UFUNCTION(BlueprintNativeEvent, meta = (ToolTip = "Called when a character spawns, used to spawn the starting inventory items and set them up for that character", DisplayName = "Construct Inventory"), Category = Job)
-		void ConstructInventory();
+		void ConstructInventory(AHuman* OwningHuman);
 
-	virtual void ConstructInventory_Implementation() {};
+	UFUNCTION(BlueprintCallable, meta = (ToolTip = "Automatically set up and spawn the ID card from the job info", DisplayName = "Construct ID Card"), Category = Job)
+		void ConstructIDCard(AHuman* OwningHuman);
 };

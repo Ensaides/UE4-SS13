@@ -22,7 +22,6 @@ void UAtmosphericComponent::GetLifetimeReplicatedProps(TArray< FLifetimeProperty
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	// Replicate to everyone
 	DOREPLIFETIME_CONDITION(UAtmosphericComponent, Gases, COND_OwnerOnly);
 }
 
@@ -41,7 +40,7 @@ void UAtmosphericComponent::TickComponent( float DeltaTime, ELevelTick TickType,
 		{
 			auto AtmosphericsManager = Cast<AAtmosphericsManager>(GameState->GetServerState()->GetAtmosphericsManager());
 
-			AtmosphericsManager->AddBufferRead(&AtmosData, VoxelIndex, &AtmosDataMutex);
+			//AtmosphericsManager->AddBufferRead(&AtmosData, VoxelIndex, &AtmosDataMutex);
 
 			bReceivedData = false;
 		}
@@ -61,7 +60,7 @@ void UAtmosphericComponent::ReceiveAtmosUpdate()
 
 void UAtmosphericComponent::SetUpGases()
 {
-	AtmosData.Gases = StartingGases.ToFloat16();
+	AtmosData.Voxel.Gases = StartingGases.ToFloat16();
 
 	UWorld* const World = GetWorld();
 	if (World)
@@ -71,7 +70,7 @@ void UAtmosphericComponent::SetUpGases()
 		{
 			auto AtmosphericsManager = Cast<AAtmosphericsManager>(GameState->GetServerState()->GetAtmosphericsManager());
 
-			AtmosphericsManager->AddBufferWrite(AtmosData.Index, AtmosWriteOperation::Set, StartingGases.ToFloat16());
+			//AtmosphericsManager->AddBufferWrite(AtmosData.Voxel.Index, AtmosWriteOperation::Set, StartingGases.ToFloat16());
 		}
 	}
 }

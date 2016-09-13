@@ -2,16 +2,16 @@
 
 #pragma once
 
-#include "SpaceStationGame.h"
-
 #include <iostream>
 #include <sstream>
-#include <string.h>
+#include <string>
 #include <locale.h>
 
-namespace Helpers
+class Helpers
 {
-	std::wstring widen(const std::string& str) {
+public:
+	static std::wstring widen(const std::string& str)
+	{
 		std::wostringstream wstm;
 		const std::ctype<wchar_t>& ctfacet = std::use_facet <std::ctype<wchar_t> >(wstm.getloc());
 		for (std::size_t i = 0; i < str.size(); ++i)
@@ -19,7 +19,8 @@ namespace Helpers
 		return wstm.str();
 	};
 
-	std::string narrow(const std::wstring& str) {
+	static std::string narrow(const std::wstring& str)
+	{
 		std::ostringstream stm;
 		const std::ctype<char>& ctfacet =
 			std::use_facet< std::ctype<char> >(stm.getloc());
@@ -28,29 +29,29 @@ namespace Helpers
 		return stm.str();
 	};
 
-	std::wstring ConvertToWString(FString str) 
+	static std::wstring ConvertToWString(FString str) 
 	{
 		return widen((TCHAR_TO_UTF8(*str)));
 	};
 
-	std::string ConvertToString(FString str) 
+	static std::string ConvertToString(FString str) 
 	{
 		return (TCHAR_TO_UTF8(*str));
 	};
 
-	FString ConvertToFString(std::string str) 
+	static FString ConvertToFString(std::string str) 
 	{
 		return (FString(str.c_str()));
 	};
 
-	FString ConvertToFString(std::wstring str) 
+	static FString ConvertToFString(std::wstring str) 
 	{
 		std::string o = narrow(str);
 		return (FString(o.c_str()));
 	};
 
 
-	const char* ConvertToCCP(FString str) 
+	static const char* ConvertToCCP(FString str) 
 	{
 		std::string t = TCHAR_TO_UTF8(*str);
 		char * returnvalue = (char *)malloc(sizeof(char)* (t.length() + 1));
@@ -58,14 +59,14 @@ namespace Helpers
 		return returnvalue;
 	};
 
-	const char* ConvertToCCP(std::string str) 
+	static const char* ConvertToCCP(std::string str) 
 	{
 		char * returnvalue = (char *)malloc(sizeof(char)* (str.length() + 1));
 		strncpy_s(returnvalue, str.length(), str.c_str(), str.length());
 		return returnvalue;
 	};
 
-	const char* ConvertToCCP(std::wstring str) 
+	static const char* ConvertToCCP(std::wstring str) 
 	{
 		std::string t = narrow(str);
 		char * returnvalue = (char *)malloc(sizeof(char)* (t.length() + 1));
@@ -74,7 +75,7 @@ namespace Helpers
 	};
 
 
-	std::string int64ToString(int64 number) 
+	static std::string int64ToString(int64 number) 
 	{
 		std::stringstream stream;
 		__int64 value(number);
@@ -83,7 +84,7 @@ namespace Helpers
 		return strValue;
 	};
 
-	std::wstring int64ToWString(int64 number) 
+	static std::wstring int64ToWString(int64 number) 
 	{
 		std::stringstream stream;
 		__int64 value(number);
@@ -91,4 +92,4 @@ namespace Helpers
 		std::string strValue(stream.str());
 		return widen(strValue);
 	};
-}
+};

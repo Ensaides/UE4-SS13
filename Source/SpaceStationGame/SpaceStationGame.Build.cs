@@ -19,6 +19,10 @@ public class SpaceStationGame : ModuleRules
                 new string[] {
                 "SpaceStationGame",
                 "SpaceStationGame/Atmospherics",
+                "SpaceStationGame/Game",
+                "SpaceStationGame/Pawns",
+                "SpaceStationGame/Player",
+                "SpaceStationGame/OpenCL",
                 "SpaceStationGame/Jobs",
                 "SpaceStationGame/Items",
                 "SpaceStationGame/Items/Instances",
