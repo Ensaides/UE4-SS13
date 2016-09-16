@@ -30,7 +30,9 @@ void AJobManager::SetupJob(APawn* PlayerPawn)
 			auto Job = Controller->StartingJob;
 			auto JobObject = NewObject<UJob>(HumanPawn, Job);
 
+			// Set up the inventory and send the player the job message
 			JobObject->ConstructInventory(HumanPawn);
+			Controller->Client_AddChatMessage(JobObject->JobMessage, MESSAGE_NOTIFICATION_COLOR);
 		}
 	}
 }

@@ -28,6 +28,8 @@ public class SpaceStationGame : ModuleRules
                 "SpaceStationGame/Items/Instances",
                 "SpaceStationGame/Managers",
                 "SpaceStationGame/Helpers",
+                "SpaceStationGame/Rounds",
+                "SpaceStationGame/Rounds/Traitor",
                 "SpaceStationGame/Structs"
                 }
             );

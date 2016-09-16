@@ -9,7 +9,7 @@ UAssistant::UAssistant(const class FObjectInitializer& ObjectInitializer)
 {
 	DefaultAccess = FAccess();
 	JobName = "Assistant";
-	JobMessage = "";
+	JobMessage = "You are the Assistant. As the Assistant you answer directly to absolutely everyone. Special circumstances may change this.";
 }
 
 void UAssistant::ConstructInventory_Implementation(AHuman* OwningHuman)

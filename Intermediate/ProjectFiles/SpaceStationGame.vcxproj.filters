@@ -226,6 +226,12 @@
     <Filter Include="Source\SpaceStationGame\Game">
       <UniqueIdentifier>{4d864b8b-41af-497b-ae32-8ff296148c7e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\SpaceStationGame\Rounds">
+      <UniqueIdentifier>{00ec8a10-2ae3-4157-81b6-ca660c4599ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\SpaceStationGame\Rounds\Traitor">
+      <UniqueIdentifier>{da825928-e2ec-4435-9973-a56f05a0fb60}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\SpaceStationGame\Atmospherics\Kernels\Includes\AtmosVoxel.h">
@@ -261,6 +267,12 @@
     <ClInclude Include="..\..\Source\SpaceStationGame\Game\SpaceStationGame.h">
       <Filter>Source\SpaceStationGame\Game</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceStationGame\Rounds\Traitor\Traitor.h">
+      <Filter>Source\SpaceStationGame\Rounds\Traitor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceStationGame\Rounds\Objective.h">
+      <Filter>Source\SpaceStationGame\Rounds</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\SpaceStationGame\Jobs\Assistant.cpp">
@@ -289,6 +301,12 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\SpaceStationGame\Game\SpaceStationGame.cpp">
       <Filter>Source\SpaceStationGame\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceStationGame\Rounds\Traitor\Traitor.cpp">
+      <Filter>Source\SpaceStationGame\Rounds\Traitor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceStationGame\Rounds\Objective.cpp">
+      <Filter>Source\SpaceStationGame\Rounds</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

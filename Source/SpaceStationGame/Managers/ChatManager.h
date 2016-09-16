@@ -6,6 +6,7 @@
 #include "ChatStructs.h"
 #include "ChatManager.generated.h"
 
+class ASpaceStationGamePlayerController;
 
 /**
  * 
@@ -13,16 +14,15 @@
 UCLASS()
 class SPACESTATIONGAME_API AChatManager : public AManager
 {
-	GENERATED_BODY()
+	GENERATED_UCLASS_BODY()
 	
 	// Array of chat messages on the server
 	TArray<FChatMessageStruct> ChatMessages;
+
+	void ReceieveChatMessage(ASpaceStationGamePlayerController* Controller, FString Msg);
 	
 	// Send the messages to the client player controllers from a player
 	void SendNewChatMessage(const FString Msg, const FString PlayerName, FVector Location);
-
-public:
-	// Configs
 
 	// How far away a person can hear someone talking
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Config)

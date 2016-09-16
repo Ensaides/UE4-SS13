@@ -30,11 +30,20 @@ ASpaceStationGameCharacter::ASpaceStationGameCharacter(const class FObjectInitia
 
 	// Inventory
 	InventorySize = 0;
+
+	// Health
+	MaxHealth = 100.f;
+	Health = MaxHealth;
 }
 
 void ASpaceStationGameCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	// Attributes
+	DOREPLIFETIME(ASpaceStationGameCharacter, NickName);
+	DOREPLIFETIME(ASpaceStationGameCharacter, Health);
+	DOREPLIFETIME(ASpaceStationGameCharacter, MaxHealth);
 
 	// Inventory
 	DOREPLIFETIME_CONDITION(ASpaceStationGameCharacter, Inventory, COND_OwnerOnly);
@@ -94,4 +103,26 @@ void ASpaceStationGameCharacter::LookUpAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+}
+
+float ASpaceStationGameCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	Health -= DamageAmount;
+
+	if (Health <= 0.f)
+		Kill(DamageCauser);
+
+	return DamageAmount;
+}
+
+void ASpaceStationGameCharacter::Kill(AActor* Attacker)
+{
+	Health = 0.f;
+
+	Destroy();
+
+	// Broadcast the death
+	OnKill.Broadcast(Attacker);
 }

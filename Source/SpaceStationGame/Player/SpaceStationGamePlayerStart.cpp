@@ -6,7 +6,7 @@
 ASpaceStationGamePlayerStart::ASpaceStationGamePlayerStart(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	CapsuleComponent->SetCapsuleSize(55, 122);
+	GetCapsuleComponent()->SetCapsuleSize(55, 122);
 }
 
 

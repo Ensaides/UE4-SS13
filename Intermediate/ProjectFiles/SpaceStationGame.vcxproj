@@ -445,7 +445,11 @@
     <ClInclude Include="..\..\Source\SpaceStationGame\Pawns\SpaceStationGameCharacter.h" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Player\SpaceStationGamePlayerController.h" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Player\SpaceStationGamePlayerStart.h" />
+    <ClCompile Include="..\..\Source\SpaceStationGame\Rounds\Objective.cpp" />
+    <ClCompile Include="..\..\Source\SpaceStationGame\Rounds\Traitor\Traitor.cpp" />
     <ClCompile Include="..\..\Source\SpaceStationGame\SpaceStationGameHUD.cpp" />
+    <ClInclude Include="..\..\Source\SpaceStationGame\Rounds\Objective.h" />
+    <ClInclude Include="..\..\Source\SpaceStationGame\Rounds\Traitor\Traitor.h" />
     <ClInclude Include="..\..\Source\SpaceStationGame\SpaceStationGameHUD.h" />
     <ClCompile Include="..\..\Source\SpaceStationGame\Atmospherics\AtmosphericComponent.cpp" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Atmospherics\AtmosphericComponent.h" />

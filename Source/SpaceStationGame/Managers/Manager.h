@@ -13,7 +13,7 @@ class AManager : public AActor
 
 public:
 	// Usually called by the game state to initialize each manager object
-	virtual void Initialize() {};
+	virtual void Initialize() { CompleteInitialization(); };
 
 private:
 	// Used by the object to complete initialization

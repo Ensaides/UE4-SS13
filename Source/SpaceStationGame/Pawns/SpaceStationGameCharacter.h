@@ -12,6 +12,27 @@ class ASpaceStationGameCharacter : public ACharacter
 {
 	GENERATED_UCLASS_BODY()
 
+	// The name that shows up to people when the character speaks
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = "Attributes")
+		FString NickName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = "Health")
+		float Health;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = "Health")
+		float MaxHealth;
+
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser);
+
+	// Call this to kill this player. Only works on the server
+	UFUNCTION(BlueprintCallable, Category = "Health")
+		void Kill(AActor* Attacker);
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FKill, AActor*, Attacker);
+
+	UPROPERTY(BlueprintAssignable)
+		FKill OnKill;
+
 	// Inventory members
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory")
 		int32 InventorySize;

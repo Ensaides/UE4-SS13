@@ -22,6 +22,8 @@ void AInstanceManager::Initialize()
 		CreateNewInstanceContainer(*ActorItr);
 	}
 	*/
+
+	Super::Initialize();
 }
 
 bool AInstanceManager::CreateNewInstanceContainer(AInstancedItem* InstanceActor)

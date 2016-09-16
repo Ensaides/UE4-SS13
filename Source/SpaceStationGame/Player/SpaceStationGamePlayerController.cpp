@@ -4,6 +4,9 @@
 #include "SpaceStationGamePlayerController.h"
 #include "Assistant.h"
 #include "SpaceStationGameHud.h"
+#include "SpaceStationGameGameState.h"
+#include "SpaceStationGameServerState.h"
+#include "ChatManager.h"
 #include "UnrealNetwork.h"
 
 ASpaceStationGamePlayerController::ASpaceStationGamePlayerController(const class FObjectInitializer& ObjectInitializer)
@@ -36,48 +39,51 @@ void ASpaceStationGamePlayerController::Tick(float DeltaSeconds)
 #endif
 }
 
-void ASpaceStationGamePlayerController::AddChatMessage(FString Msg, bool Radio)
+void ASpaceStationGamePlayerController::AddChatMessage(FString Msg, FLinearColor Color)
 {
 	FClientChatMessageStruct NewMessage;
 
-	if (Radio)
-	{
-		NewMessage.MessageColor = FColor::Red;
-	}
-	else
-	{
-		NewMessage.MessageColor = FColor::Black;
-	}
-
 	NewMessage.ChatMsg = Msg;
-	NewMessage.MessageColor = FColor::Black;
+	NewMessage.MessageColor = Color;
 
 	ChatMessages.Add(NewMessage);
 
-	Client_AddChatMessage(Msg, Radio);
+	Client_AddChatMessage(Msg, Color);
 }
 
-bool ASpaceStationGamePlayerController::Client_AddChatMessage_Validate(const FString& Msg, bool Radio)
+bool ASpaceStationGamePlayerController::Client_AddChatMessage_Validate(const FString& Msg, FLinearColor Color)
 {
 	return true;
 }
 
-void ASpaceStationGamePlayerController::Client_AddChatMessage_Implementation(const FString& Msg, bool Radio)
+void ASpaceStationGamePlayerController::Client_AddChatMessage_Implementation(const FString& Msg, FLinearColor Color)
 {
 	FClientChatMessageStruct NewMessage;
 
-	if (Radio)
-	{
-		NewMessage.MessageColor = FColor::Red;
-	}
-	else
-	{
-		NewMessage.MessageColor = FColor::Black;
-	}
-
 	NewMessage.ChatMsg = Msg;
-	NewMessage.MessageColor = FColor::Black;
+	NewMessage.MessageColor = Color;
 
 	if (Cast<ASpaceStationGameHUD>(GetHUD()))
 		Cast<ASpaceStationGameHUD>(GetHUD())->BP_AddChatMessage(NewMessage);
+}
+
+void ASpaceStationGamePlayerController::Say(const FString& InputString)
+{
+	Server_Say(InputString);
+}
+
+bool ASpaceStationGamePlayerController::Server_Say_Validate(const FString& InputString)
+{
+	return true;
+}
+
+void ASpaceStationGamePlayerController::Server_Say_Implementation(const FString& InputString)
+{
+	auto GameState = Cast<ASpaceStationGameGameState>(GetWorld()->GetGameState());
+	if (GameState)
+	{
+		auto ServerState = GameState->GetServerState();
+
+		ServerState->GetChatManager()->ReceieveChatMessage(this, InputString);
+	}
 }

@@ -104,7 +104,7 @@ void ASpaceStationGameGameMode::HandleRoundHasStarted()
 		{
 			RestartPlayer(PlayerController);
 
-			Cast<ASpaceStationGamePlayerController>(PlayerController)->AddChatMessage("Welcome to the station crew, enjoy your stay!", false);
+			Cast<ASpaceStationGamePlayerController>(PlayerController)->AddChatMessage("Welcome to the station crew, enjoy your stay!", MESSAGE_NOTIFICATION_COLOR);
 		}
 	}
 }

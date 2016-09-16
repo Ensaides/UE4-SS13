@@ -9,5 +9,4 @@ DECLARE_LOG_CATEGORY_EXTERN(SpaceStationGameLog, Log, All);
 
 DECLARE_LOG_CATEGORY_EXTERN(SpaceStationGameCriticalErrors, Log, All);
 
-
 #endif

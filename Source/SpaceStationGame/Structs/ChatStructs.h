@@ -1,6 +1,9 @@
 #pragma once
 #include "ChatStructs.generated.h"
 
+#define MESSAGE_DEFAULT_COLOR FLinearColor(0,0,0,1)
+#define MESSAGE_NOTIFICATION_COLOR FLinearColor(0.5,0.5,0.5,1)
+
 USTRUCT()
 struct FChatMessageStruct
 {
@@ -28,5 +31,5 @@ struct FClientChatMessageStruct
 		FString ChatMsg;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Default)
-		FColor MessageColor;
+		FLinearColor MessageColor;
 };
