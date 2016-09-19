@@ -39,9 +39,14 @@ class SPACESTATIONGAME_API ASpaceStationGamePlayerController : public APlayerCon
 
 public:
 	// Job
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = Job)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = "Job")
 		TSubclassOf<class UJob> StartingJob;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = "Round")
+		bool bRoundStartReady;
+
+	UFUNCTION(BlueprintCallable, Server, Unreliable, WithValidation, Category = "Round")
+		void SetRoundStartReady(bool bNewReady);
 public:
 	virtual void Tick(float DeltaSeconds) override;
 

@@ -44,28 +44,28 @@ class SPACESTATIONGAME_API AJobManager : public AManager
 		void InitializeJobs();
 
 	// Job Classes members
-	static TArray<FJobClass> JobClasses;
+	UFUNCTION(BlueprintCallable, Category = "Jobs")
+		static TArray<FJobClass>& GetJobClasses()
+		{
+			static TArray<FJobClass> JobClasses;
+
+			return JobClasses;
+		};
 
 	UFUNCTION(BlueprintCallable, meta = (ToolTip = "Add a job class to the list of jobs", DisplayName = "Add Job Class"), Category = "Jobs")
 		static void AddJobClass(FString JobName, TSubclassOf<UJob> NewJob)
 		{
-			JobClasses.Add(FJobClass(JobName, NewJob));
-		};
-
-	UFUNCTION(BlueprintCallable, Category = "Jobs")
-		static TArray<FJobClass>& GetJobClasses()
-		{
-			return JobClasses;
+			GetJobClasses().Add(FJobClass(JobName, NewJob));
 		};
 
 	UFUNCTION(BlueprintCallable, Category = "Jobs")
 		static void RemoveJobClass(FString JobName)
 		{
-			for (int i = 0; i < JobClasses.Num(); i++)
+			for (int i = 0; i < GetJobClasses().Num(); i++)
 			{
-				if (JobClasses[i].JobName == JobName)
+				if (GetJobClasses()[i].JobName == JobName)
 				{
-					JobClasses.RemoveAt(i);
+					GetJobClasses().RemoveAt(i);
 
 					return;
 				}

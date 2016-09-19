@@ -3,6 +3,7 @@
 
 #define MESSAGE_DEFAULT_COLOR FLinearColor(0,0,0,1)
 #define MESSAGE_NOTIFICATION_COLOR FLinearColor(0.5,0.5,0.5,1)
+#define MESSAGE_COLOR_RED FLinearColor(1.0,0.0,0.0,1)
 
 USTRUCT()
 struct FChatMessageStruct

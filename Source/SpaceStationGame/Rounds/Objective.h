@@ -9,4 +9,9 @@ class UObjective : public UObject
 {
 	GENERATED_UCLASS_BODY()
 
+	UFUNCTION(BlueprintNativeEvent, Category = "Objective")
+		void InitializeObjective();
+
+	UFUNCTION(BlueprintNativeEvent, Category = "Objective")
+		FString GetObjectiveMessage();
 };

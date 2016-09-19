@@ -1,6 +1,7 @@
 // Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
 #pragma once
 #include "GameFramework/GameMode.h"
+#include "SpaceStationGamePlayerController.h"
 #include "SpaceStationGameGameMode.generated.h"
 
 // Match states for the space station game mode
@@ -25,7 +26,6 @@ public:
 	virtual void SetPlayerDefaults(APawn* PlayerPawn);
 
 public:
-
 	/** Returns true if the round is in progress **/
 	UFUNCTION(BlueprintCallable, Category = "Game")
 		virtual bool IsMatchInProgress() const override;
@@ -51,6 +51,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Round")
 		virtual void EndRound();
 
+	UFUNCTION(BlueprintCallable, Category = "Game")
+		TArray<ASpaceStationGamePlayerController*> GetReadyPlayers();
 public:
 	/** Whether the round should start immediately or if there should be a round start timer */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Round")

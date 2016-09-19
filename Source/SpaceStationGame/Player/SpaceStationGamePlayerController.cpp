@@ -13,6 +13,7 @@ ASpaceStationGamePlayerController::ASpaceStationGamePlayerController(const class
 	: Super(ObjectInitializer)
 {
 	StartingJob = UAssistant::StaticClass();
+	bRoundStartReady = true;
 }
 
 void ASpaceStationGamePlayerController::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
@@ -21,6 +22,9 @@ void ASpaceStationGamePlayerController::GetLifetimeReplicatedProps(TArray< FLife
 
 	// Job
 	DOREPLIFETIME_CONDITION(ASpaceStationGamePlayerController, StartingJob, COND_OwnerOnly);
+
+	// Round
+	DOREPLIFETIME(ASpaceStationGamePlayerController, bRoundStartReady);
 
 //#ifdef UE_BUILD_DEBUG
 	DOREPLIFETIME_CONDITION(ASpaceStationGamePlayerController, AtmosphericsFPS, COND_OwnerOnly);
@@ -86,4 +90,14 @@ void ASpaceStationGamePlayerController::Server_Say_Implementation(const FString&
 
 		ServerState->GetChatManager()->ReceieveChatMessage(this, InputString);
 	}
+}
+
+bool ASpaceStationGamePlayerController::SetRoundStartReady_Validate(bool bNewReady)
+{
+	return true;
+}
+
+void ASpaceStationGamePlayerController::SetRoundStartReady_Implementation(bool bNewReady)
+{
+	bRoundStartReady = bNewReady;
 }

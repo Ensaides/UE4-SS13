@@ -6,5 +6,15 @@
 UObjective::UObjective(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	
+}
 
+void UObjective::InitializeObjective_Implementation()
+{
+
+}
+
+FString UObjective::GetObjectiveMessage_Implementation()
+{
+	return FString("");
 }

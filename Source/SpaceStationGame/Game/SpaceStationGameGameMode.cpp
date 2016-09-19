@@ -3,10 +3,10 @@
 #include "SpaceStationGame.h"
 #include "SpaceStationGameGameMode.h"
 #include "SpaceStationGameGameState.h"
-#include "SpaceStationGamePlayerController.h"
 #include "SpaceStationGameHUD.h"
 #include "SpaceStationGameServerState.h"
 #include "SpaceStationGameCharacter.h"
+#include "UnrealMathUtility.h"
 #include "JobManager.h"
 
 namespace MatchState
@@ -31,6 +31,30 @@ ASpaceStationGameGameMode::ASpaceStationGameGameMode(const FObjectInitializer& O
 
 	bDelayedRoundStart = false;
 	RoundStartDelay = 5.f;
+}
+
+TArray<ASpaceStationGamePlayerController*> ASpaceStationGameGameMode::GetReadyPlayers()
+{
+	TArray<ASpaceStationGamePlayerController*> ReadyPlayers;
+
+	for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
+	{
+		auto PlayerController = Cast<ASpaceStationGamePlayerController>(*Iterator);
+
+		if (!bDelayedRoundStart)
+		{
+			// If the round is starting immediately (not delayed), then dont check if the controller is ready
+			if (PlayerController)
+				ReadyPlayers.Add(PlayerController);
+		}
+		else
+		{
+			if (PlayerController && PlayerController->bRoundStartReady)
+				ReadyPlayers.Add(PlayerController);
+		}
+	}
+
+	return ReadyPlayers;
 }
 
 void ASpaceStationGameGameMode::StartMatch()

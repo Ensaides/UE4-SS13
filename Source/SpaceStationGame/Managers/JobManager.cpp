@@ -3,8 +3,6 @@
 #include "SpaceStationGamePlayerController.h"
 #include "JobManager.h"
 
-TArray<FJobClass> AJobManager::JobClasses;
-
 AJobManager::AJobManager(const class FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {

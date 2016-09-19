@@ -273,6 +273,12 @@
     <ClInclude Include="..\..\Source\SpaceStationGame\Rounds\Objective.h">
       <Filter>Source\SpaceStationGame\Rounds</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceStationGame\Rounds\Traitor\ObjectiveKill.h">
+      <Filter>Source\SpaceStationGame\Rounds\Traitor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceStationGame\Rounds\Traitor\ObjectiveEscapeShuttle.h">
+      <Filter>Source\SpaceStationGame\Rounds\Traitor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\SpaceStationGame\Jobs\Assistant.cpp">
@@ -307,6 +313,12 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\SpaceStationGame\Rounds\Objective.cpp">
       <Filter>Source\SpaceStationGame\Rounds</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceStationGame\Rounds\Traitor\ObjectiveKill.cpp">
+      <Filter>Source\SpaceStationGame\Rounds\Traitor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceStationGame\Rounds\Traitor\ObjectiveEscapeShuttle.cpp">
+      <Filter>Source\SpaceStationGame\Rounds\Traitor</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
