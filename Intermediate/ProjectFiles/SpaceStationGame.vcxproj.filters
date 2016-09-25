@@ -232,6 +232,9 @@
     <Filter Include="Source\SpaceStationGame\Rounds\Traitor">
       <UniqueIdentifier>{da825928-e2ec-4435-9973-a56f05a0fb60}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\SpaceStationGame\Construction">
+      <UniqueIdentifier>{11d342f8-35f6-474e-bd61-7c48c63cc86d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Source\SpaceStationGame\Atmospherics\Kernels\Includes\AtmosVoxel.h">
@@ -279,6 +282,18 @@
     <ClInclude Include="..\..\Source\SpaceStationGame\Rounds\Traitor\ObjectiveEscapeShuttle.h">
       <Filter>Source\SpaceStationGame\Rounds\Traitor</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceStationGame\Construction\Tileset.h">
+      <Filter>Source\SpaceStationGame\Construction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceStationGame\Construction\WallTileset.h">
+      <Filter>Source\SpaceStationGame\Construction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceStationGame\Managers\TilesetManager.h">
+      <Filter>Source\SpaceStationGame\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SpaceStationGame\Structs\TilesetSector.h">
+      <Filter>Source\SpaceStationGame\Structs</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\SpaceStationGame\Jobs\Assistant.cpp">
@@ -319,6 +334,15 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\SpaceStationGame\Rounds\Traitor\ObjectiveEscapeShuttle.cpp">
       <Filter>Source\SpaceStationGame\Rounds\Traitor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceStationGame\Construction\Tileset.cpp">
+      <Filter>Source\SpaceStationGame\Construction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceStationGame\Construction\WallTileset.cpp">
+      <Filter>Source\SpaceStationGame\Construction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceStationGame\Managers\TilesetManager.cpp">
+      <Filter>Source\SpaceStationGame\Managers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

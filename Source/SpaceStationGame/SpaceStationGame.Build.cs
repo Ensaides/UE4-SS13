@@ -19,6 +19,7 @@ public class SpaceStationGame : ModuleRules
                 new string[] {
                 "SpaceStationGame",
                 "SpaceStationGame/Atmospherics",
+                "SpaceStationGame/Construction",
                 "SpaceStationGame/Game",
                 "SpaceStationGame/Pawns",
                 "SpaceStationGame/Player",

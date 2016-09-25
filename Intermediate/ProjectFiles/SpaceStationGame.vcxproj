@@ -406,6 +406,7 @@
     <NMakeOutput>..\..\Binaries\HTML5\SpaceStationGame-HTML5-Shipping.exe</NMakeOutput>
   </PropertyGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\SpaceStationGame\Structs\TilesetSector.h" />
     <None Include="..\..\Source\SpaceStationGame\Atmospherics\Kernels\CommitAtmosphericWrites.cl" />
     <None Include="..\..\Source\SpaceStationGame\Atmospherics\Kernels\ComputeAtmospherics.cl" />
     <None Include="..\..\Source\SpaceStationGame\Atmospherics\Kernels\GetDebugInfo.cl" />
@@ -425,22 +426,28 @@
     <None Include="..\..\Plugins\OpenCL\OpenCL.uplugin" />
     <None Include="..\..\Plugins\OpenCL\Resources\Icon128.png" />
     <None Include="..\..\Source\SpaceStationGame\SpaceStationGame.Build.cs" />
+    <ClCompile Include="..\..\Source\SpaceStationGame\Construction\Tileset.cpp" />
+    <ClCompile Include="..\..\Source\SpaceStationGame\Construction\WallTileset.cpp" />
     <ClCompile Include="..\..\Source\SpaceStationGame\Game\SpaceStationGame.cpp" />
     <ClCompile Include="..\..\Source\SpaceStationGame\Game\SpaceStationGameGameMode.cpp" />
     <ClCompile Include="..\..\Source\SpaceStationGame\Game\SpaceStationGameGameState.cpp" />
     <ClCompile Include="..\..\Source\SpaceStationGame\Game\SpaceStationGameServerState.cpp" />
     <ClCompile Include="..\..\Source\SpaceStationGame\Jobs\Assistant.cpp" />
+    <ClCompile Include="..\..\Source\SpaceStationGame\Managers\TilesetManager.cpp" />
     <ClCompile Include="..\..\Source\SpaceStationGame\Pawns\Human.cpp" />
     <ClCompile Include="..\..\Source\SpaceStationGame\Pawns\SpaceStationGameCharacter.cpp" />
     <ClCompile Include="..\..\Source\SpaceStationGame\Player\SpaceStationGamePlayerController.cpp" />
     <ClCompile Include="..\..\Source\SpaceStationGame\Player\SpaceStationGamePlayerStart.cpp" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Atmospherics\Kernels\Includes\AtmosVoxel.h" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Atmospherics\Kernels\Includes\DebugInfo.h" />
+    <ClInclude Include="..\..\Source\SpaceStationGame\Construction\Tileset.h" />
+    <ClInclude Include="..\..\Source\SpaceStationGame\Construction\WallTileset.h" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Game\SpaceStationGame.h" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Game\SpaceStationGameGameMode.h" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Game\SpaceStationGameGameState.h" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Game\SpaceStationGameServerState.h" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Jobs\Assistant.h" />
+    <ClInclude Include="..\..\Source\SpaceStationGame\Managers\TilesetManager.h" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Pawns\Human.h" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Pawns\SpaceStationGameCharacter.h" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Player\SpaceStationGamePlayerController.h" />
