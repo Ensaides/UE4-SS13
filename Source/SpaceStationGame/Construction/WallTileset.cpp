@@ -31,7 +31,7 @@ void AWallTileset::OnConstruction(const FTransform& Transform)
 
 FWallTileAdjacentTiles AWallTileset::GetAdjacentTiles(bool bRefreshOverlaps)
 {
-	auto Adjacents = FWallTilesetOverlaps();
+	auto Adjacents = FWallTileAdjacentTiles();
 
 	auto UpActor = ATilesetManager::GetTile(GetActorLocation() + FVector(0, TILESETSECTOR_TILE_SIZE, 0));
 	auto DownActor = ATilesetManager::GetTile(GetActorLocation() + FVector(0, -TILESETSECTOR_TILE_SIZE, 0));

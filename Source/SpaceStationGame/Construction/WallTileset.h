@@ -24,7 +24,7 @@ struct FWallTileAdjacentTiles
 	UPROPERTY(BlueprintReadWrite)
 		bool bRightOverlap;
 
-	FWallTilesetOverlaps()
+	FWallTileAdjacentTiles()
 	{
 		bUpOverlap = false;
 		bDownOverlap = false;
