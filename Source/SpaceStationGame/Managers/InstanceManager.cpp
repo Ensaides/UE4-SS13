@@ -12,20 +12,6 @@ AInstanceManager::AInstanceManager(const FObjectInitializer& ObjectInitializer)
 
 }
 
-
-void AInstanceManager::Initialize()
-{
-	/*
-	for (TActorIterator<AInstancedItem> ActorItr(GetWorld()); ActorItr; ++ActorItr)
-	{
-		// Create a new instance container if one doesn't exist
-		CreateNewInstanceContainer(*ActorItr);
-	}
-	*/
-
-	Super::Initialize();
-}
-
 bool AInstanceManager::CreateNewInstanceContainer(AInstancedItem* InstanceActor)
 {
 	// If we don't find an instance container, create a new one

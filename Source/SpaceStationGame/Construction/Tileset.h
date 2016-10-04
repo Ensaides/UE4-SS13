@@ -3,6 +3,7 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
+#include "TilesetSector.h"
 #include "Tileset.generated.h"
 
 UCLASS()
@@ -15,11 +16,20 @@ class SPACESTATIONGAME_API ATileset : public AActor
 	UFUNCTION(BlueprintCallable, Category = "Spawn")
 		AActor* SpawnActorInEditor(UClass* ActorClass, FTransform Transform);
 
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Visual")
-		void Refresh(bool bRefreshAdjacent);
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Visual")
+		void BP_Refresh(bool bRefreshAdjacent);
 
-	virtual void BeginDestroy();
+	virtual void CleanupTile();
 
-	FVector LastTileLocation;
+	virtual void BeginDestroy() override;
+
+	FTilesetSectorCoordinates TileIndex;
+	
+	UFUNCTION(BlueprintCallable, Category = "Tile")
+		FTilesetSectorCoordinates GetTileIndex() { return TileIndex; };
+
+	UFUNCTION(BlueprintCallable, Category = "World")
+		bool IsGameWorld();
+
 	bool bAlreadyConstructed;
 };

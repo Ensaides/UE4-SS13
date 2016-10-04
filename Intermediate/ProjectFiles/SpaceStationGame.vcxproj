@@ -406,6 +406,7 @@
     <NMakeOutput>..\..\Binaries\HTML5\SpaceStationGame-HTML5-Shipping.exe</NMakeOutput>
   </PropertyGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\SpaceStationGame\Structs\TilesetSector.cpp" />
     <ClInclude Include="..\..\Source\SpaceStationGame\Structs\TilesetSector.h" />
     <None Include="..\..\Source\SpaceStationGame\Atmospherics\Kernels\CommitAtmosphericWrites.cl" />
     <None Include="..\..\Source\SpaceStationGame\Atmospherics\Kernels\ComputeAtmospherics.cl" />

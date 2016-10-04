@@ -18,85 +18,111 @@ AWallTileset::AWallTileset(const class FObjectInitializer& ObjectInitializer)
 
 void AWallTileset::OnConstruction(const FTransform& Transform)
 {
-	FVector PreviousLastTileLocation = LastTileLocation;
+	auto LastTileIndex = TileIndex;
 
 	Super::OnConstruction(Transform);
 
 	// After we have moved our wall, update the adjacent walls in the previous location
 	if (bAlreadyConstructed)
 	{
-		RefreshAdjacentTiles(PreviousLastTileLocation);
+		RefreshAdjacentTiles(LastTileIndex);
 	}
 }
 
-FWallTileAdjacentTiles AWallTileset::GetAdjacentTiles(bool bRefreshOverlaps)
+FWallTileAdjacentTiles AWallTileset::GetAdjacentTiles(FTilesetSectorCoordinates Coords, bool bRefreshOverlaps)
 {
 	auto Adjacents = FWallTileAdjacentTiles();
 
-	auto UpActor = ATilesetManager::GetTile(GetActorLocation() + FVector(0, TILESETSECTOR_TILE_SIZE, 0));
-	auto DownActor = ATilesetManager::GetTile(GetActorLocation() + FVector(0, -TILESETSECTOR_TILE_SIZE, 0));
-	auto LeftActor = ATilesetManager::GetTile(GetActorLocation() + FVector(-TILESETSECTOR_TILE_SIZE, 0, 0));
-	auto RightActor = ATilesetManager::GetTile(GetActorLocation() + FVector(TILESETSECTOR_TILE_SIZE, 0, 0));
+	if (!IsGameWorld()) return Adjacents;
 
-	if (UpActor && UpActor != this)
+	auto UpActor = ATilesetManager::GetTileSectorCoords(Coords + FTilesetSectorCoordinates(0, 0, 0, 0, 1));
+	auto DownActor = ATilesetManager::GetTileSectorCoords(Coords + FTilesetSectorCoordinates(0, 0, 0, 0, -1));
+	auto LeftActor = ATilesetManager::GetTileSectorCoords(Coords + FTilesetSectorCoordinates(0, 0, 0, 1, 0));
+	auto RightActor = ATilesetManager::GetTileSectorCoords(Coords + FTilesetSectorCoordinates(0, 0, 0, -1, 0));
+
+	if (IsValid(UpActor) && UpActor != this)
 	{
 		Adjacents.bUpOverlap = true;
 
 		if (bRefreshOverlaps)
-			UpActor->Refresh(false);
+		{
+			UpActor->BP_Refresh(false);
+		}
 	}
 
-	if (DownActor && DownActor != this)
+	if (IsValid(DownActor) && DownActor != this)
 	{
 		Adjacents.bDownOverlap = true;
 
 		if (bRefreshOverlaps)
-			DownActor->Refresh(false);
+		{
+			DownActor->BP_Refresh(false);
+		}
 	}
 
-	if (LeftActor && LeftActor != this)
+	if (IsValid(LeftActor) && LeftActor != this)
 	{
 		Adjacents.bLeftOverlap = true;
 
 		if (bRefreshOverlaps)
-			LeftActor->Refresh(false);
+		{
+			LeftActor->BP_Refresh(false);
+		}
 	}
 
-	if (RightActor && RightActor != this)
+	if (IsValid(RightActor) && RightActor != this)
 	{
 		Adjacents.bRightOverlap = true;
 
 		if (bRefreshOverlaps)
-			RightActor->Refresh(false);
+		{
+			RightActor->BP_Refresh(false);
+		}
 	}
 
 	return Adjacents;
 }
 
-void AWallTileset::RefreshAdjacentTiles(FVector Location)
+void AWallTileset::RefreshAdjacentTiles(FTilesetSectorCoordinates Coords)
 {
-	auto UpActor = ATilesetManager::GetTile(GetActorLocation() + FVector(0, TILESETSECTOR_TILE_SIZE, 0));
-	auto DownActor = ATilesetManager::GetTile(GetActorLocation() + FVector(0, -TILESETSECTOR_TILE_SIZE, 0));
-	auto LeftActor = ATilesetManager::GetTile(GetActorLocation() + FVector(-TILESETSECTOR_TILE_SIZE, 0, 0));
-	auto RightActor = ATilesetManager::GetTile(GetActorLocation() + FVector(TILESETSECTOR_TILE_SIZE, 0, 0));
+	if (!IsGameWorld()) return;
 
-	if (UpActor && UpActor != this)
+	auto UpActor = ATilesetManager::GetTileSectorCoords(Coords + FTilesetSectorCoordinates(0, 0, 0, 0, 1));
+	auto DownActor = ATilesetManager::GetTileSectorCoords(Coords + FTilesetSectorCoordinates(0, 0, 0, 0, -1));
+	auto LeftActor = ATilesetManager::GetTileSectorCoords(Coords + FTilesetSectorCoordinates(0, 0, 0, 1, 0));
+	auto RightActor = ATilesetManager::GetTileSectorCoords(Coords + FTilesetSectorCoordinates(0, 0, 0, -1, 0));
+
+	if (IsValid(UpActor) && UpActor != this)
 	{
-		UpActor->Refresh(false);
+		UpActor->BP_Refresh(false);
 	}
 
-	if (DownActor && DownActor != this)
+	if (IsValid(DownActor) && DownActor != this)
 	{
-		DownActor->Refresh(false);
+		DownActor->BP_Refresh(false);
 	}
 
-	if (LeftActor && LeftActor != this)
+	if (IsValid(LeftActor) && LeftActor != this)
 	{
-		LeftActor->Refresh(false);
+		LeftActor->BP_Refresh(false);
 	}
 
-	if (RightActor && RightActor != this)
+	if (IsValid(RightActor) && RightActor != this)
 	{
-		RightActor->Refresh(false);
+		RightActor->BP_Refresh(false);
 	}
+}
+
+void AWallTileset::CleanupTile()
+{
+	Super::CleanupTile();
+
+	UE_LOG(LogTemp, Log, TEXT("Cleaning up tile"));
+
+	if (bAlreadyConstructed)
+	{
+		RefreshAdjacentTiles(TileIndex);
+	}
+
+	DestroyWalls();
 }

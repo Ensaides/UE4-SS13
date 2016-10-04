@@ -344,5 +344,8 @@
     <ClCompile Include="..\..\Source\SpaceStationGame\Managers\TilesetManager.cpp">
       <Filter>Source\SpaceStationGame\Managers</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\SpaceStationGame\Structs\TilesetSector.cpp">
+      <Filter>Source\SpaceStationGame\Structs</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

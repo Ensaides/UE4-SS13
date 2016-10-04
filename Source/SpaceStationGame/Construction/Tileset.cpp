@@ -12,15 +12,16 @@ ATileset::ATileset(const class FObjectInitializer& ObjectInitializer)
 
 void ATileset::OnConstruction(const FTransform& Transform)
 {
-	if (bAlreadyConstructed && LastTileLocation != Transform.GetTranslation())
+	if (IsGameWorld())
 	{
-		ATilesetManager::RemoveTileAtLocation(LastTileLocation);
+		if (bAlreadyConstructed)
+		{
+			ATilesetManager::RemoveTile(TileIndex, this, true);
+		}
+
+		// If we succeeded in adding the tile, bAlreadyConstructed = true
+		bAlreadyConstructed = ATilesetManager::AddTile(this, TileIndex);
 	}
-	
-	// Add the tile
-	ATilesetManager::AddTileAtLocation(Transform.GetTranslation(), this);
-	LastTileLocation = Transform.GetTranslation();
-	bAlreadyConstructed = true;
 
 	Super::OnConstruction(Transform);
 }
@@ -40,14 +41,36 @@ AActor* ATileset::SpawnActorInEditor(UClass* ActorClass, FTransform Transform)
 	return NULL;
 }
 
-void ATileset::Refresh_Implementation(bool bRefreshAdjacent)
+bool ATileset::IsGameWorld()
 {
+	auto World = GetWorld();
+	if (!World)
+	{
+		return false;
+	}
 
+	// World type 1 is the game world, type 2 is the editor world
+	if (World->WorldType == 1 || World->WorldType == 2)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+void ATileset::CleanupTile()
+{
+	if (bAlreadyConstructed)
+	{
+		ATilesetManager::RemoveTile(TileIndex);
+	}
 }
 
 void ATileset::BeginDestroy()
 {
-	ATilesetManager::RemoveTile(this);
+	UE_LOG(LogTemp, Log, TEXT("*** BeginDestroy() entered. ***"));
+
+	CleanupTile();
 
 	Super::BeginDestroy();
 }

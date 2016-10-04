@@ -10,9 +10,9 @@ ATilesetManager::ATilesetManager(const class FObjectInitializer& ObjectInitializ
 
 }
 
-ATileset* ATilesetManager::GetTile(FVector Coordinate)
+ATileset* ATilesetManager::GetTileWorldCoords(FVector Location)
 {
-	auto Coords = FTilesetSectorCoordinates::GetCoordinatesFromLoc(Coordinate);
+	auto Coords = FTilesetSectorCoordinates::GetSectorCoordsFromWorldLoc(Location);
 
 	// Look through the tilesets
 	for (auto&& TilesetSector : GetSectors())
@@ -27,9 +27,9 @@ ATileset* ATilesetManager::GetTile(FVector Coordinate)
 	return NULL;
 }
 
-void ATilesetManager::AddTile(ATileset* NewTile)
+ATileset* ATilesetManager::GetTileSectorCoords(FTilesetSectorCoordinates Coords)
 {
-	auto Coords = FTilesetSectorCoordinates::GetCoordinatesFromLoc(NewTile->GetActorLocation());
+	Coords.Normalize();
 
 	// Look through the tilesets
 	for (auto&& TilesetSector : GetSectors())
@@ -37,25 +37,51 @@ void ATilesetManager::AddTile(ATileset* NewTile)
 		// If we found the sector
 		if (TilesetSector.CoordX == Coords.SectorX && TilesetSector.CoordY == Coords.SectorY && TilesetSector.CoordZ == Coords.SectorZ)
 		{
-			if (!TilesetSector.Tiles[Coords.CoordX][Coords.CoordY])
-				TilesetSector.Tiles[Coords.CoordX][Coords.CoordY] = NewTile;
+			return TilesetSector.Tiles[Coords.CoordX][Coords.CoordY];
+		}
+	}
 
-			return;
+	return NULL;
+}
+
+bool ATilesetManager::AddTile(ATileset* NewTile, FTilesetSectorCoordinates& OutCoords)
+{
+	OutCoords = FTilesetSectorCoordinates::GetSectorCoordsFromWorldLoc(NewTile->GetActorLocation());
+
+	// Look through the tilesets
+	for (auto&& TilesetSector : GetSectors())
+	{
+		// If we found the sector
+		if (TilesetSector.CoordX == OutCoords.SectorX && TilesetSector.CoordY == OutCoords.SectorY && TilesetSector.CoordZ == OutCoords.SectorZ)
+		{
+			if (!TilesetSector.Tiles[OutCoords.CoordX][OutCoords.CoordY])
+			{
+				TilesetSector.Tiles[OutCoords.CoordX][OutCoords.CoordY] = NewTile;
+
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
 	}
 
 	// If we didnt find the tile sector, create it
 	auto NewSector = FTilesetSector();
-	NewSector.CoordX = Coords.SectorX;
-	NewSector.CoordY = Coords.SectorY;
-	NewSector.CoordZ = Coords.SectorZ;
+	NewSector.CoordX = OutCoords.SectorX;
+	NewSector.CoordY = OutCoords.SectorY;
+	NewSector.CoordZ = OutCoords.SectorZ;
 
 	// Add it in
-	NewSector.Tiles[Coords.CoordX][Coords.CoordY] = NewTile;
+	NewSector.Tiles[OutCoords.CoordX][OutCoords.CoordY] = NewTile;
 
 	GetSectors().push_back(NewSector);
+
+	return true;
 }
 
+/*
 void ATilesetManager::AddTileAtLocation(FVector Location, ATileset* NewTile)
 {
 	auto Coords = FTilesetSectorCoordinates::GetCoordinatesFromLoc(Location);
@@ -84,20 +110,51 @@ void ATilesetManager::AddTileAtLocation(FVector Location, ATileset* NewTile)
 
 	GetSectors().push_back(NewSector);
 }
+*/
 
-void ATilesetManager::RemoveTile(ATileset* RemoveTile)
+bool ATilesetManager::RemoveTile(FTilesetSectorCoordinates Coords, ATileset* RemoveTile, bool bMatchActor)
 {
-	auto Coords = FTilesetSectorCoordinates::GetCoordinatesFromLoc(RemoveTile->GetActorLocation());
-
 	// Look through the tilesets
 	for (auto&& TilesetSector : GetSectors())
 	{
 		// If we found the sector
 		if (TilesetSector.CoordX == Coords.SectorX && TilesetSector.CoordY == Coords.SectorY && TilesetSector.CoordZ == Coords.SectorZ)
 		{
-			TilesetSector.Tiles[Coords.CoordX][Coords.CoordY] = NULL;
+			if (bMatchActor)
+			{
+				if (TilesetSector.Tiles[Coords.CoordX][Coords.CoordY] == RemoveTile)
+				{
+					TilesetSector.Tiles[Coords.CoordX][Coords.CoordY] = NULL;
 
-			return;
+					return true;
+				}
+			}
+			else
+			{
+				TilesetSector.Tiles[Coords.CoordX][Coords.CoordY] = NULL;
+
+				return true;
+			}
+
+			return false;
+		}
+	}
+
+	return false;
+}
+
+/*
+void ATilesetManager::RemoveAllTilesMatchingActor(ATileset* RemoveTile)
+{
+	for (auto&& TilesetSector : GetSectors())
+	{
+		for (auto&& Row : TilesetSector.Tiles)
+		{
+			for (auto&& Tile : Row)
+			{
+				if (Tile == RemoveTile)
+					Tile = NULL;
+			}
 		}
 	}
 }
@@ -118,6 +175,25 @@ void ATilesetManager::RemoveTileAtLocation(FVector Coordinate)
 		}
 	}
 }
+
+void ATilesetManager::RemoveTileAtLocationMatchActor(FVector Coordinate, ATileset* RemoveTile)
+{
+	auto Coords = FTilesetSectorCoordinates::GetCoordinatesFromLoc(Coordinate);
+
+	// Look through the tilesets
+	for (auto&& TilesetSector : GetSectors())
+	{
+		// If we found the sector
+		if (TilesetSector.CoordX == Coords.SectorX && TilesetSector.CoordY == Coords.SectorY && TilesetSector.CoordZ == Coords.SectorZ)
+		{
+			if (TilesetSector.Tiles[Coords.CoordX][Coords.CoordY] == RemoveTile)
+				TilesetSector.Tiles[Coords.CoordX][Coords.CoordY] = NULL;
+
+			return;
+		}
+	}
+}
+*/
 
 void ATilesetManager::PrintTileInfo()
 {

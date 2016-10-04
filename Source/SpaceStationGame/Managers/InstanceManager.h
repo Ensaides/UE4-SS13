@@ -16,11 +16,7 @@ UCLASS()
 class SPACESTATIONGAME_API AInstanceManager : public AManager
 {
 	GENERATED_UCLASS_BODY()
-	
-public:
-	// Initialization
-	virtual void Initialize() override;
-	
+		
 	// Checks if this actor already has an instance container, will create one if not. Returns true if created a new container
 	bool CreateNewInstanceContainer(AInstancedItem* InstanceActor);
 

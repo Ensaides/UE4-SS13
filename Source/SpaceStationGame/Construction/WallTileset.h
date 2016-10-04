@@ -47,8 +47,13 @@ class SPACESTATIONGAME_API AWallTileset : public ATileset
 		UBoxComponent* Center;
 
 	UFUNCTION(BlueprintCallable, meta = (ToolTip = "Get the wall tiles in adjacent cells, optionally updating them on the new tile positions", DisplayName = "Get Adjacent Tiles"), Category = "Tiles")
-		FWallTileAdjacentTiles GetAdjacentTiles(bool bRefreshOverlaps);
+		FWallTileAdjacentTiles GetAdjacentTiles(FTilesetSectorCoordinates Coords, bool bRefreshOverlaps);
 
 	UFUNCTION(BlueprintCallable, Category = "Tiles")
-		void RefreshAdjacentTiles(FVector Location);
+		void RefreshAdjacentTiles(FTilesetSectorCoordinates Coords);
+
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Tiles")
+		void DestroyWalls();
+
+	virtual void CleanupTile() override;
 };
