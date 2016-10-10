@@ -11,19 +11,26 @@ class SPACESTATIONGAME_API ATileset : public AActor
 {
 	GENERATED_UCLASS_BODY()
 
-	virtual void OnConstruction(const FTransform& Transform) override;
+	virtual void PostInitializeComponents() override;
 
-	UFUNCTION(BlueprintCallable, Category = "Spawn")
-		AActor* SpawnActorInEditor(UClass* ActorClass, FTransform Transform);
+	virtual void PostLoad() override;
 
-	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Visual")
-		void BP_Refresh(bool bRefreshAdjacent);
+#ifdef WITH_EDITOR
+	virtual void PostEditImport() override;
+
+	virtual void PostEditMove(bool bFinished) override;
+#endif
+
+	AActor* SpawnActorInEditor(UClass* ActorClass, FTransform Transform);
+
+	virtual void Refresh(bool bRefreshAdjacent, const FTransform& Transform);
 
 	virtual void CleanupTile();
 
-	virtual void BeginDestroy() override;
+	virtual void Destroyed() override;
 
-	FTilesetSectorCoordinates TileIndex;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Tile")
+		FTilesetSectorCoordinates TileIndex;
 	
 	UFUNCTION(BlueprintCallable, Category = "Tile")
 		FTilesetSectorCoordinates GetTileIndex() { return TileIndex; };
@@ -32,4 +39,6 @@ class SPACESTATIONGAME_API ATileset : public AActor
 		bool IsGameWorld();
 
 	bool bAlreadyConstructed;
+
+	bool bCopyConstructed;
 };

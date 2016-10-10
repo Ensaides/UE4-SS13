@@ -34,6 +34,9 @@ class SPACESTATIONGAME_API ATilesetManager : public AManager
 	UFUNCTION(BlueprintCallable, meta = (ToolTip = "Add a tile to the sectors, returning the new tile's coordinate. Will return true if it was successful.", DisplayName = "Add Tile"), Category = "Tile")
 		static bool AddTile(ATileset* NewTile, FTilesetSectorCoordinates& OutCoords);
 
+	UFUNCTION(BlueprintCallable, meta = (ToolTip = "Add a tile to the sectors, specifying a custom location, returning the new tile's coordinate. Will return true if it was successful.", DisplayName = "Add Tile"), Category = "Tile")
+		static bool AddTileAtLocation(ATileset* NewTile, FVector Loc, FTilesetSectorCoordinates& OutCoords);
+
 	/*
 	UFUNCTION(BlueprintCallable, meta = (ToolTip = "Add a tile to the sectors at location", DisplayName = "Add Tile At Location"), Category = "Tile")
 		static void AddTileAtLocation(FVector Location, ATileset* NewTile);

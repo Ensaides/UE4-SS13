@@ -8,12 +8,15 @@ ATileset::ATileset(const class FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	bAlreadyConstructed = false;
+	bCopyConstructed = false;
 }
 
-void ATileset::OnConstruction(const FTransform& Transform)
+void ATileset::PostInitializeComponents()
 {
 	if (IsGameWorld())
 	{
+		UE_LOG(LogTemp, Warning, TEXT("ON POST INITIIALZIE COMPOENTS!"));
+
 		if (bAlreadyConstructed)
 		{
 			ATilesetManager::RemoveTile(TileIndex, this, true);
@@ -21,9 +24,69 @@ void ATileset::OnConstruction(const FTransform& Transform)
 
 		// If we succeeded in adding the tile, bAlreadyConstructed = true
 		bAlreadyConstructed = ATilesetManager::AddTile(this, TileIndex);
+
+		if (bAlreadyConstructed)
+		{
+			Refresh(true, GetActorTransform());
+		}
 	}
 
-	Super::OnConstruction(Transform);
+	Super::PostInitializeComponents();
+}
+
+void ATileset::PostLoad()
+{
+	if (IsGameWorld())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ON POST LOAD!"));
+
+		if (bAlreadyConstructed)
+		{
+			ATilesetManager::RemoveTile(TileIndex, this, true);
+		}
+
+		// If we succeeded in adding the tile, bAlreadyConstructed = true
+		bAlreadyConstructed = ATilesetManager::AddTile(this, TileIndex);
+
+		if (bAlreadyConstructed)
+		{
+			Refresh(true, GetActorTransform());
+		}
+	}
+
+	Super::PostLoad();
+}
+
+void ATileset::PostEditImport()
+{
+	UE_LOG(LogTemp, Warning, TEXT("ON COPY!"));
+
+	bCopyConstructed = true;
+
+	Super::PostEditImport();
+}
+
+void ATileset::PostEditMove(bool bFinished)
+{
+	if (bFinished && IsGameWorld())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ON EDIT MOVE!"));
+
+		if (bAlreadyConstructed)
+		{
+			ATilesetManager::RemoveTile(TileIndex, this, true);
+		}
+
+		// If we succeeded in adding the tile, bAlreadyConstructed = true
+		bAlreadyConstructed = ATilesetManager::AddTile(this, TileIndex);
+
+		if (bAlreadyConstructed)
+		{
+			Refresh(true, GetActorTransform());
+		}
+	}
+
+	Super::PostEditMove(bFinished);
 }
 
 AActor* ATileset::SpawnActorInEditor(UClass* ActorClass, FTransform Transform)
@@ -39,6 +102,11 @@ AActor* ATileset::SpawnActorInEditor(UClass* ActorClass, FTransform Transform)
 	}
 
 	return NULL;
+}
+
+void ATileset::Refresh(bool bRefreshAdjacent, const FTransform& Transform)
+{
+	
 }
 
 bool ATileset::IsGameWorld()
@@ -66,11 +134,11 @@ void ATileset::CleanupTile()
 	}
 }
 
-void ATileset::BeginDestroy()
+void ATileset::Destroyed()
 {
 	UE_LOG(LogTemp, Log, TEXT("*** BeginDestroy() entered. ***"));
 
 	CleanupTile();
 
-	Super::BeginDestroy();
+	Super::Destroyed();
 }

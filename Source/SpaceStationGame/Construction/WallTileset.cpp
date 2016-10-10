@@ -14,18 +14,60 @@ AWallTileset::AWallTileset(const class FObjectInitializer& ObjectInitializer)
 	Center->SetupAttachment(GetRootComponent());
 	Center->InitBoxExtent(FVector(64, 64, 64));
 	Center->RelativeLocation = FVector(128, 128, 64);
+
+	Walls.Init(NULL, 4);
 }
 
-void AWallTileset::OnConstruction(const FTransform& Transform)
+void AWallTileset::PostInitializeComponents()
 {
 	auto LastTileIndex = TileIndex;
 
-	Super::OnConstruction(Transform);
+	Super::PostInitializeComponents();
 
 	// After we have moved our wall, update the adjacent walls in the previous location
 	if (bAlreadyConstructed)
 	{
 		RefreshAdjacentTiles(LastTileIndex);
+	}
+}
+
+void AWallTileset::PostLoad()
+{
+	auto LastTileIndex = TileIndex;
+
+	Super::PostLoad();
+
+	// After we have moved our wall, update the adjacent walls in the previous location
+	if (bAlreadyConstructed && IsGameWorld())
+	{
+		RefreshAdjacentTiles(LastTileIndex);
+	}
+}
+
+void AWallTileset::PostEditImport()
+{
+	Walls.Init(NULL, 4);
+
+	Super::PostEditImport();
+}
+
+void AWallTileset::PostEditMove(bool bFinished)
+{
+	if (bFinished && IsGameWorld())
+	{
+		auto LastTileIndex = TileIndex;
+
+		Super::PostEditMove(bFinished);
+
+		// After we have moved our wall, update the adjacent walls in the previous location
+		if (bAlreadyConstructed)
+		{
+			RefreshAdjacentTiles(LastTileIndex);
+		}
+	}
+	else
+	{
+		Super::PostEditMove(bFinished);
 	}
 }
 
@@ -46,7 +88,7 @@ FWallTileAdjacentTiles AWallTileset::GetAdjacentTiles(FTilesetSectorCoordinates 
 
 		if (bRefreshOverlaps)
 		{
-			UpActor->BP_Refresh(false);
+			UpActor->Refresh(false, UpActor->GetActorTransform());
 		}
 	}
 
@@ -56,7 +98,7 @@ FWallTileAdjacentTiles AWallTileset::GetAdjacentTiles(FTilesetSectorCoordinates 
 
 		if (bRefreshOverlaps)
 		{
-			DownActor->BP_Refresh(false);
+			DownActor->Refresh(false, DownActor->GetActorTransform());
 		}
 	}
 
@@ -66,7 +108,7 @@ FWallTileAdjacentTiles AWallTileset::GetAdjacentTiles(FTilesetSectorCoordinates 
 
 		if (bRefreshOverlaps)
 		{
-			LeftActor->BP_Refresh(false);
+			LeftActor->Refresh(false, LeftActor->GetActorTransform());
 		}
 	}
 
@@ -76,11 +118,82 @@ FWallTileAdjacentTiles AWallTileset::GetAdjacentTiles(FTilesetSectorCoordinates 
 
 		if (bRefreshOverlaps)
 		{
-			RightActor->BP_Refresh(false);
+			RightActor->Refresh(false, RightActor->GetActorTransform());
 		}
 	}
 
 	return Adjacents;
+}
+
+void AWallTileset::Refresh(bool bRefreshAdjacent, const FTransform& Transform)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Refresh "));
+
+	DestroyWalls();
+
+	auto AdjacentTiles = GetAdjacentTiles(GetTileIndex(), bRefreshAdjacent);
+
+	if (!AdjacentTiles.bUpOverlap && !Walls[0])
+	{
+		auto UpTransform = Transform;
+		UpTransform.AddToTranslation(WallUpTransform.GetLocation());
+		UpTransform.SetRotation((WallUpTransform.GetRotation().Rotator() + UpTransform.GetRotation().Rotator()).Quaternion());
+
+		auto NewWall = SpawnActorInEditor(WallClass, UpTransform);
+
+		if (NewWall)
+			Walls[0] = NewWall;
+	}
+
+	if (!AdjacentTiles.bDownOverlap && !Walls[1])
+	{
+		auto DownTransform = Transform;
+		DownTransform.AddToTranslation(WallDownTransform.GetLocation());
+		DownTransform.SetRotation((WallDownTransform.GetRotation().Rotator() + DownTransform.GetRotation().Rotator()).Quaternion());
+
+		auto NewWall = SpawnActorInEditor(WallClass, DownTransform);
+
+		if (NewWall)
+			Walls[1] = NewWall;
+	}
+
+	if (!AdjacentTiles.bLeftOverlap && !Walls[2])
+	{
+		auto LeftTransform = Transform;
+		LeftTransform.AddToTranslation(WallLeftTransform.GetLocation());
+		LeftTransform.SetRotation((WallLeftTransform.GetRotation().Rotator() + LeftTransform.GetRotation().Rotator()).Quaternion());
+
+		auto NewWall = SpawnActorInEditor(WallClass, LeftTransform);
+
+		if (NewWall)
+			Walls[2] = NewWall;
+	}
+
+	if (!AdjacentTiles.bRightOverlap && !Walls[3])
+	{
+		auto RightTransform = Transform;
+		RightTransform.AddToTranslation(WallRightTransform.GetLocation());
+		RightTransform.SetRotation((WallRightTransform.GetRotation().Rotator() + RightTransform.GetRotation().Rotator()).Quaternion());
+
+		auto NewWall = SpawnActorInEditor(WallClass, RightTransform);
+
+		if (NewWall)
+			Walls[3] = NewWall;
+	}
+
+}
+
+void AWallTileset::DestroyWalls()
+{
+	for (auto& Wall : Walls)
+	{
+		if (IsValid(Wall))
+		{
+			Wall->Destroy(false, true);
+
+			Wall = NULL;
+		}
+	}
 }
 
 void AWallTileset::RefreshAdjacentTiles(FTilesetSectorCoordinates Coords)
@@ -94,22 +207,22 @@ void AWallTileset::RefreshAdjacentTiles(FTilesetSectorCoordinates Coords)
 
 	if (IsValid(UpActor) && UpActor != this)
 	{
-		UpActor->BP_Refresh(false);
+		UpActor->Refresh(false, UpActor->GetActorTransform());
 	}
 
 	if (IsValid(DownActor) && DownActor != this)
 	{
-		DownActor->BP_Refresh(false);
+		DownActor->Refresh(false, DownActor->GetActorTransform());
 	}
 
 	if (IsValid(LeftActor) && LeftActor != this)
 	{
-		LeftActor->BP_Refresh(false);
+		LeftActor->Refresh(false, LeftActor->GetActorTransform());
 	}
 
 	if (IsValid(RightActor) && RightActor != this)
 	{
-		RightActor->BP_Refresh(false);
+		RightActor->Refresh(false, RightActor->GetActorTransform());
 	}
 }
 

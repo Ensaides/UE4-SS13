@@ -4,8 +4,11 @@
 
 class ATileset;
 
-#define TILESETSECTOR_SECTOR_SIZE 32
-#define TILESETSECTOR_TILE_SIZE_XY 256.f
+#define TILESETSECTOR_SECTOR_SIZE_X 32
+#define TILESETSECTOR_SECTOR_SIZE_Y 32
+#define TILESETSECTOR_SECTOR_SIZE_Z 1
+#define TILESETSECTOR_TILE_SIZE_X 256.f
+#define TILESETSECTOR_TILE_SIZE_Y 256.f
 #define TILESETSECTOR_TILE_SIZE_Z 512.f
 
 struct FTilesetSector
@@ -16,7 +19,7 @@ struct FTilesetSector
 	int32 CoordZ;
 
 	// Pointers to the tiles in the sector
-	ATileset* Tiles[TILESETSECTOR_SECTOR_SIZE][TILESETSECTOR_SECTOR_SIZE];
+	ATileset* Tiles[TILESETSECTOR_SECTOR_SIZE_X][TILESETSECTOR_SECTOR_SIZE_Y];
 };
 
 USTRUCT(Blueprintable)
@@ -24,86 +27,72 @@ struct FTilesetSectorCoordinates
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(BlueprintReadWrite, Category = "Sector")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Sector")
 		int32 SectorX;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Sector")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Sector")
 		int32 SectorY;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Sector")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Sector")
 		int32 SectorZ;
 
 
-	UPROPERTY(BlueprintReadWrite, Category = "Tile Coordinate")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Tile Coordinate")
 		int32 CoordX;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Tile Coordinate")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Tile Coordinate")
 		int32 CoordY;
 
-	FTilesetSectorCoordinates operator+(const FTilesetSectorCoordinates& Rhs)
-	{
-		auto ReturnVar = Rhs;
+	FTilesetSectorCoordinates operator+(const FTilesetSectorCoordinates& Rhs);
 
-		ReturnVar.SectorX = SectorX + Rhs.SectorX;
-		ReturnVar.SectorY = SectorY + Rhs.SectorY;
-		ReturnVar.SectorZ = SectorZ + Rhs.SectorZ;
-
-		ReturnVar.CoordX = CoordX + Rhs.CoordX;
-		ReturnVar.CoordY = CoordY + Rhs.CoordY;
-
-		return ReturnVar;
-	}
-
-	static FTilesetSectorCoordinates GetSectorCoordsFromWorldLoc(FVector Location)
-	{
-		auto Coordinates = FTilesetSectorCoordinates();
-
-		Coordinates.SectorX = round((Location.X / TILESETSECTOR_TILE_SIZE_XY) / TILESETSECTOR_SECTOR_SIZE);
-		Coordinates.SectorY = round((Location.Y / TILESETSECTOR_TILE_SIZE_XY) / TILESETSECTOR_SECTOR_SIZE);
-		Coordinates.SectorZ = round((Location.Z / TILESETSECTOR_TILE_SIZE_Z) / TILESETSECTOR_SECTOR_SIZE);
-
-		Coordinates.CoordX = (int32)round((Location.X / TILESETSECTOR_TILE_SIZE_XY)) % TILESETSECTOR_SECTOR_SIZE;
-		Coordinates.CoordY = (int32)round((Location.Y / TILESETSECTOR_TILE_SIZE_XY)) % TILESETSECTOR_SECTOR_SIZE;
-
-		if (Coordinates.CoordX < 0)
-			Coordinates.CoordX = TILESETSECTOR_SECTOR_SIZE + Coordinates.CoordX;
-
-		if (Coordinates.CoordY < 0)
-			Coordinates.CoordY = TILESETSECTOR_SECTOR_SIZE + Coordinates.CoordY;
-
-		return Coordinates;
-	};
+	static FTilesetSectorCoordinates GetSectorCoordsFromWorldLoc(FVector Location);
 	
 	// Normalizes the coords
 	void Normalize()
 	{
 		if (CoordX < 0)
 		{
-			SectorX += (CoordX % TILESETSECTOR_SECTOR_SIZE) + 1;
+			SectorX += (CoordX / TILESETSECTOR_SECTOR_SIZE_X) - 1;
 
-			CoordX %= TILESETSECTOR_SECTOR_SIZE;
-			CoordX = TILESETSECTOR_SECTOR_SIZE + CoordX;
+			CoordX %= TILESETSECTOR_SECTOR_SIZE_X;
+			CoordX = TILESETSECTOR_SECTOR_SIZE_X + CoordX;
 		}
 
 		if (CoordY < 0)
 		{
-			SectorY += (CoordY % TILESETSECTOR_SECTOR_SIZE) + 1;
+			SectorY += (CoordY / TILESETSECTOR_SECTOR_SIZE_Y) - 1;
 
-			CoordY %= TILESETSECTOR_SECTOR_SIZE;
-			CoordY = TILESETSECTOR_SECTOR_SIZE + CoordY;
+			CoordY %= TILESETSECTOR_SECTOR_SIZE_Y;
+			CoordY = TILESETSECTOR_SECTOR_SIZE_Y + CoordY;
+		}
+
+		if (CoordX > 31)
+		{
+			SectorX += (CoordX / TILESETSECTOR_SECTOR_SIZE_X) + 1;
+
+			CoordX %= TILESETSECTOR_SECTOR_SIZE_X;
+			CoordX = TILESETSECTOR_SECTOR_SIZE_X + CoordX;
+		}
+
+		if (CoordY > 31)
+		{
+			SectorY += (CoordY / TILESETSECTOR_SECTOR_SIZE_Y) + 1;
+
+			CoordY %= TILESETSECTOR_SECTOR_SIZE_Y;
+			CoordY = TILESETSECTOR_SECTOR_SIZE_Y + CoordY;
 		}
 	};
 
 	static FVector GetWorldLocFromSectorCoords(FTilesetSectorCoordinates Coords)
 	{
 		// Get the sector location
-		auto Location = FVector(Coords.SectorX * TILESETSECTOR_TILE_SIZE_XY * TILESETSECTOR_SECTOR_SIZE,
-								Coords.SectorY * TILESETSECTOR_TILE_SIZE_XY * TILESETSECTOR_SECTOR_SIZE,
+		auto Location = FVector(Coords.SectorX * TILESETSECTOR_TILE_SIZE_X * TILESETSECTOR_SECTOR_SIZE_X,
+								Coords.SectorY * TILESETSECTOR_TILE_SIZE_Y * TILESETSECTOR_SECTOR_SIZE_Y,
 								Coords.SectorZ * TILESETSECTOR_TILE_SIZE_Z);
 
 		// Then add the coord location
-		Location += FVector(Coords.CoordX * TILESETSECTOR_TILE_SIZE_XY,
-							Coords.CoordY * TILESETSECTOR_TILE_SIZE_XY,
+		Location += FVector(Coords.CoordX * TILESETSECTOR_TILE_SIZE_X,
+							Coords.CoordY * TILESETSECTOR_TILE_SIZE_Y,
 							0.f);
 
 		return Location;
