@@ -5,9 +5,13 @@
 #include "Manager.h"
 #include "TilesetSector.h"
 #include <list>
+#include <map>
 #include "TilesetManager.generated.h"
 
 class ATileset;
+
+typedef std::list<FTilesetSector> Tileset;
+typedef std::map<FString, Tileset> TilesetMap;
 
 /**
  * 
@@ -16,13 +20,29 @@ UCLASS()
 class SPACESTATIONGAME_API ATilesetManager : public AManager
 {
 	GENERATED_UCLASS_BODY()
-	
-	// The list of all sectors
-	static std::list<FTilesetSector>& GetSectors()
-	{
-		static std::list<FTilesetSector> Sectors = std::list<FTilesetSector>();
 
-		return Sectors;
+	static TilesetMap& GetTilesetMap()
+	{
+		static TilesetMap NewTilesetMap = TilesetMap();
+
+		return NewTilesetMap;
+	}
+
+	// The list of all sectors
+	static Tileset& GetSectors()
+	{
+		auto& NewTilesetMap = GetTilesetMap();
+
+		auto&& It = NewTilesetMap.find("Walltileset");
+
+		if (It == NewTilesetMap.end())
+		{
+			NewTilesetMap["Walltileset"] = Tileset();
+		}
+
+		//static Tileset Sectors = Tileset();
+
+		return NewTilesetMap["Walltileset"];
 	}
 
 	UFUNCTION(BlueprintCallable, meta = (ToolTip = "Get a tile from world coordinates.", DisplayName = "Get Tile From World Coordinates"), Category = "Tile")
