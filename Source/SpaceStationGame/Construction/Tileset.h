@@ -11,6 +11,9 @@ class SPACESTATIONGAME_API ATileset : public AActor
 {
 	GENERATED_UCLASS_BODY()
 
+	UPROPERTY(EditDefaultsOnly, Category = "Tile")
+		FString TilesetName;
+
 	virtual void PostInitializeComponents() override;
 
 	virtual void PostLoad() override;

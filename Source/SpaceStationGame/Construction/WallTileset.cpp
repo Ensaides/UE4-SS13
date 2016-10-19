@@ -16,6 +16,8 @@ AWallTileset::AWallTileset(const class FObjectInitializer& ObjectInitializer)
 	Center->RelativeLocation = FVector(128, 128, 64);
 
 	Walls.Init(NULL, 4);
+
+	TilesetName = "WallTileset";
 }
 
 void AWallTileset::PostInitializeComponents()
@@ -77,10 +79,10 @@ FWallTileAdjacentTiles AWallTileset::GetAdjacentTiles(FTilesetSectorCoordinates 
 
 	if (!IsGameWorld()) return Adjacents;
 
-	auto UpActor = ATilesetManager::GetTileSectorCoords(Coords + FTilesetSectorCoordinates(0, 0, 0, 0, 1));
-	auto DownActor = ATilesetManager::GetTileSectorCoords(Coords + FTilesetSectorCoordinates(0, 0, 0, 0, -1));
-	auto LeftActor = ATilesetManager::GetTileSectorCoords(Coords + FTilesetSectorCoordinates(0, 0, 0, 1, 0));
-	auto RightActor = ATilesetManager::GetTileSectorCoords(Coords + FTilesetSectorCoordinates(0, 0, 0, -1, 0));
+	auto UpActor = ATilesetManager::GetTileSectorCoords(TilesetName, Coords + FTilesetSectorCoordinates(0, 0, 0, 0, 1));
+	auto DownActor = ATilesetManager::GetTileSectorCoords(TilesetName, Coords + FTilesetSectorCoordinates(0, 0, 0, 0, -1));
+	auto LeftActor = ATilesetManager::GetTileSectorCoords(TilesetName, Coords + FTilesetSectorCoordinates(0, 0, 0, 1, 0));
+	auto RightActor = ATilesetManager::GetTileSectorCoords(TilesetName, Coords + FTilesetSectorCoordinates(0, 0, 0, -1, 0));
 
 	if (IsValid(UpActor) && UpActor != this)
 	{
@@ -127,7 +129,7 @@ FWallTileAdjacentTiles AWallTileset::GetAdjacentTiles(FTilesetSectorCoordinates 
 
 void AWallTileset::Refresh(bool bRefreshAdjacent, const FTransform& Transform)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Refresh "));
+	UE_LOG(LogTemp, Warning, TEXT("Refresh"));
 
 	DestroyWalls();
 
@@ -200,10 +202,10 @@ void AWallTileset::RefreshAdjacentTiles(FTilesetSectorCoordinates Coords)
 {
 	if (!IsGameWorld()) return;
 
-	auto UpActor = ATilesetManager::GetTileSectorCoords(Coords + FTilesetSectorCoordinates(0, 0, 0, 0, 1));
-	auto DownActor = ATilesetManager::GetTileSectorCoords(Coords + FTilesetSectorCoordinates(0, 0, 0, 0, -1));
-	auto LeftActor = ATilesetManager::GetTileSectorCoords(Coords + FTilesetSectorCoordinates(0, 0, 0, 1, 0));
-	auto RightActor = ATilesetManager::GetTileSectorCoords(Coords + FTilesetSectorCoordinates(0, 0, 0, -1, 0));
+	auto UpActor = ATilesetManager::GetTileSectorCoords(TilesetName, Coords + FTilesetSectorCoordinates(0, 0, 0, 0, 1));
+	auto DownActor = ATilesetManager::GetTileSectorCoords(TilesetName, Coords + FTilesetSectorCoordinates(0, 0, 0, 0, -1));
+	auto LeftActor = ATilesetManager::GetTileSectorCoords(TilesetName, Coords + FTilesetSectorCoordinates(0, 0, 0, 1, 0));
+	auto RightActor = ATilesetManager::GetTileSectorCoords(TilesetName, Coords + FTilesetSectorCoordinates(0, 0, 0, -1, 0));
 
 	if (IsValid(UpActor) && UpActor != this)
 	{

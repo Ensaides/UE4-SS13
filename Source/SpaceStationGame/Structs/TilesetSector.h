@@ -68,18 +68,16 @@ struct FTilesetSectorCoordinates
 
 		if (CoordX > 31)
 		{
-			SectorX += (CoordX / TILESETSECTOR_SECTOR_SIZE_X) + 1;
+			SectorX += (CoordX / TILESETSECTOR_SECTOR_SIZE_X);
 
 			CoordX %= TILESETSECTOR_SECTOR_SIZE_X;
-			CoordX = TILESETSECTOR_SECTOR_SIZE_X + CoordX;
 		}
 
 		if (CoordY > 31)
 		{
-			SectorY += (CoordY / TILESETSECTOR_SECTOR_SIZE_Y) + 1;
+			SectorY += (CoordY / TILESETSECTOR_SECTOR_SIZE_Y);
 
 			CoordY %= TILESETSECTOR_SECTOR_SIZE_Y;
-			CoordY = TILESETSECTOR_SECTOR_SIZE_Y + CoordY;
 		}
 	};
 

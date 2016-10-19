@@ -9,6 +9,8 @@ ATileset::ATileset(const class FObjectInitializer& ObjectInitializer)
 {
 	bAlreadyConstructed = false;
 	bCopyConstructed = false;
+
+	TilesetName = "Tileset";
 }
 
 void ATileset::PostInitializeComponents()
@@ -19,11 +21,11 @@ void ATileset::PostInitializeComponents()
 
 		if (bAlreadyConstructed)
 		{
-			ATilesetManager::RemoveTile(TileIndex, this, true);
+			ATilesetManager::RemoveTile(TilesetName, TileIndex, this, true);
 		}
 
 		// If we succeeded in adding the tile, bAlreadyConstructed = true
-		bAlreadyConstructed = ATilesetManager::AddTile(this, TileIndex);
+		bAlreadyConstructed = ATilesetManager::AddTile(TilesetName, this, TileIndex);
 
 		if (bAlreadyConstructed)
 		{
@@ -42,11 +44,11 @@ void ATileset::PostLoad()
 
 		if (bAlreadyConstructed)
 		{
-			ATilesetManager::RemoveTile(TileIndex, this, true);
+			ATilesetManager::RemoveTile(TilesetName, TileIndex, this, true);
 		}
 
 		// If we succeeded in adding the tile, bAlreadyConstructed = true
-		bAlreadyConstructed = ATilesetManager::AddTile(this, TileIndex);
+		bAlreadyConstructed = ATilesetManager::AddTile(TilesetName, this, TileIndex);
 
 		if (bAlreadyConstructed)
 		{
@@ -74,11 +76,11 @@ void ATileset::PostEditMove(bool bFinished)
 
 		if (bAlreadyConstructed)
 		{
-			ATilesetManager::RemoveTile(TileIndex, this, true);
+			ATilesetManager::RemoveTile(TilesetName, TileIndex, this, true);
 		}
 
 		// If we succeeded in adding the tile, bAlreadyConstructed = true
-		bAlreadyConstructed = ATilesetManager::AddTile(this, TileIndex);
+		bAlreadyConstructed = ATilesetManager::AddTile(TilesetName, this, TileIndex);
 
 		if (bAlreadyConstructed)
 		{
@@ -130,7 +132,7 @@ void ATileset::CleanupTile()
 {
 	if (bAlreadyConstructed)
 	{
-		ATilesetManager::RemoveTile(TileIndex);
+		ATilesetManager::RemoveTile(TilesetName, TileIndex);
 	}
 }
 
