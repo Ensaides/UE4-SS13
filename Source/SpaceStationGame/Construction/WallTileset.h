@@ -38,6 +38,8 @@ class SPACESTATIONGAME_API AWallTileset : public ATileset
 {
 	GENERATED_UCLASS_BODY()
 
+	virtual void OnConstruction(const FTransform & Transform) override;
+
 	virtual void PostInitializeComponents() override;
 
 	virtual void PostLoad() override;
@@ -63,6 +65,9 @@ class SPACESTATIONGAME_API AWallTileset : public ATileset
 	virtual void Refresh(bool bRefreshAdjacent, const FTransform& Transform) override;
 
 	virtual void DestroyWalls();
+
+	UFUNCTION(BlueprintCallable, meta = (ToolTip = "Destroy the tileset Walls.", DisplayName = "Destroy Walls"), Category = "Tile")
+		void BP_DestroyWalls() { DestroyWalls(); };
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Walls")
 		TArray<AActor*> Walls;

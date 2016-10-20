@@ -20,6 +20,19 @@ AWallTileset::AWallTileset(const class FObjectInitializer& ObjectInitializer)
 	TilesetName = "WallTileset";
 }
 
+void AWallTileset::OnConstruction(const FTransform& Transform)
+{
+	auto LastTileIndex = TileIndex;
+
+	Super::OnConstruction(Transform);
+
+	// After we have moved our wall, update the adjacent walls in the previous location
+	if (bAlreadyConstructed)
+	{
+		RefreshAdjacentTiles(LastTileIndex);
+	}
+}
+
 void AWallTileset::PostInitializeComponents()
 {
 	auto LastTileIndex = TileIndex;

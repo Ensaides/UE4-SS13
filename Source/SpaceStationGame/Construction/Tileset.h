@@ -14,6 +14,8 @@ class SPACESTATIONGAME_API ATileset : public AActor
 	UPROPERTY(EditDefaultsOnly, Category = "Tile")
 		FString TilesetName;
 
+	virtual void OnConstruction(const FTransform & Transform) override;
+
 	virtual void PostInitializeComponents() override;
 
 	virtual void PostLoad() override;
@@ -28,6 +30,9 @@ class SPACESTATIONGAME_API ATileset : public AActor
 
 	virtual void Refresh(bool bRefreshAdjacent, const FTransform& Transform);
 
+	UFUNCTION(BlueprintCallable, meta = (ToolTip = "Refresh the tile and update its position in the tileset.", DisplayName = "Refresh"), Category = "Tile")
+		void BP_Refresh(bool bRefreshAdjacent, const FTransform& Transform) { Refresh(bRefreshAdjacent, Transform); };
+
 	virtual void CleanupTile();
 
 	virtual void Destroyed() override;
@@ -41,7 +46,11 @@ class SPACESTATIONGAME_API ATileset : public AActor
 	UFUNCTION(BlueprintCallable, Category = "World")
 		bool IsGameWorld();
 
+	bool bShouldConstruct;
+
 	bool bAlreadyConstructed;
 
 	bool bCopyConstructed;
+
+	bool bBeingMoved;
 };

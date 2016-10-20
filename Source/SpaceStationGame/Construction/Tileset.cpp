@@ -13,6 +13,31 @@ ATileset::ATileset(const class FObjectInitializer& ObjectInitializer)
 	TilesetName = "Tileset";
 }
 
+void ATileset::OnConstruction(const FTransform& Transform)
+{
+	if (bShouldConstruct && !bCopyConstructed && !bBeingMoved && IsGameWorld())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ON CONSTRUCT!"));
+
+		if (bAlreadyConstructed)
+		{
+			ATilesetManager::RemoveTile(TilesetName, TileIndex, this, true);
+		}
+
+		// If we succeeded in adding the tile, bAlreadyConstructed = true
+		bAlreadyConstructed = ATilesetManager::AddTile(TilesetName, this, TileIndex);
+
+		if (bAlreadyConstructed)
+		{
+			Refresh(true, GetActorTransform());
+		}
+
+		bShouldConstruct = false;
+	}
+
+	Super::OnConstruction(Transform);
+}
+
 void ATileset::PostInitializeComponents()
 {
 	if (IsGameWorld())
@@ -54,6 +79,8 @@ void ATileset::PostLoad()
 		{
 			Refresh(true, GetActorTransform());
 		}
+
+		bShouldConstruct = true;
 	}
 
 	Super::PostLoad();
@@ -65,11 +92,15 @@ void ATileset::PostEditImport()
 
 	bCopyConstructed = true;
 
+	bShouldConstruct = true;
+
 	Super::PostEditImport();
 }
 
 void ATileset::PostEditMove(bool bFinished)
 {
+	bBeingMoved = !bFinished;
+
 	if (bFinished && IsGameWorld())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("ON EDIT MOVE!"));
